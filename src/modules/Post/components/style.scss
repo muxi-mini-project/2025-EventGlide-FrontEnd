@@ -1,0 +1,56 @@
+.post-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    .img {
+      width: 100%;
+      border-radius: 10rpx 10rpx 0 0;
+    }
+    .content {
+      height: 160rpx;
+      width: 100%;
+      background-color: #fff;
+      border-radius: 0 0 15rpx 15rpx;
+      .title-container {
+        position: absolute;
+        bottom: 3rpx;
+        left: 0rpx;
+        width: 100%;
+        height: 60rpx;
+        // display: flex;
+        // align-items: center;
+        // justify-content: space-around;
+        .post-user {
+          display: flex;
+          align-items: center;
+          position: absolute;
+          left: 12rpx;
+          .avatar {
+            width: 50rpx;
+            border-radius: 50%;
+            margin-right: 10rpx;
+          }
+          .username {
+            font-family: SimHei;
+            font-size: 25rpx;
+            color: #736F80;
+          }
+        }
+        .post-favorite {
+          display: flex;
+          align-items: center;
+          position: absolute;
+          right: 20rpx;
+          .avatar {
+            width: 50rpx;
+            margin-right: 10rpx;
+          }
+          .count {
+            font-family: SimHei;
+            font-size: 28rpx;
+            color: #736F80;
+          }
+        }
+      }
+    }
+}

@@ -1,0 +1,26 @@
+.album-window-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: SimHei;
+    font-size: 36rpx;
+    color:  #B36AEB;
+    &-btn1 {
+        width: 100%;
+        height: 120rpx;
+        line-height: 120rpx;
+        text-align: center;
+        background-color: #fff;
+        border-radius: 20rpx 20rpx 0 0;
+        border-bottom: 2rpx solid #D8C6EF;
+    }
+    &-btn2 {
+        @extend .album-window-content-btn1;
+        border-radius: 0;
+    }
+    &-cancel {
+        @extend .album-window-content-btn1;
+        border-radius: 0;
+        border-top: 6rpx solid #D8C6EF;
+    } 
+}

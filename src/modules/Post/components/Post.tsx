@@ -1,5 +1,6 @@
 import "./style.scss"
 import { View, Image, Text } from "@tarojs/components"
+import { navigateTo } from "@tarojs/taro"
 import img1 from "@/common/assets/Postlist/波奇.jpg"
 import img2 from "@/common/assets/Postlist/11.jpg"
 import pic from "@/common/assets/Postlist/波奇.jpg"
@@ -25,7 +26,7 @@ const Post: React.FC<any> = memo(function ({ item, index }) {
   }
   // console.log(img);
   return (
-    <View className="post-container" >
+    <View className="post-container" onClick={() => navigateTo({ url: "/pages/blogDetail/index" })}>
       <Image className="img" mode="widthFix" lazyLoad={true} src={img} ></Image>
       <View className="content">
         <View className="title-container">

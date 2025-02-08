@@ -9,10 +9,14 @@ import classnames from 'classnames';
 const Button: React.FC<BtnType> = memo(function ({ ...props }) {
 
     const handleClick = () => {
-        if (props.url === "/pages/index/index") {
+        if (props.url === "/pages/indexHome/index") {
             reLaunch({ url: props.url })
         }
-        navigateTo({ url: props.url })
+        else if (!props.url) {
+            return;
+        }
+        else
+            navigateTo({ url: props.url })
     }
 
     return (

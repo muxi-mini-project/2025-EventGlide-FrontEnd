@@ -1,6 +1,7 @@
 import "./style.scss"
 import { View, Radio, RadioGroup, Input, Label, Image } from "@tarojs/components"
 import { useState } from "react"
+import { navigateTo } from "@tarojs/taro"
 import classnames from "classnames"
 import searchpic from "@/common/assets/Postlist/搜索.png"
 
@@ -38,7 +39,7 @@ function Sticky() {
                         </Label>
                     ))}
                 </RadioGroup>
-                <View className="sticky-date-check">
+                <View className="sticky-date-check" onClick={() => { navigateTo({ url: "/pages/actScreen/index" })}}>
                     筛选
                 </View>
             </View>

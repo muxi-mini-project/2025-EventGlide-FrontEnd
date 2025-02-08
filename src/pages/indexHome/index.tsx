@@ -3,6 +3,8 @@ import Active from '@/modules/activityItem/index'
 import ActiveList from '@/common/types/ActiveList'
 import './index.scss'
 import Sticky from "@/modules/index-sticky/index"
+import PostWindow from '@/modules/PostWindow'
+import { useState } from 'react'
 
 const activeList: ActiveList[] = new Array(20).fill(
   {
@@ -13,18 +15,22 @@ const activeList: ActiveList[] = new Array(20).fill(
 )
 
 const Index = () => {
+  const [showPostWindow, setShowPostWindow] = useState(false)
   return (
-    <ScrollView className="active" scrollY={true}>
-      <View className="sticky-header" >
-        <Sticky />
-      </View>
-      <View className="sticky-item" >
-        {activeList.map((activeItem, index) => (
-          <Active key={index} activeItem={activeItem} />
-        ))}
-      </View>
-    </ScrollView>
-    // <View className='test'>牛魔</View>
+    <>
+      <ScrollView className="active" scrollY={true}>
+        <View className="sticky-header" >
+          <Sticky />
+        </View>
+        <View className="sticky-item" >
+          {activeList.map((activeItem, index) => (
+            <Active key={index} activeItem={activeItem} setShowPostWindow={setShowPostWindow}/>
+          ))}
+        </View>
+      </ScrollView>
+      {showPostWindow && <PostWindow WindowType="active" setShowPostWindow={setShowPostWindow}></PostWindow>}
+      {/* // <View className='test'>牛魔</View> */}
+    </>
   )
 }
 

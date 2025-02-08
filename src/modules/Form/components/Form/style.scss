@@ -3,14 +3,13 @@
     height: 200rpx;
     background-color: #fff;
     border-radius: 10rpx;
+    position: relative;
+    font-family: SimHei;
     .form-title-container {
         position: absolute;
         top: 30rpx;
         left: 20rpx;
-        font: {
-            size: 40rpx;
-            family: SimHei;
-        }
+        font-size: 40rpx;
         .form-required {
             color: rgb(217, 2, 32);
             margin-right: 10rpx;

@@ -1,10 +1,12 @@
 type inputType = 'textInpput' | 'dateChoice' | 'SimpChoice' 
 
-type formType = {
+interface formType {
     text: string,
     type: inputType,
     reminder: string,
-    options?: string[]
+    required: boolean,
+    options?: string[],
+    disabled: boolean,
 }
 
 export default formType;

@@ -1,0 +1,123 @@
+.addPeopleIndex {
+    width: 100%;
+    height: 100vh;
+    background-color: #F9F8FC;
+    font-family: SimHei;
+    &-title {
+        color: #5E5064;
+        font-size: 32rpx;
+        text-align: right;
+        width: 90%;
+        margin: 0 auto;
+    }
+    &-content {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        margin: 0 auto;
+    }
+    &-add {
+        width: 90%;
+        margin: 0 auto;
+        height: 120rpx;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 10rpx 10rpx;
+        @extend .border-bottom;
+        &-icon {
+            margin-left: 30rpx;
+            width: 60rpx;
+            height: 60rpx;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.0784);
+            line-height: 60rpx;
+            text-align: center;
+            color:  #736F80;
+            font-size: 50rpx;
+        }
+        &-text {
+            margin-left: 30rpx;
+            color: #5E5064;
+            font-size: 32rpx;
+        }
+    }
+    &-footer {
+        position: absolute;
+        left: 50%;
+        bottom: 50rpx;
+        transform: translateX(-50%);    
+        width: 670rpx;
+        height: 112rpx;
+        background-color: #CF79FA;
+        border-radius: 20rpx;
+        line-height: 112rpx;
+        text-align: center;
+        color: #FFFEFF;
+        font-size: 42rpx;
+    }
+}
+
+.addPeopleItem {
+    width: 100%;
+    height: 120rpx;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    &-edit {
+        margin-left: 30rpx;
+        width: 60rpx;
+        height: 60rpx;
+        border-radius: 50%;
+        border: 4rpx solid #dbd2d2;
+        box-sizing: border-box;
+        background-color: #EE604A;
+        color: #fff;
+        font-size: 50rpx;
+        font-weight: 700;
+        text-align: center;
+        line-height: 60rpx;
+    }
+    &-id {
+        margin-left: 30rpx;
+        width: 60rpx;
+        height: 60rpx;
+        background-color: #CF79FA;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 40rpx;
+        text-align: center;
+        line-height: 60rpx;
+    }
+    &-info {
+        margin-left: 30rpx;
+        &-name {
+            color: #5E5064;
+            font-size: 32rpx;
+        }
+        &-number {
+            color: #5E5064;
+            font-size: 20rpx;
+        }
+    }
+}
+
+.border {
+    border-bottom: 3rpx solid #F1EEFC;
+    border-left: 2rpx solid #EFF2FA;
+    border-right: 2rpx solid #EFF2FA;
+}
+
+.border-top {
+    border-radius: 10rpx 10rpx 0 0;
+    border-top: 2rpx solid #EFF2FA;
+    border-left: 2rpx solid #EFF2FA;
+    border-right: 2rpx solid #EFF2FA;
+}
+
+.border-bottom {
+    border-radius: 0 0 10rpx 10rpx;
+    border-bottom: 2rpx solid #EFF2FA;
+    border-left: 2rpx solid #EFF2FA;
+    border-right: 2rpx solid #EFF2FA;
+}

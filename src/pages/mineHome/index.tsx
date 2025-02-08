@@ -2,6 +2,7 @@ import { View, Image } from "@tarojs/components";
 import './index.scss'
 import MinePost from "@/modules/minePost/index";
 import MineActivity from "@/modules/mineActivity/index";
+import { navigateTo } from "@tarojs/taro";
 import { useState } from "react";
 import classnames from "classnames";
 import avatar from "@/common/assets/Postlist/波奇.jpg"
@@ -23,7 +24,7 @@ const Index = () => {
             <View className="mine-user-name">用户名</View>
             <View className="mine-user-school">华中师范大学</View>
           </View>
-          <Image className="mine-user-arrowhead" mode="widthFix" src={arrowheadw}></Image>
+          <Image className="mine-user-arrowhead" mode="widthFix" src={arrowheadw} onClick={() => navigateTo({ url: '/pages/mineInfo/index' })}></Image>
         </View>
         <View className="mine-user-check">
           <View className="mine-user-check-info">审核中</View>

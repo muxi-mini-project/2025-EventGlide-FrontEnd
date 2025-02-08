@@ -1,14 +1,20 @@
 export default {
   pages: [
+    "pages/login/index",
     "pages/indexHome/index",
+    "pages/addIntroduce/index",
     "pages/addHome/index",
     "pages/blogHome/index",
+    "pages/blogInfo/index",
     "pages/mineHome/index",
+    "pages/mineInfo/index",
     "pages/actScreen/index",
-    "pages/addIntroduce/index",
     "pages/addLabel/index",
+    "pages/addSuccess/index",
+    "pages/isChecking/index",
+    "pages/addPeopleIndex/index",
+    "pages/addPeoplePage/index",
     "pages/album/index",
-    "pages/login/index",
     "pages/takePic/index"],
   window: {
     backgroundTextStyle: "light",

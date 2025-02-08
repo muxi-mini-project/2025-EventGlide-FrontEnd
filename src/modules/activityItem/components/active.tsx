@@ -2,10 +2,11 @@ import "./style.scss"
 import { View, Image } from "@tarojs/components"
 import pos from "@/common/assets/activity/pos.png"
 import date from "@/common/assets/activity/act.png"
+import { memo } from "react"
 
-function Active({activeItem}) {
+const Active: React.FC<{activeItem, setShowPostWindow: (show: boolean) => void}> = memo(({activeItem, setShowPostWindow}) => {
     return (
-        <View className="active-container">
+        <View className="active-container" onClick={() => setShowPostWindow(true)}>
             <View className="active-line"></View>
             <View className="active-header">{activeItem.title}XXX</View>
             <View className="active-content">
@@ -19,6 +20,6 @@ function Active({activeItem}) {
             <View className="active-underline"></View>
         </View>
     )
-}
+})
 
 export default Active

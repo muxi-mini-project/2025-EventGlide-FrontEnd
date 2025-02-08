@@ -56,7 +56,8 @@
     "classnames": "^2.5.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "taro-hooks": "2"
+    "taro-hooks": "2",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",

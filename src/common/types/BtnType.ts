@@ -1,5 +1,5 @@
 type BtnType = {
-    url: string;
+    url?: string;
     text: string;
     backgroundColor: string;
     textColor: string;

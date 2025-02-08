@@ -7,7 +7,7 @@ import BtnType from "@/common/types/BtnType";
 
 const Index = () => {
   const addBtn: BtnType = {
-    url: '/pages/addHome/addHome',
+    url: '/pages/addIntroduce/index',
     text: "去填写",
     backgroundColor: "#CF79FA",
     textColor: "#fff",

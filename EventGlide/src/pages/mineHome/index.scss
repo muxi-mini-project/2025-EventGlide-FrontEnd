@@ -1,0 +1,170 @@
+.mine-page {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background-color: #E4A5FF;
+    font-family: "SimHei";
+    .mine-user {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 40%;
+        background-color: #E4A5FF;
+        &-content {
+            padding-top: 20rpx;
+            width: 100%;
+            height: 250rpx;
+            display: flex;
+            align-items: center;
+            .mine-user-avatar {
+                width: 200rpx;
+                height: 200rpx;
+                border-radius: 50%;
+                margin: 0 40rpx;
+            }
+            .mine-user-info {
+                display: flex;
+                flex-direction: column;
+                color: #fff;
+                .mine-user-name {
+                    font-size: 60rpx;
+                    margin-bottom: 20rpx;
+                }
+                .mine-user-school {
+                    font-size: 28rpx;
+                }
+            }
+            .mine-user-arrowhead {
+                position: absolute;
+                width: 20rpx;
+                right: 80rpx;
+            }
+        }
+        &-check {
+            position: absolute;
+            bottom: 60rpx;
+            left: 40rpx;
+            width: 90%;
+            height: 130rpx;
+            background-color: #fff;
+            border-radius: 20rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            &-info {
+                color: #B36AEB;
+                font-size: 44rpx;
+                margin-left: 46rpx;
+            }
+            &-arrowhead {
+                width: 20rpx;
+                margin-right: 40rpx;
+            }
+        }
+    }
+    .mine-order {
+        position: absolute;
+        top: 40%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        height: 60%;
+        border-radius: 20rpx 20rpx 0 0;
+        &-title {
+            position: absolute;
+            top: 0;
+            height: 200rpx;
+            width: 100%;
+            &-choice {
+                position: absolute;
+                top: 0;
+                width: 100%;
+                height: 100rpx;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: #828283;
+                font-size: 44rpx;
+                &-left {
+                    padding-left: 220rpx;
+                }
+                &-right {
+                    padding-right: 220rpx;
+                }
+            }
+            &-search {
+                position: absolute;
+                width: 26rpx;
+                top: 32rpx;
+                right: 52rpx;
+            }
+            &-line {
+                position: absolute;
+                top: 100rpx;
+                width: 100%;
+                height: 0;
+                border: 2rpx solid #F9F8FC;
+            }
+            &-index {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 100rpx;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                color: #828283;
+                font-size: 36rpx;
+                &-left {
+                    padding-left: 225rpx;
+                }
+                &-right {
+                    padding-right: 225rpx;
+                }
+                // border-bottom: 2rpx solid #c5c4c7;
+            }
+        }
+        &-content {
+            position: absolute;
+            width: 100%;
+            top: 200rpx;
+            padding-top: 20rpx;
+            overflow-y: scroll;
+            left: 0;
+            background-color: #F9F8FC;
+        }
+    }
+}
+
+
+// 变量
+.active-decoration {
+    color: #4D4D4E;
+    position: relative;
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: -10rpx;
+        width: 50rpx;
+        height: 4rpx;
+        background-color: #CF79FA;
+    }
+}
+
+.active-decoration-left {
+    @extend.active-decoration;
+    &::after {
+        left: 240rpx;
+    }
+}
+.active-decoration-right {
+    @extend.active-decoration;
+    &::after {
+        left: 20rpx;
+    }
+}
+
+.active-decoration-item {
+    color: #4D4D4E;
+}

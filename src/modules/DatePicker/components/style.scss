@@ -1,0 +1,77 @@
+.Scrolled-title {
+    height: 90rpx;
+    width: 100%;
+    background-color: #fff;
+    border-bottom: 2rpx solid #D8C6EF;
+    border-radius: 20rpx 20rpx 0 0;
+    font-family: SimHei;
+    position: relative;
+    &-text1 {
+        position: absolute;
+        top: 24rpx;
+        left: 26rpx;
+        font-size: 28rpx;
+        color: #828283;
+    }
+    &-text2 {
+        position: absolute;
+        top: 22rpx;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 30rpx;
+        color: #131415;
+    }
+    &-text3 {
+        position: absolute;
+        top: 24rpx;
+        right: 26rpx;
+        font-size: 28rpx;
+        color: #B36AEB;
+    }
+}
+
+.Scrolled-container {
+    height: 520rpx;
+    width: 100%;
+    background-color: #fff;
+    position: relative;
+    display: flex;
+}
+
+.Scrolled-content {
+    position: relative;
+    width: 20%;
+    height: 520rpx;
+    font-size: 28rpx;
+    font-family: SimHei;
+    color: #828283;
+    overflow: scroll;   
+    text-align: center;
+    mask-image: linear-gradient(to bottom, transparent , #fff, transparent);
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.Scrolled-snap {
+    position: sticky;
+    z-index: -1;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 104rpx;
+    flex: none;
+    background-color: #F9F8FC;
+}
+
+
+.Scrolled-item {
+    height: 104rpx;
+    width: 100%;
+    line-height: 104rpx;
+    text-align: center;
+}
+
+.active {
+    color: #131415;
+}

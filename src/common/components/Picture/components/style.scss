@@ -1,0 +1,32 @@
+.picture {
+    position: relative;
+    width: 180rpx;
+    height: 180rpx;
+    background-color: #F5F5F5;
+    margin-right: 8rpx;
+    margin-bottom: 8rpx;
+    border-radius: 20rpx;
+    &-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 180rpx;
+        height: 180rpx;
+        border-radius: 20rpx;
+        // display: none;
+    }
+    &-mask {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: 10rpx 20rpx 10rpx 10rpx;
+        background-color: rgba(75, 63, 81, 0.502);
+        z-index: 2;
+        font-size: 24rpx;
+        color: #fff;
+        text-align: center;
+        line-height: 40rpx;
+    }
+}

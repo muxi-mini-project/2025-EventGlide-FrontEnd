@@ -1,0 +1,39 @@
+.addSuccess-page {
+    width: 100%;
+    height: 100vh;
+    font-family: SimHei;
+    &-content {
+        position: absolute;
+        left: 50%;
+        top: 300rpx;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        &-img {
+            width: 150rpx;
+            margin-bottom: 20rpx;
+        }
+        &-title {
+            font-size: 46rpx;
+            color: #A84ADF;
+            margin-bottom: 18rpx;
+        }
+        &-desc {
+            font-size: 30rpx;
+            color: #C378E3;
+            width: 450rpx;
+            text-align: center;
+        }
+    }
+    &-btn {
+        position: absolute;
+        top: 800rpx;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        height: 256rpx;
+        justify-content: space-between;
+    }
+}

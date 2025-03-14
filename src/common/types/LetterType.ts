@@ -6,6 +6,8 @@ type LetterType = {
 }
 
 
+
+
 export default LetterType;
 
 const letter: LetterType[] = 

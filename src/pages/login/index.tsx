@@ -1,25 +1,37 @@
 import { View, Image, Input, Text } from "@tarojs/components";
-import './index.scss'
-import logo from "@/common/assets/logo/logo.png";
+import "./index.scss";
+import logo from "@/common/svg/login/logo.svg";
 import eye from "@/common/assets/logo/小眼睛.png";
 import eye1 from "@/common/assets/logo/小眼睛1.png";
+import Taro from "@tarojs/taro";
 import { useState } from "react";
+import { useEffect } from "react";
+import handleUserLogin from "@/common/api/Login";
 import { switchTab } from "@tarojs/taro";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('user');
-  const [password, setPassword] = useState('123456');
+  const [studentid, setStudentid] = useState("");
+  const [password, setPassword] = useState("");
   const [showError, setShowError] = useState(false);
   const [isCheck, setIsCheck] = useState(true);
 
+  // useEffect(() => {
+  //   Taro.getStorage({
+  //     key: "token",
+  //     success: () => {
+  //       switchTab({ url: "/pages/indexHome/index" });
+  //     }
+  //   })
+  // });
+
   const handleLogin = () => {
-    if (username === 'user' && password === '123456' && isCheck) {
-      switchTab({ url: '/pages/indexHome/index' });
+    if (isCheck) {
+      handleUserLogin({ params: { studentid, password, setShowError } })
     } else {
       setShowError(true);
     }
-  }
+  };
 
   return (
     <View className="login-page">
@@ -31,28 +43,74 @@ const Index = () => {
       <View className="login-page-form">
         <View className="login-page-form-container">
           <View className="login-page-form-title">&nbsp;账号</View>
-          <View className="login-page-form-input"><Input className="login-page-form-input-text"
-            placeholder="请输入账号" placeholderTextColor={"color: #5E5064;"} placeholderClass={"login-page-form-input-text"}
-            type="text" value={username} onInput={(e) => { setUsername(e.detail.value); setShowError(false); }} />
+          <View className="login-page-form-input">
+            <Input
+              className="login-page-form-input-text"
+              placeholder="请输入账号"
+              placeholderTextColor={"color: #5E5064;"}
+              placeholderClass={"login-page-form-input-text"}
+              type="text"
+              value={studentid}
+              onInput={(e) => {
+                setStudentid(e.detail.value);
+                setShowError(false);
+              }}
+            />
           </View>
           <View className="login-page-form-title">&nbsp;密码</View>
-          <View className="login-page-form-input"><Input className="login-page-form-input-text"
-            placeholder="请输入密码" placeholderTextColor={"color: #5E5064;"} placeholderClass={"login-page-form-input-text"}
-            type="text" password={!showPassword} value={password} onInput={(e) => { setPassword(e.detail.value); setShowError(false); }} />
-            <Image src={showPassword ? eye1 : eye} mode="widthFix" className="login-page-form-input-icon" onClick={() => setShowPassword(!showPassword)} />
+          <View className="login-page-form-input">
+            <Input
+              className="login-page-form-input-text"
+              placeholder="请输入密码"
+              placeholderTextColor={"color: #5E5064;"}
+              placeholderClass={"login-page-form-input-text"}
+              style={"font-size: 24rpx; font-family: SimHei;"}
+              type="text"
+              password={!showPassword}
+              value={password}
+              onInput={(e) => {
+                setPassword(e.detail.value);
+                setShowError(false);
+              }}
+            />
+            <Image
+              src={showPassword ? eye1 : eye}
+              mode="widthFix"
+              className="login-page-form-input-icon"
+              onClick={() => setShowPassword(!showPassword)}
+            />
           </View>
-          {showError && <View className="login-page-form-error">账号或密码错误，请重新输入</View>}
+          {showError && (
+            <View className="login-page-form-error">
+              账号或密码错误，请重新输入
+            </View>
+          )}
         </View>
         <View className="login-page-form-privacy">
-          {!isCheck && <View className="login-page-form-privacy-check" onClick={() => setIsCheck(!isCheck)}></View>}
-          {isCheck && <View className="login-page-form-privacy-check-active" onClick={() => setIsCheck(!isCheck)}>
-            <View className="login-page-form-privacy-check-active-icon"></View>
-          </View>}
-          <View className="login-page-form-privacy-text">我已阅读并同意
-            <Text style={"color: #A84ADF"}>《用户协议》</Text>及<Text style={"color: #A84ADF"}>《隐私政策》</Text></View>
+          {!isCheck && (
+            <View
+              className="login-page-form-privacy-check"
+              onClick={() => setIsCheck(!isCheck)}
+            ></View>
+          )}
+          {isCheck && (
+            <View
+              className="login-page-form-privacy-check-active"
+              onClick={() => setIsCheck(!isCheck)}
+            >
+              <View className="login-page-form-privacy-check-active-icon"></View>
+            </View>
+          )}
+          <View className="login-page-form-privacy-text">
+            我已阅读并同意
+            <Text style={"color: #A84ADF"}>《用户协议》</Text>及
+            <Text style={"color: #A84ADF"}>《隐私政策》</Text>
+          </View>
         </View>
       </View>
-      <View className="login-page-btn" onClick={handleLogin}>登录</View>
+      <View className="login-page-btn" onClick={handleLogin}>
+        登录
+      </View>
     </View>
   );
 };

@@ -35,4 +35,15 @@
             flex: 1;
         }
     }
+    .form-item-img {
+        position: absolute;
+        top: 100rpx;
+        left: 50rpx;
+        width: 600rpx;
+        height: 120rpx;
+    }
+}
+
+.none {
+    display: none;
 }

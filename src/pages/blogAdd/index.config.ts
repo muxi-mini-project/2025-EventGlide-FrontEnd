@@ -1,4 +1,4 @@
 export default {
-  navigationBarTitleText: '拍照',
+  navigationBarTitleText: '添加',
   enableShareAppMessage: true,
 };

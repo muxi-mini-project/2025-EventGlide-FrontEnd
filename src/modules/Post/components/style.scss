@@ -5,6 +5,11 @@
     .img {
       width: 100%;
       border-radius: 10rpx 10rpx 0 0;
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+    .img-active {
+      opacity: 1;
     }
     .content {
       height: 160rpx;
@@ -42,12 +47,12 @@
           position: absolute;
           right: 20rpx;
           .avatar {
-            width: 50rpx;
-            margin-right: 10rpx;
+            width: 36rpx;
+            margin-right: 20rpx;
           }
           .count {
             font-family: SimHei;
-            font-size: 28rpx;
+            font-size: 32rpx;
             color: #736F80;
           }
         }

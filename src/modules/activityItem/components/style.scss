@@ -9,7 +9,7 @@
         top: 40rpx;
         width: 15rpx;
         height: 160rpx;
-        background-color: #AF8BF5;
+        background-color: #B9F58C;
         border-radius: 100rpx;
     }
     .active-header {
@@ -19,14 +19,14 @@
         height: 40rpx;
         line-height: 40rpx;
         font: {
-            size: 40rpx;
+            size: 36rpx;
             family: "SimHei";
         };
         color: #4D4D4E;
     }
     .active-content {
         position: absolute;
-        top: 100rpx;
+        top: 120rpx;
         left: 60rpx;
         width: 100%;
         height: 120rpx;

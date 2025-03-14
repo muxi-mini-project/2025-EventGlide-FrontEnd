@@ -2,10 +2,13 @@ export default {
   pages: [
     "pages/login/index",
     "pages/indexHome/index",
+    "pages/actComment/index",
     "pages/addIntroduce/index",
     "pages/addHome/index",
     "pages/blogHome/index",
     "pages/blogInfo/index",
+    "pages/blogDetail/index",
+    "pages/blogAdd/index",
     "pages/mineHome/index",
     "pages/mineInfo/index",
     "pages/actScreen/index",
@@ -14,8 +17,7 @@ export default {
     "pages/isChecking/index",
     "pages/addPeopleIndex/index",
     "pages/addPeoplePage/index",
-    "pages/album/index",
-    "pages/takePic/index"],
+    "pages/album/index"],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#F9F8FC",

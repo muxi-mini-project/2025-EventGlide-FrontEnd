@@ -116,11 +116,14 @@
                 height: 50rpx;
                 line-height: 50rpx;
                 margin-right: 25rpx;
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 .pwfai-img {
                     text-align: center;
                     align-items: center;
-                    width: 32rpx;
-                    height: 36rpx;
+                    width: 40rpx;
+                    height: 40rpx;
                     padding-right: 15rpx;
                 }
             }

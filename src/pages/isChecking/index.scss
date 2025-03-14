@@ -1,0 +1,91 @@
+.isCheckingPage {
+  font-family: SimHei;
+  width: 100%;
+  height: 100vh;
+  background-color: #f9f8fc;
+  position: relative;
+
+  &-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+
+    &-img {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      width: 580rpx;
+      z-index: 7;
+    }
+  }
+
+  &-container {
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border: 2rpx solid #f0f2fa;
+    border-radius: 10rpx;
+    width: 90%;
+    height: 900rpx;
+  }
+
+  &-header {
+    position: absolute;
+    top: 46rpx;
+    left: 20rpx;
+    color: #170a1e;
+    font-size: 44rpx;
+  }
+
+  &-gapline1 {
+    position: absolute;
+    top: 110rpx;
+    left: 50%;
+    width: 628rpx;
+    height: 2rpx;
+    transform: translateX(-50%);
+    background-color: #d8c6ef;
+  }
+
+  &-content {
+    position: absolute;
+    top: 110rpx;
+    left: 20rpx;
+    color: #5e5064;
+    font-size: 28rpx;
+  }
+
+  &-label {
+    overflow-x: scroll;
+    position: absolute;
+    top: 320rpx;
+    left: 22rpx;
+    display: flex;
+    width: 540rpx;
+
+    &-item {
+      font-size: 24rpx;
+      color: #5e5064;
+      height: 40rpx;
+      width: 200rpx;
+      background-color: #f3f3fb;
+      border-radius: 20rpx;
+      margin: 0 10rpx;
+      line-height: 40rpx;
+      text-align: center;
+    }
+  }
+
+  &-pic {
+    position: absolute;
+    top: 380rpx;
+    left: 20rpx;
+    display: flex;
+    flex-wrap: wrap;
+  }
+}

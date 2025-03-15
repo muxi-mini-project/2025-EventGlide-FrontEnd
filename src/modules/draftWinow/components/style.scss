@@ -1,0 +1,58 @@
+.draftWindow {
+    font-family: SimHei;
+    &-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 5;
+    }
+    &-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 6;
+        width: 86%;
+        height: 260rpx;
+        background-color: #fff;
+        border: 2rpx solid #F0F2FA;
+        border-radius: 10rpx;
+        &-title {
+            font-size: 44rpx;
+            color: #170A1E;
+            text-align: center;
+            height: 130rpx;
+            line-height: 130rpx;
+        }
+        &-line {
+            height: 1rpx;
+            width: 90%;
+            background-color:  #D8C6EF;
+            margin: 0 auto;
+        }
+        &-btn {
+            display: flex;
+            width: 100%;
+            height: 129rpx;
+            &-item {
+                flex: 1;
+                text-align: center;
+                height: 100%;
+                line-height: 129rpx;
+                text-align: center;
+                font-size: 48rpx;
+                color: #828283;
+            }
+        }
+        &-mask {
+            position: absolute;
+            top: 15rpx;
+            right: 15rpx;
+            color: #B36AEB;
+            font-weight: 700;
+        }
+    }
+}

@@ -1,0 +1,68 @@
+.active-container {
+    width: 92%;
+    height: 240rpx;
+    background-color: #fff;
+    position: relative;
+    .active-line {
+        position: absolute;
+        left: 16rpx;
+        top: 40rpx;
+        width: 15rpx;
+        height: 160rpx;
+        background-color: #B9F58C;
+        border-radius: 100rpx;
+    }
+    .active-header {
+        position: absolute;
+        left: 64rpx;
+        top: 50rpx;
+        height: 40rpx;
+        line-height: 40rpx;
+        font: {
+            size: 36rpx;
+            family: "SimHei";
+        };
+        color: #4D4D4E;
+    }
+    .active-content {
+        position: absolute;
+        top: 120rpx;
+        left: 60rpx;
+        width: 100%;
+        height: 120rpx;
+        font: {
+            size: 22rpx;
+            family: "SimHei";
+        };
+        color: #807D84;
+        .active-icon {
+            width: 25rpx;
+            margin-right: 20rpx;
+        }
+        .active-date {
+            display: flex;
+            width: 100%;
+            height: 20rpx;
+            align-items: center;
+            line-height: 20rpx;
+            margin-top: 20rpx;
+            margin-bottom: 20rpx;
+        }
+        .active-pos {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            line-height: 20rpx;
+            margin-top: 10rpx;
+        }
+
+    }
+    .active-underline {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 90%;
+        height: 3rpx;
+        background-color: #CBCBCB;
+    }
+}

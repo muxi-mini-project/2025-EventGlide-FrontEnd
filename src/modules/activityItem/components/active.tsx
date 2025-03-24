@@ -8,7 +8,6 @@ import { activeColor } from "@/common/const/Formconst"
 import TimeTranslation from "@/common/const/TimeTranslation"
 
 const Active: React.FC<{ activeItem: ActivityDetailList, setShowPostWindow: (show: boolean) => void }> = memo(({ activeItem, setShowPostWindow }) => {
-    // console.log(activeItem)
     return (
         <View className="active-container" onClick={() => setShowPostWindow(true)}>
             <View className="active-line" style={activeColor.get(activeItem.holderType) ? `background-color: ${activeColor.get(activeItem.holderType)}`: "background-color: #F68C8C"}></View>

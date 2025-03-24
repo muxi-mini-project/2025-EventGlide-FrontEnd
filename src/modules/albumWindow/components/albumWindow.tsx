@@ -18,14 +18,14 @@ const AlbumWindow: React.FC<AlbumWindowProps> = memo(function AlbumWindow({
 }) {
   const handleChooseImageClick = () => {
     if (type === "blog") {
-      handleChooseImage({ setIsVisiable, setImgUrl, imgUrl, count: count, url: "/pages/blogAdd/index", isAlbum: true });
+      handleChooseImage({ setIsVisiable, setImgUrl, imgUrl, count: count, url: "/subpackage/blogAdd/index", isAlbum: true });
     } else if (type === "event") {
       handleChooseImage({ setIsVisiable, setImgUrl, imgUrl, count: count, url: "", isAlbum: true, isRequest: isRequest});
     }
   };
   const handleTakePhotoClick = () => {
     if (type === "blog") {
-      handleChooseImage({ setIsVisiable, setImgUrl, imgUrl, count: 1, url: "/pages/blogAdd/index", isAlbum: false });
+      handleChooseImage({ setIsVisiable, setImgUrl, imgUrl, count: 1, url: "/subpackage/blogAdd/index", isAlbum: false });
     } else if (type === "event") {
       handleChooseImage({ setIsVisiable, setImgUrl, imgUrl, count: 1, url: "", isAlbum: false, isRequest: isRequest });
     }

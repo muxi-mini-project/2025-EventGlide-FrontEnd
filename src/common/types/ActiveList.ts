@@ -10,6 +10,7 @@ interface MineActivityList {
     title: string;
     name: string;
     likes: number;
+    collectNum: number;
     comment: number;
     introduce: string;
     showImg: string[];
@@ -18,11 +19,11 @@ interface MineActivityList {
 }
 
 interface selectedInfo {
-    host: string[] | null;
-    type: string[] | null;
-    detailDate: { startTime: string, endTime: string } | null;
-    position: string[] | null;
-    if_register: boolean | null;
+    holderType: string[];
+    type: string[];
+    detailTime: { startTime: string, endTime: string };
+    position: string[];
+    if_register: string;
 }
 
 interface ActivityDetailList {

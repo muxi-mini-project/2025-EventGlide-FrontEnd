@@ -1,2 +1,2 @@
-import NavigationBar from "./components/NavifationBar";
-export default NavigationBar;
+import { NavigationBar, NavigationBarTabBar, NavigationBarBack } from "./components/NavifationBar";
+export { NavigationBar, NavigationBarTabBar, NavigationBarBack }

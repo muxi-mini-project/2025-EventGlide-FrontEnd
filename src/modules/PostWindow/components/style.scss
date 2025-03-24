@@ -8,14 +8,14 @@
         height: 100%;
         background-color: #000;
         opacity: 0.5;
-        z-index: 6;
+        z-index: 666;
     }
     &-container {
         position: absolute;
-        top: 12%;
+        top: 20%;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 7;
+        z-index: 7777;
         background-color: #fff;
         border: 2rpx solid #F0F2FA;
         border-radius: 10rpx;

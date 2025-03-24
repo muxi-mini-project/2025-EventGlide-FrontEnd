@@ -1,6 +1,5 @@
 export default {
-  navigationBarTitleText: '我的',
+  navigationBarTitleText: '',
   enableShareAppMessage: true,
-  navigationBarBackgroundColor: "#e4a5ff",
-  navigationBarTextStyle: "white" 
+  navigationStyle: 'custom',  
 };

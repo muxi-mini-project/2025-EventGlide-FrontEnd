@@ -11,6 +11,7 @@ import useActiveInfoStore from "@/store/activeInfoStore";
 import useActivityStore from "@/store/ActivityStore";
 import useUserStore from "@/store/userStore";
 import post from "@/common/api/post";
+import handleInteraction from "@/common/const/Interaction";
 
 const Label: React.FC<{ text: string }> = memo(({ text }) => {
   return <View className="post-window-label-item">{text}</View>;
@@ -28,16 +29,25 @@ const AddConfirm: React.FC = memo(() => {
     studentid,
     title,
   };
+  
   const handleConfirm = () => {
     console.log(activeInfo);
     post("/act/create", activeInfo)
       .then((res) => {
-        if (res.msg !== "success") throw new Error(res.msg);
+        if (res.msg !== "success") {
+          Taro.showToast({
+            title: `${res.msg}`,
+            icon: "none",
+            duration: 2000,
+          })
+        };
+        if (res.msg === "success") {
+          navigateTo({ url: "/subpackage/addSuccess/index" });
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-    navigateTo({ url: "/pages/addSuccess/index" });
   };
 
   return (
@@ -53,14 +63,47 @@ const ActiveWindow: React.FC<{
   isCollect: string;
   setShowPostWindow: (show: boolean) => void;
 }> = memo(({ ...props }) => {
-  const { setCollectNumChange, selectedItem } = useActivityStore();
-  const handleClick = () => {
-    if (props.isCollect === "true") {
-      setCollectNumChange(selectedItem.bid, "reduce");
-    } else {
-      setCollectNumChange(selectedItem.bid, "add");
+  const { studentid } = useUserStore((state) => state);
+  const { setCollectNumChange, selectedItem, setSelectedItem } = useActivityStore();
+  const params = {
+    studentid: studentid,
+    subject: "activity",
+    targetid: selectedItem.bid,
+  };
+  const handleCollect = () => {
+    if (selectedItem.isCollect === "true") {
+      handleInteraction("discollect", params)
+        .then((res) => {
+          if (res.msg === "success") {
+            setCollectNumChange(selectedItem.bid, "reduce");
+            setSelectedItem({
+              ...selectedItem,
+              isCollect: "false",
+              collectNum: selectedItem.collectNum - 1,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (selectedItem.isCollect === "false") {
+      handleInteraction("collect", params)
+        .then((res) => {
+          if (res.msg === "success") {
+            setCollectNumChange(selectedItem.bid, "add");
+            setSelectedItem({
+              ...selectedItem,
+              isCollect: "true",
+              collectNum: selectedItem.collectNum + 1,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
+
 
   return (
     <View className="post-window-footer-active">
@@ -68,14 +111,14 @@ const ActiveWindow: React.FC<{
         <Image
           src={props.isCollect === "true" ? favorAct : favor}
           className="pwfai-img"
-          onClick={handleClick}
+          onClick={handleCollect}
         ></Image>
         <View>{props.favorNum}</View>
       </View>
       <View className="post-window-footer-active-item">
         <Image
           onClick={() => {
-            navigateTo({ url: "/pages/actComment/index" });
+            navigateTo({ url: "/subpackage/actComment/index" });
             props.setShowPostWindow(false);
           }}
           src={commentPic}
@@ -92,7 +135,6 @@ const ActiveWindow: React.FC<{
 const PostWindow: React.FC<{
   WindowType: "add" | "active";
   setShowPostWindow: (show: boolean) => void;
-  activityIndex?: number;
 }> = memo(({ ...props }) => {
   //草稿
   const {
@@ -155,10 +197,9 @@ const PostWindow: React.FC<{
       );
     }
     case "active": {
-      if (props.activityIndex === undefined) return null;
       const showList = activeItem;
       console.log(showList);
-      const imgList = showList.showImg.map((img) => ({
+      const imgList = showList.showImg===null?[]:showList.showImg.map((img) => ({
         src: img,
         isShowDelete: false,
       }));
@@ -186,7 +227,7 @@ const PostWindow: React.FC<{
               ))}
             </View>
             <View className="post-window-pic">
-              {imgList.map((item, index) => (
+              {(imgList===null?[]:imgList).map((item, index) => (
                 <Picture
                   key={index}
                   src={item.src}

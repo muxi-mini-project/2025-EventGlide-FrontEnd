@@ -1,18 +1,18 @@
 import Taro from "@tarojs/taro";
 const preUrl = "https://api.inside-me.top";
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIzMjE0NTYzIiwiZXhwIjoxNzQyMjAwMTY2LCJqdGkiOiIwZTgzNTMzMi03YTQ3LTRmMGEtOGRlZC04YjlkMmY5ODNiMTEifQ.CFFXFE4A9PkMtuuFgBtqUfgxP5SZXL0oM6bS-3kpwcM"
+// const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIzMjE0NTYzIiwiZXhwIjoxNzQyMjAwMTY2LCJqdGkiOiIwZTgzNTMzMi03YTQ3LTRmMGEtOGRlZC04YjlkMmY5ODNiMTEifQ.CFFXFE4A9PkMtuuFgBtqUfgxP5SZXL0oM6bS-3kpwcM"
 
 const get =  async (url: string) => {
-  // const getToken = () => {
-  //   return new Promise((resolve, reject) => {
-  //     void Taro.getStorage({
-  //       key: "token",
-  //       success: (res) => resolve(res.data),
-  //       fail: (err) => reject(err),
-  //     })
-  //   })
-  // }
-  // const token = await getToken();
+  const getToken = () => {
+    return new Promise((resolve, reject) => {
+      void Taro.getStorage({
+        key: "token",
+        success: (res) => resolve(res.data),
+        fail: (err) => reject(err),
+      })
+    })
+  }
+  const token = await getToken();
     const header = {
         Authorization: `Bearer ${token}`,
         'Content-Type': "application/json;charset=UTF-8"

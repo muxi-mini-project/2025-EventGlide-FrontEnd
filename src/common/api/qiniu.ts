@@ -55,7 +55,7 @@ export const fetchToQiniu = async (filepath: string) => {
           resolve(`http://${domain_name}/${JSON.parse(res.data)?.key}`);
         },
         fail: (err) => {
-          reject(err);
+          reject(err);  
         },
       });
     });

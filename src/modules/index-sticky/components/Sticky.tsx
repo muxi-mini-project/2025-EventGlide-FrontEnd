@@ -8,9 +8,13 @@ import {
   Image,
 } from "@tarojs/components";
 import { useState, memo } from "react";
-import { navigateTo } from "@tarojs/taro";
+import Taro, { navigateTo } from "@tarojs/taro";
 import classnames from "classnames";
 import searchpic from "@/common/assets/Postlist/搜索.png";
+import post from "@/common/api/post";
+import useActivityStore from "@/store/ActivityStore";
+import get from "@/common/api/get";
+import useUserStore from "@/store/userStore";
 
 const datelist = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 const typelist = ["文艺", "体育", "竞赛", "游戏", "学术"];
@@ -21,6 +25,9 @@ const Sticky: React.FC<{
 }> = memo(function ({ ...props }) {
   const [checkDateIndex, setCheckDateIndex] = useState<number>(-1);
   const [checkTypeIndex, setCheckTypeIndex] = useState<number>(-1);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const { setActiveList } = useActivityStore();
+  const { studentid } = useUserStore();
   const [placeholder, setPlaceholder] =
     useState<string>("在这里可以查找你想要的活动哦");
   const handleDateClick = (index: number) => {
@@ -47,6 +54,39 @@ const Sticky: React.FC<{
   const handleBlurChange = () => {
     setPlaceholder("在这里可以查找你想要的活动哦");
   };
+  const handleInputChange = (e: any) => {
+    setSearchValue(e.detail.value);
+  }
+  const handleSearch = () => {
+    if (searchValue === "") {
+      get(`/act/all/${studentid}`).then((res) => {
+        if (res.msg === "success") {
+          setActiveList(res.data);
+        }
+        else {
+          Taro.showToast({
+            title: `${res.msg}`,
+            icon: "none",
+            duration: 1000,
+          });
+        }
+      });
+    }
+    else {
+      post("/act/name", { name: searchValue }).then((res) => {
+        if (res.msg === "success") {
+          setActiveList(res.data);
+        }
+        else {
+          Taro.showToast({
+            title: `${res.msg}`,
+            icon: "none",
+            duration: 1000,
+          });
+        }
+      });
+    }
+  }
   return (
     <View className="sticky-container">
       <View className="sticky-search">
@@ -57,10 +97,13 @@ const Sticky: React.FC<{
             onFocus={handleFocusChange}
             onBlur={handleBlurChange}
             placeholder={placeholder}
+            value={searchValue}
+            onInput={handleInputChange}
+            onConfirm={handleSearch}
             type="text"
           />
         </View>
-        <View className="search-btn">搜索</View>
+        <View className="search-btn" onClick={handleSearch}>搜索</View>
       </View>
       <View className="sticky-date">
         <View className="sticky-date-line"></View>
@@ -81,7 +124,7 @@ const Sticky: React.FC<{
         <View
           className="sticky-date-check"
           onClick={() => {
-            navigateTo({ url: "/pages/actScreen/index" });
+            navigateTo({ url: "/subpackage/actScreen/index" });
           }}
         >
           筛选

@@ -7,9 +7,12 @@ import favor from "@/common/svg/post/star.svg";
 import favorActive from "@/common/svg/post/starAct.svg";
 import commentpic from "@/common/svg/post/comment.svg";
 
+
 const MineActivityItem: React.FC<MineActivityList> = memo(({ ...props }) => {
+
+
   return (
-    <View className="mine-activity-container">
+    <View className="mine-activity-container" >
       <Image className="mine-activity-avatar" src={props.avatar}></Image>
       <View className="mine-activity-content">
         <View className="mine-activity-content-uername">{props.name}</View>
@@ -33,9 +36,9 @@ const MineActivityItem: React.FC<MineActivityList> = memo(({ ...props }) => {
           <Image
             className="mine-activity-content-favor-img"
             mode="widthFix"
-            src={props.isLike === "true" ? favorActive : favor}
+            src={props.isCollect === "true" ? favorActive : favor}
           ></Image>
-          <View className="mine-activity-content-favor-num">{props.likes}</View>
+          <View className="mine-activity-content-favor-num">{props.collectNum}</View>
         </View>
         <View className="mine-activity-content-comment">
           <Image

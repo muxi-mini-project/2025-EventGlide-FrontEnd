@@ -52,7 +52,7 @@ const Post: React.FC<any> = memo(function ({ item, index, isShowImg }) {
         lazyLoad={true}
         src={isVisiable ? item.showImg[0] : ""}
         onClick={() => {
-          navigateTo({ url: "/pages/blogDetail/index" });
+          navigateTo({ url: "/subpackage/blogDetail/index" });
           setBlogIndex(index);
         }}
       ></Image>

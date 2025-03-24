@@ -5,8 +5,8 @@
   "appid": "wxb8d843f0289294eb",
   "setting": {
     "urlCheck": true,
-    "es6": false,
-    "enhance": false,
+    "es6": true,
+    "enhance": true,
     "compileHotReLoad": false,
     "postcss": false,
     "preloadBackgroundData": false,

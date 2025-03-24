@@ -1,8 +1,6 @@
 import { View, ScrollView } from "@tarojs/components";
 import Active from "@/modules/activityItem/index";
-import Taro from "@tarojs/taro";
-import { useDidShow } from "@tarojs/taro";
-// import ActiveList from "@/common/types/ActiveList";
+import { useDidShow, useLoad } from "@tarojs/taro";
 import "./index.scss";
 import Sticky from "@/modules/index-sticky/index";
 import PostWindow from "@/modules/PostWindow";
@@ -10,31 +8,59 @@ import { useState } from "react";
 import useActivityStore from "@/store/ActivityStore";
 import { judgeDate } from "@/common/const/DateList";
 import get from "@/common/api/get";
+import post from "@/common/api/post";
 import useUserStore from "@/store/userStore";
+import usePostStore from "@/store/PostStore";
+import { NavigationBarTabBar } from "@/common/components/NavigationBar";
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
-  const [activityIndex, setActivityIndex] = useState(0);
-  const activityList = useActivityStore((state) => state.activeList);
-  const { setActiveList,  setSelectedItem } = useActivityStore();
+  const { activeList, setActiveList, setSelectedItem, selectedInfo, isSelect } =
+    useActivityStore();
   const [approximateTime, setApproximateTime] = useState<string>("");
   const [type, setType] = useState<string>("");
-  // const { studentid } = useUserStore();
-  const studentid = "2023214563";
+  const { studentid } = useUserStore();
+  const { setBlogList } = usePostStore();
+
+  useLoad(() => {
+    get("/post/all").then((res) => {
+      setBlogList(res.data);
+    });
+  });
 
   useDidShow(() => {
-    get(`/act/all/${studentid}`)
-      .then((res) => {
-        setActiveList(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (isSelect) {
+      post("/act/search", selectedInfo)
+        .then((res) => {
+          setActiveList(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      get(`/act/all/${studentid}`)
+        .then((res) => {
+          setActiveList(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   });
 
   return (
     <>
-      <ScrollView className="active" scrollY={true}>
+      <NavigationBarTabBar
+        backgroundColor="#F8F9FC"
+        title="首页"
+      ></NavigationBarTabBar>
+      <ScrollView
+        className="active"
+        scrollY={true}
+        usingSticky={true}
+        enhanced={true}
+        showScrollbar={false}
+      >
         <View className="sticky-header">
           <Sticky
             setApproximateTime={setApproximateTime}
@@ -42,35 +68,35 @@ const Index = () => {
           ></Sticky>
         </View>
         <View className="sticky-item">
-          {activityList===null?null:activityList.map((activeItem, index) => {
-            const isMatch =
-              (approximateTime === "" ||
-                judgeDate(approximateTime, activeItem.detailTime)) &&
-              (type === "" || activeItem.type === type);
-            if (isMatch) {
-              return (
-                <View
-                  key={index}
-                  onClick={() => {
-                    setActivityIndex(index);
-                    setSelectedItem(activeItem);
-                  }}
-                >
-                  <Active
-                    key={index}
-                    activeItem={activeItem}
-                    setShowPostWindow={setShowPostWindow}
-                  />
-                </View>
-              );
-            }
-            return null;
-          })}
+          {activeList === null
+            ? null
+            : activeList.map((activeItem, index) => {
+                const isMatch =
+                  (approximateTime === "" ||
+                    judgeDate(approximateTime, activeItem.detailTime)) &&
+                  (type === "" || activeItem.type === type);
+                if (isMatch) {
+                  return (
+                    <View
+                      key={index}
+                      onClick={() => {
+                        setSelectedItem(activeItem);
+                      }}
+                    >
+                      <Active
+                        key={index}
+                        activeItem={activeItem}
+                        setShowPostWindow={setShowPostWindow}
+                      />
+                    </View>
+                  );
+                }
+                return null;
+              })}
         </View>
       </ScrollView>
       {showPostWindow && (
         <PostWindow
-          activityIndex={activityIndex}
           WindowType="active"
           setShowPostWindow={setShowPostWindow}
         ></PostWindow>

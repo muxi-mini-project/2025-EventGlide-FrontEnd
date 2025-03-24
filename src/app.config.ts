@@ -2,22 +2,30 @@ export default {
   pages: [
     "pages/login/index",
     "pages/indexHome/index",
-    "pages/actComment/index",
-    "pages/addIntroduce/index",
     "pages/addHome/index",
     "pages/blogHome/index",
-    "pages/blogInfo/index",
-    "pages/blogDetail/index",
-    "pages/blogAdd/index",
     "pages/mineHome/index",
-    "pages/mineInfo/index",
-    "pages/actScreen/index",
-    "pages/addLabel/index",
-    "pages/addSuccess/index",
-    "pages/isChecking/index",
-    "pages/addPeopleIndex/index",
-    "pages/addPeoplePage/index",
-    "pages/album/index"],
+  ],
+  subpackages: [
+    {
+      root: "subpackage",
+      pages: [
+        "actComment/index",
+        "addIntroduce/index",
+        "blogInfo/index",
+        "blogDetail/index",
+        "blogAdd/index",
+        "mineInfo/index",
+        "actScreen/index",
+        "addLabel/index",
+        "addSuccess/index",
+        "isChecking/index",
+        "addPeopleIndex/index",
+        "addPeoplePage/index",
+        "album/index",
+      ],
+    },
+  ],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#F9F8FC",
@@ -35,26 +43,26 @@ export default {
         pagePath: "pages/indexHome/index",
         text: "首页",
         iconPath: "common/assets/tabBar/img/home.png",
-        selectedIconPath: "common/assets/tabBar/img-active/home-active.png"
+        selectedIconPath: "common/assets/tabBar/img-active/home-active.png",
       },
       {
         pagePath: "pages/addHome/index",
         text: "添加",
         iconPath: "common/assets/tabBar/img/add.png",
-        selectedIconPath: "common/assets/tabBar/img-active/add-active.png"
+        selectedIconPath: "common/assets/tabBar/img-active/add-active.png",
       },
       {
         pagePath: "pages/blogHome/index",
         text: "发现",
         iconPath: "common/assets/tabBar/img/blog.png",
-        selectedIconPath: "common/assets/tabBar/img-active/blog-active.png"
+        selectedIconPath: "common/assets/tabBar/img-active/blog-active.png",
       },
       {
         pagePath: "pages/mineHome/index",
         text: "我的",
         iconPath: "common/assets/tabBar/img/mine.png",
-        selectedIconPath: "common/assets/tabBar/img-active/mine-active.png"
-      }
-    ]
-  }
+        selectedIconPath: "common/assets/tabBar/img-active/mine-active.png",
+      },
+    ],
+  },
 };

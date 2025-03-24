@@ -1,0 +1,154 @@
+.actScreen-page {
+    width: 100%;
+    height: calc(100vh - 180rpx);
+    font-family: SimHei;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 180rpx;
+    &-container {
+        width: 86%;
+        height: 270rpx;
+        position: relative;
+        &-title {
+            font-size: 44rpx;
+            color: #131415;
+            position: absolute;
+            top: 30rpx;
+            // width: ;
+        }
+        &-all {
+            display: flex;
+            position: absolute;
+            top: 30rpx;
+            right: 0;
+            align-items: center;
+            &-text {
+                margin-right: 25rpx;
+                color: #B36AEB;
+                font-size: 32rpx;
+            }
+            &-radio {
+                width: 28rpx;
+                height: 28rpx;
+                border: 2rpx solid #B36AEB;
+            }
+            &-radio-active {
+                @extend .actScreen-page-container-all-radio;
+                background-color: #B36AEB;
+                border: 2rpx solid #B36AEB;
+                display: flex;
+                justify-content: center;
+                position: relative;
+                &-icon {
+                    position: absolute;
+                    top: 6rpx;
+                    width: 18rpx;
+                    height: 8rpx;
+                    border-left: 4rpx solid white; 
+                    border-bottom: 4rpx solid white;
+                    transform: rotate(-45deg);
+                }
+            }
+        }
+        &-choice {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20rpx;
+            justify-content: space-between;
+            position: absolute;
+            top: 120rpx;
+            color: #828283;
+            font-size: 28rpx;
+        }
+    }
+    &-time {
+        width: 86%;
+        height: 220rpx;
+        position: relative;
+        &-title {
+            @extend .actScreen-page-container-title;
+        }
+        &-choice {
+            display: flex;
+            gap: 44rpx;
+            position: absolute;
+            top: 120rpx;
+            align-items: center;
+            &-item {
+                width: 276rpx;
+                height: 52rpx;
+                background-color: #F9F8FC;
+                line-height: 52rpx;
+                text-align: center;
+                color: #828283;
+                font-size: 28rpx;
+            }
+            &-text {
+                color: #BE7CE0;
+                font-size: 40rpx;
+            }
+        }
+    }
+    &-sign {
+        width: 86%;
+        height: 100rpx;
+        position: relative;
+        &-title {
+            @extend .actScreen-page-container-title;
+        }
+        &-choice {
+            display: flex;
+            gap: 28rpx;
+            position: absolute;
+            top: 38rpx;
+            right: 0;
+            align-items: center;
+            width: 250rpx;
+            &-active {
+                @extend .actScreen-page-container-all-radio-active;
+            }
+            &-radio {
+                @extend .actScreen-page-container-all-radio;
+            }
+            &-text {
+                color: #B36AEB;
+                font-size: 32rpx;
+            }
+        }
+    }
+    &-floor {
+        width: 100%;
+        height: 150rpx;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-top: 4rpx solid #D8C6EF;
+        display: flex;
+        gap: 280rpx;
+        justify-content: center;
+        align-items: center;
+        &-btn {
+            color: #828283;
+            font-size: 42rpx;
+        }
+    }
+}
+
+.label {
+    width: 130rpx;
+    height: 50rpx;
+    line-height: 50rpx;
+    text-align: center;
+    border-radius: 20rpx;
+    background-color: #F9F8FC;
+}
+
+.active-label {
+    @extend .label;
+    color: #131415;
+    background-color: #F5F2FE;
+    border: 2rpx solid #BE7CE0;
+    box-sizing: border-box;
+}

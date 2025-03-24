@@ -1,14 +1,12 @@
 .active {
   width: 100%;
-  height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  height: calc(100% - 180rpx);
+  overflow: hidden;
   position: absolute;
-  top: 0;
+  top: 180rpx;
   left: 0;
   background-color: #f9f8fc;
   .sticky-header {
-    position: absolute;
     width: 100%;
     height: 40rpx;
     background-color: #fff;

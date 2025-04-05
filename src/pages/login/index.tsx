@@ -3,11 +3,9 @@ import "./index.scss";
 import logo from "@/common/svg/login/logo.svg";
 import eye from "@/common/assets/logo/小眼睛.png";
 import eye1 from "@/common/assets/logo/小眼睛1.png";
-import Taro from "@tarojs/taro";
 import { useState } from "react";
-import { useEffect } from "react";
-import handleUserLogin from "@/common/api/Login";
 import { switchTab } from "@tarojs/taro";
+import handleUserLogin from "@/common/api/Login";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,16 +14,8 @@ const Index = () => {
   const [showError, setShowError] = useState(false);
   const [isCheck, setIsCheck] = useState(true);
 
-  // useEffect(() => {
-  //   Taro.getStorage({
-  //     key: "token",
-  //     success: () => {
-  //       switchTab({ url: "/pages/indexHome/index" });
-  //     }
-  //   })
-  // });
-
   const handleLogin = () => {
+    // switchTab({ url: "/pages/mineHome/index" });
     if (isCheck) {
       handleUserLogin({ params: { studentid, password, setShowError } })
     } else {

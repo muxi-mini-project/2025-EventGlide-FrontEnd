@@ -1,32 +1,42 @@
 .navigationBar {
+  width: 100%;
+  height: 180rpx;
+  background-color: #fff;
+  position: fixed;
+  z-index: 100;
+  font-family: SimHei;
+  &-back {
+    position: absolute;
+    width: 20rpx;
+    left: 20rpx;
+    bottom: 30rpx;
+    z-index: 101;
+  }
+  &-user {
+    position: absolute;
+    left: 70rpx;
+    bottom: 20rpx;
+    display: flex;
+    gap: 20rpx;
+    align-items: center;
+    &-avatar {
+      width: 60rpx;
+      height: 60rpx;
+      border-radius: 50%;
+      background-color: #f9f8fc;
+    }
+    &-name {
+      font-size: 36rpx;
+      color: #222222;
+    }
+  }
+  &-title {
+    position: absolute;
     width: 100%;
-    height: 180rpx;
-    background-color: #fff;
-    position: fixed;
-    z-index: 10;
-    font-family: SimHei;
-    &-back {
-        position: absolute;
-        width: 20rpx;
-        left: 20rpx;
-        bottom: 30rpx;
-    }
-    &-user {
-        position: absolute;
-        left: 70rpx;
-        bottom: 20rpx;
-        display: flex;
-        gap: 20rpx;
-        align-items: center;
-        &-avatar {
-            width: 60rpx;
-            height: 60rpx;
-            border-radius: 50%;
-            background-color: #F9F8FC;
-        }
-        &-name {
-            font-size: 36rpx;
-            color: #222222;
-        }
-    }
+    height: 100rpx;
+    bottom: 0rpx;
+    text-align: center;
+    font-size: 36rpx;
+    line-height: 100rpx;
+  }
 }

@@ -8,7 +8,6 @@ import { year, month, day, hour, minute } from "@/common/const/DateList";
 const DatePickerItem: React.FC<any> = ({
   activeIndex,
   setActiveIndex,
-  px,
   list,
   type,
 }) => {
@@ -103,6 +102,7 @@ const DatePicker: React.FC<any> = memo(
     setActiveHourIndex,
     activeMinuteIndex,
     setActiveMinuteIndex,
+    timeType,
   }) => {
     const [screenWidth, setScreenWidth] = useState(0);
 
@@ -110,18 +110,6 @@ const DatePicker: React.FC<any> = memo(
       const systemInfo = Taro.getWindowInfo();
       setScreenWidth(systemInfo.screenWidth);
     }, []);
-
-    const rpx = (px) => {
-      if (screenWidth === 0) return 0;
-      return (px / screenWidth) * 750;
-    };
-
-    const px = (rpx) => {
-      // if (screenWidth === 0) return 0;
-      // return (rpx / 750) * screenWidth;
-      return rpx;
-      // return Taro.pxTransform(rpx);
-    };
 
     return (
       <>
@@ -142,7 +130,7 @@ const DatePicker: React.FC<any> = memo(
             <View className="Scrolled-title-text2">选择时间</View>
             <View
               className="Scrolled-title-text3"
-              onClick={() => handleConfirm()}
+              onClick={() => handleConfirm(timeType)}
             >
               确定
             </View>
@@ -151,35 +139,30 @@ const DatePicker: React.FC<any> = memo(
             <DatePickerItem
               activeIndex={activeYearIndex}
               setActiveIndex={setActiveYearIndex}
-              px={px}
               list={year}
               type="year"
             />
             <DatePickerItem
               activeIndex={activeMonthIndex}
               setActiveIndex={setActiveMonthIndex}
-              px={px}
               list={month}
               type="month"
             />
             <DatePickerItem
               activeIndex={activeDayIndex}
               setActiveIndex={setActiveDayIndex}
-              px={px}
               list={day}
               type="day"
             />
             <DatePickerItem
               activeIndex={activeHourIndex}
               setActiveIndex={setActiveHourIndex}
-              px={px}
               list={hour}
               type="hour"
             />
             <DatePickerItem
               activeIndex={activeMinuteIndex}
               setActiveIndex={setActiveMinuteIndex}
-              px={px}
               list={minute}
               type="minute"
             />

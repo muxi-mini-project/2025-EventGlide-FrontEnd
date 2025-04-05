@@ -10,110 +10,31 @@ import get from "@/common/api/get";
 import post from "@/common/api/post";
 import { blogType } from "@/store/PostStore";
 
+// import handleInteraction from "@/common/const/Interaction";
+
 const MinePost: React.FC<{
   activeIndex: "release" | "favourite";
   activePage: "activity" | "post";
-}> = memo(function ({ activeIndex, activePage }) {
-  const [windowHeight, setWindowHeight] = useState(0);
-  const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
-  // const { studentid } = useUserStore();
-  // const { blogList } = usePostStore();
-  const [minePostList, setMinePostList] = useState<blogType[]>([]);
-  const studentid = "2023214563";
+  isSticky: boolean;
+  setIsSticky: (isSticky: boolean) => void;
+}> = memo(function ({ activeIndex, activePage, isSticky, setIsSticky }) {
 
-  useEffect(() => {
-    if (activeIndex === "release") {
-      get(`/post/own/${studentid}`)
-        .then((res) => {
-          const newPostList: blogType[] = [];
-          res.data.forEach((item) => {
-            newPostList.push(item as blogType);
-          });
-          setMinePostList(newPostList);
-          handleScroll(windowHeight);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else if (activeIndex === "favourite") {
-      post("/user/collect/post", { studentid })
-        .then((res) => {
-          console.log(res);
-          const newPostList: blogType[] = [];
-          res.data??[].forEach((item) => {
-            newPostList.push(item as blogType);
-          });
-          setMinePostList(newPostList);
-          handleScroll(windowHeight);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [activeIndex]);
 
-  useEffect(() => {
-    if (minePostList.length > 0 && windowHeight > 0 && activePage === "post") {
-      console.log("handleScroll");
-      handleScroll(windowHeight);
-    }
-  }, [activePage, windowHeight, minePostList]);
 
-  Taro.useReady(() => {
-    const newwindowHeight = Taro.getWindowInfo().windowHeight;
-    setWindowHeight(newwindowHeight);
-  });
-
-  const handleScroll = (newwindowHeight?: number) => {
-    let tempHeight = windowHeight;
-    if (newwindowHeight) {
-      tempHeight = newwindowHeight;
-    }
-    const query = Taro.createSelectorQuery();
-    minePostList.forEach((_, index) => {
-      query.select(`#post-item-${index}`).boundingClientRect();
-    });
-    query.exec((res) => {
-      res.forEach((rect, index) => {
-        if (!rect) return;
-        const { top, bottom } = rect;
-        if (top <= tempHeight && bottom >= 0) {
-          setIsShowList((prevList) => {
-            if (!prevList.includes(index)) {
-              return [...prevList, index];
-            }
-            return prevList;
-          });
-        } else {
-          setIsShowList((prevList) => {
-            return prevList.filter((item) => item !== index);
-          });
-        }
-      });
-    });
-  };
 
   return (
-    <View className="blog-container">
-      <ScrollView
-        type="custom"
-        style={{ height: "100vh" }}
-        scrollY={true}
-        onScroll={() => handleScroll()}
-      >
-        <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-          {minePostList.map((item, index) => (
-            <View key={index} id={`post-item-${index}`}>
-              <Post
-                item={item}
-                index={index}
-                isShowImg={isShowList.includes(index)}
-              />
-            </View>
-          ))}
-        </GridView>
-      </ScrollView>
-    </View>
+    <ScrollView
+      className="minepost-container"
+      type="custom"
+      id="minepost-scrollview"
+      style={{ height: "calc(100vh - 200rpx)" }}
+      scrollY={isSticky ? true : false}
+      usingSticky={true}
+      enhanced={true}
+      showScrollbar={false}
+    >
+
+    </ScrollView>
   );
 });
 

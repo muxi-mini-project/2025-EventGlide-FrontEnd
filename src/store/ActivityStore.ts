@@ -5,9 +5,11 @@ interface ActivityStoreState {
   selectedInfo: selectedInfo | null;
   activeList: ActivityDetailList[];
   selectedItem: ActivityDetailList;
-  setSelectInfo: (info: selectedInfo) => void;
+  isSelect: boolean;
+  setIsSelect: (type: boolean) => void;
+  setSelectInfo: (info: selectedInfo | null) => void; //筛选条件
   setActiveList: (list: ActivityDetailList[]) => void;
-  setSelectedItem: (list: ActivityDetailList) => void;
+  setSelectedItem: (list: ActivityDetailList) => void; //选中的活动详情
   setLikeNumChange: (id: string, type: string) => void;
   setCollectNumChange: (id: string, type: string) => void;
 }
@@ -16,6 +18,8 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
   selectedInfo: null,
   activeList: [],
   selectedItem: {} as ActivityDetailList,
+  isSelect: false,
+  setIsSelect: (type) => set(() => ({ isSelect: type })),
   setSelectInfo: (info) => set(() => ({ selectedInfo: info })),
   setActiveList: (list) => set(() => ({ activeList: list })),
   setSelectedItem: (Item) => set(() => ({ selectedItem: Item })),

@@ -25,12 +25,15 @@ interface PostStoreType {
   studentid: string;
   blogList: blogType[];
   blogIndex: number;
+  backPage: string;
+  setBackPage: (page: string) => void;
   setBlogList: (blogList: blogType[]) => void;
-  setBlogIndex: (index: number) => void;
+  setBlogIndex: (bid: string) => void;
   setLikeNumChange: (blog: blogType, type: number) => void;
   setCollectNumChange: (blog: blogType, type: number) => void;
   setImgUrl: (url: string[]) => void;
   setPostStudentId: (id: string) => void;
+  setCommentNumChange: (blog: blogType) => void;
   setContent: (title: string, description: string, imgUrl: string[]) => void;
 }
 
@@ -41,8 +44,14 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   studentid: "",
   blogList: [],
   blogIndex: -1,
+  backPage: "",
+  setBackPage: (page) => set(() => ({ backPage: page })),
   setBlogList: (blogList) => set(() => ({ blogList })),
-  setBlogIndex: (index) => set(() => ({ blogIndex: index })),
+  setBlogIndex: (bid) => {
+    const currentBlogList = get().blogList;
+    const index = currentBlogList.findIndex((b) => b.bid === bid); // 找到 bid 对应的索引
+    set(() => ({ blogIndex: index }));
+  },
   setLikeNumChange: (blog, type) => {
     const currentBlogList = get().blogList;
     const updatedBlogList = currentBlogList.map((b) => {
@@ -75,6 +84,19 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setImgUrl: (url) => set(() => ({ showImg: url })),
   setContent: (title, description, imgUrl) =>
     set(() => ({ title, introduce: description, showImg: imgUrl })),
+  setCommentNumChange: (blog) => {
+    const currentBlogList = get().blogList;
+    const updatedBlogList = currentBlogList.map((b) => {
+      if (b.bid === blog.bid) {
+        return {
+          ...b,
+          commentNum: b.commentNum + 1,
+        };
+      }
+      return b;
+    });
+    set(() => ({ blogList: updatedBlogList }));
+  }
 }));
 
 export default usePostStore;

@@ -3,6 +3,7 @@ import "./index.scss";
 import logo from "@/common/svg/login/logo.svg";
 import eye from "@/common/assets/logo/小眼睛.png";
 import eye1 from "@/common/assets/logo/小眼睛1.png";
+import Logo from "@/common/assets/logo/mainlogo.png";
 import { useState } from "react";
 import { switchTab } from "@tarojs/taro";
 import handleUserLogin from "@/common/api/Login";
@@ -23,12 +24,23 @@ const Index = () => {
     }
   };
 
+  const quicklogin=()=>{
+    setShowError(false);
+    if (isCheck) {
+      handleUserLogin({ params: { studentid: "2024214381", password: "25YJ10yj", setShowError } })
+    }
+  }
+  const frocelogin=()=>{
+    switchTab({ url: '/pages/indexHome/index' })
+  }
+
   return (
     <View className="login-page">
       <View className="login-page-logo">
-        <Image src={logo} mode="widthFix" className="login-page-logo-img" />
+       {/* <Image src={logo} mode="widthFix" className="login-page-logo-img" />
         <Text className="login-page-logo-text">校灵通</Text>
-        <Text className="login-page-logo-desc">EventGlide</Text>
+        <Text className="login-page-logo-desc">EventGlide</Text>*/}
+        <Image src={Logo} mode="widthFix" style={{width:250,height:250}} />
       </View>
       <View className="login-page-form">
         <View className="login-page-form-container">
@@ -101,6 +113,12 @@ const Index = () => {
       <View className="login-page-btn" onClick={handleLogin}>
         登录
       </View>
+      <View onClick={quicklogin}>
+        快速登录
+      </View>
+      {/*<View onClick={frocelogin}>
+        强制登录
+      </View>*/}
     </View>
   );
 };

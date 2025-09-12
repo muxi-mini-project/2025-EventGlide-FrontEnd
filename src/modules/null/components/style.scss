@@ -1,0 +1,31 @@
+.index-page-null {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 50rpx);
+  min-height: 50vh;
+  margin-right: 50rpx;
+}
+
+.index-page-null-text {
+  font-size: 36px;
+  font-weight: 400;
+  color: #8A8A8A;
+  text-align: center;
+}
+.mine-page-null {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 50vh;
+}
+
+.mine-page-null-text {
+  font-size: 36px;
+  font-weight: 400;
+  color: #8A8A8A;
+  text-align: center;
+}

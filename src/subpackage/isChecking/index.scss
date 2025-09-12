@@ -7,64 +7,51 @@
 
   &-state {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin-top: 35vh;
     z-index: 6;
 
     &-img {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      position: absolute;
       width: 580rpx;
+      margin-left:50rpx;
       z-index: 7;
     }
   }
 
   &-container {
-    position: absolute;
-    top: 2%;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-top: 10rpx;
+    margin-bottom: 10rpx;
+    margin-left: 5%;
     background-color: #fff;
     border: 2rpx solid #f0f2fa;
-    border-radius: 10rpx;
+    border-radius: 20rpx;
     width: 90%;
     height: 900rpx;
   }
 
   &-header {
-    position: absolute;
-    top: 46rpx;
-    left: 20rpx;
+    margin: 30rpx 10rpx 0 30rpx;
     color: #170a1e;
     font-size: 44rpx;
   }
 
   &-gapline1 {
-    position: absolute;
-    top: 110rpx;
-    left: 50%;
-    width: 628rpx;
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 20rpx;
     height: 2rpx;
-    transform: translateX(-50%);
     background-color: #d8c6ef;
   }
 
   &-content {
-    position: absolute;
-    top: 110rpx;
-    left: 20rpx;
+    margin: 30rpx 10rpx 0 30rpx;
     color: #5e5064;
     font-size: 28rpx;
   }
 
   &-label {
     overflow-x: scroll;
-    position: absolute;
-    top: 320rpx;
-    left: 22rpx;
+    margin-left: 20rpx;
+    margin-top: 100rpx;
     display: flex;
     width: 540rpx;
 
@@ -82,9 +69,8 @@
   }
 
   &-pic {
-    position: absolute;
-    top: 380rpx;
-    left: 20rpx;
+    margin-top: 30rpx;
+    margin-left: 30rpx;
     display: flex;
     flex-wrap: wrap;
   }

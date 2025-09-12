@@ -1,7 +1,7 @@
 import { View, Image, ScrollView, GridView } from "@tarojs/components";
 import "./index.scss";
 import MineActivity from "@/modules/mineActivity/index";
-import Taro, { navigateTo, useDidShow, usePageScroll } from "@tarojs/taro";
+import Taro, { navigateTo, useDidShow } from "@tarojs/taro";
 import { useState, useEffect } from "react";
 import classnames from "classnames";
 import arrowheadw from "@/common/assets/arrowhead/引导箭头-白.png";
@@ -11,22 +11,21 @@ import post from "@/common/api/post";
 import useUserStore from "@/store/userStore";
 import useActivityStore from "@/store/ActivityStore";
 import { blogType } from "@/store/PostStore";
-import avatar from "@/common/assets/Postlist/波奇.jpg";
 import { NavigationBarTabBar } from "@/common/components/NavigationBar";
 import Post from "@/modules/Post";
 import usePostStore from "@/store/PostStore";
 import PostWindow from "@/modules/PostWindow";
-
+import MinePageNull from "@/modules/null/components/minepagenull";
 const Index = () => {
   const [activePage, setActivePage] = useState<"activity" | "post">("post");
-  const [activeIndex, setActiveIndex] = useState<"release" | "favourite">(
+  const [activeIndex, setActiveIndex] = useState<"release" |"like"| "favourite">(
     "release",
   );
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const { setBlogIndex, setBackPage } = usePostStore();
   const [minePostList, setMinePostList] = useState<blogType[]>([]);
-  const { studentid, username, school, setAvatar, setUsername, setSchool } =
+  const { avatar, studentid, username, school, setAvatar, setUsername, setSchool } =
     useUserStore();
   const { setIsSelect } = useActivityStore();
 
@@ -64,7 +63,23 @@ const Index = () => {
     } else if (activeIndex === "favourite") {
       post("/user/collect/post", { studentid })
         .then((res) => {
-          console.log(res);
+          console.log('收藏：',res);
+          const newPostList: blogType[] = [];
+          if (res.msg === "success") {
+            res.data.forEach((item) => {
+              newPostList.push(item as blogType);
+            });
+            setMinePostList(newPostList);
+          }
+          handleScroll();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (activeIndex === "like") {
+      post("/user/like/post", { studentid })
+        .then((res) => {
+          console.log('点赞：',res);
           const newPostList: blogType[] = [];
           if (res.msg === "success") {
             res.data.forEach((item) => {
@@ -145,15 +160,17 @@ const Index = () => {
               onClick={() => navigateTo({ url: "/subpackage/mineInfo/index" })}
             ></Image>
           </View>
-          {/* <View className="mine-user-check">
+
+        <View className="mine-user-check">
           <View className="mine-user-check-info">审核中</View>
           <Image
             className="mine-user-check-arrowhead"
-            onClick={() => navigateTo({ url: "/pages/isChecking/index" })}
+            onClick={() => navigateTo({ url: "/subpackage/isChecking/index" })}
             mode="widthFix"
             src={arrowheadp}
           ></Image>
-        </View> */}
+        </View>
+
         </View>
         <View className="mine-order-title" id="scrollView">
           <View className="mine-order-title-choice">
@@ -185,6 +202,14 @@ const Index = () => {
               发布
             </View>
             <View
+              className={classnames("mine-order-title-index-mid", {
+                "active-decoration-item": activeIndex === "like",
+              })}
+              onClick={() => setActiveIndex("like")}
+            >
+              点赞
+            </View>
+            <View
               className={classnames("mine-order-title-index-right", {
                 "active-decoration-item": activeIndex === "favourite",
               })}
@@ -195,24 +220,28 @@ const Index = () => {
           </View>
         </View>
         {activePage === "post" ? (
-          <GridView type="masonry" crossAxisGap={5} mainAxisGap={5} padding={[10, 10, 10, 10]}>
-            {minePostList.map((item, index) => (
-              <View
-                key={index}
-                id={`post-item-${index}`}
-                onClick={() => {
-                  setBlogIndex(item.bid);
-                  setBackPage("mineHome");
-                }}
-              >
-                <Post
-                  item={item}
-                  index={index}
-                  isShowImg={isShowList.includes(index)}
-                />
-              </View>
-            ))}
-          </GridView>
+          minePostList.length === 0 ? (
+            <MinePageNull />
+          ) : (
+            <GridView type="masonry" crossAxisGap={5} mainAxisGap={5} padding={[10, 10, 10, 10]}>
+              {minePostList.map((item, index) => (
+                <View
+                  key={index}
+                  id={`post-item-${index}`}
+                  onClick={() => {
+                    setBlogIndex(item.bid);
+                    setBackPage("mineHome");
+                  }}
+                >
+                  <Post
+                    item={item}
+                    index={index}
+                    isShowImg={isShowList.includes(index)}
+                  />
+                </View>
+              ))}
+            </GridView>
+          )
         ) : (
           <MineActivity activeIndex={activeIndex} setIsShowActivityWindow={setIsShowActivityWindow} />
         )}

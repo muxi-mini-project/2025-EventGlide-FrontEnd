@@ -7,9 +7,9 @@ import post from "@/common/api/post";
 import useUserStore from "@/store/userStore";
 import useActivityStore from "@/store/ActivityStore";
 import { ActivityDetailList } from "@/common/types/ActiveList";
-
+import MinePageNull from "@/modules/null/components/minepagenull";
 const MineActivity: React.FC<{
-  activeIndex: "release" | "favourite";
+  activeIndex: "release" | "like" | "favourite";
   setIsShowActivityWindow: (isShow: boolean) => void;
 }> = memo(function ({ activeIndex, setIsShowActivityWindow }) {
   const { studentid } = useUserStore();
@@ -33,7 +33,27 @@ const MineActivity: React.FC<{
     } else if (activeIndex === "favourite") {
       post("/user/collect/act", { studentid })
         .then((res) => {
-          console.log(res);
+          console.log('收藏活动：',res);
+          if (res.data === null) {
+            setActiveList([]);
+            return;
+          }
+          const newActiveList: ActivityDetailList[] = [];
+          res.data.forEach((item) => {
+            if (item.title !== "")
+              newActiveList.push({
+                  ...item,
+              });
+          });
+          setActiveList(newActiveList);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else if (activeIndex === "like") {
+      post("/user/like/act", { studentid })
+        .then((res) => {
+          console.log('点赞活动：',res);
           if (res.data === null) {
             setActiveList([]);
             return;
@@ -55,8 +75,8 @@ const MineActivity: React.FC<{
 
   return (
     <View className="mine-activity-page">
-      {activeList === null
-        ? null
+      {activeList.length === 0
+        ? <MinePageNull />
         : activeList.map((item, index) => {
           return (
             <View key={index} onClick={() => {

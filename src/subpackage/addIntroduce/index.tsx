@@ -18,6 +18,7 @@ const Index = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const { setBasicInfo } = useActiveInfoStore();
+  const [count,setCount]=useState(0)
 
   useDidShow(() => {
     get("/act/load").then((res) => {
@@ -34,6 +35,7 @@ const Index = () => {
         } else {
           setImgUrl([]);
         }
+        setCount(res.data.Introduce?.length || 0);
       }
     });
   });
@@ -50,22 +52,28 @@ const Index = () => {
     <>
       <View className="add-introduce">
         <View className="add-introduce-container">
-          <View className="add-introduce-container-title">12/1000</View>
+          <View className="add-introduce-container-title">{count}/1000</View>
           <View className="add-introduce-container-content">
             <Input
-              style={"font-size: 44rpx;color: #170A1E;font-family: SimHei;"}
+              style={"font-size: 44rpx;color: #170A1E;font-family: SimHei;height: 50rpx;"}
               className="add-introduce-container-content-title"
               value={title}
               onInput={(e) => setTitle(e.detail.value)}
               placeholderClass="add-introduce-container-content-title-placeholder"
               placeholder="清晰名称能更好地让人注意哦~"
+              maxlength={30}
             ></Input>
             <Textarea
               className="add-introduce-container-content-desc"
               value={description}
-              onInput={(e) => setDescription(e.detail.value)}
+              onInput={(e) => {
+                const value = e.detail.value;
+                setDescription(value);
+                setCount(value.length);
+              }}
               placeholderClass="add-introduce-container-content-desc-placeholder"
               placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
+              maxlength={1000}
             ></Textarea>
             <View className="add-introduce-container-content-pic">
               {imgUrl &&

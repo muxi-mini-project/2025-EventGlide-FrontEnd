@@ -12,6 +12,7 @@
     width: 100%;
     height: 35%;
     background-color: #e4a5ff;
+    padding-bottom: 40rpx;
     &-content {
       padding-top: 20rpx;
       width: 100%;
@@ -44,9 +45,7 @@
       }
     }
     &-check {
-      position: absolute;
-      bottom: 60rpx;
-      left: 40rpx;
+      margin-left: 40rpx;
       width: 90%;
       height: 130rpx;
       background-color: #fff;
@@ -112,10 +111,10 @@
         color: #828283;
         font-size: 36rpx;
         &-left {
-          padding-left: 225rpx;
+          padding-left: 120rpx;
         }
         &-right {
-          padding-right: 225rpx;
+          padding-right: 120rpx;
         }
       }
     }

@@ -1,4 +1,4 @@
-import { View, Image, Input } from "@tarojs/components";
+import { View, Image, Input, Span } from "@tarojs/components";
 import Taro, { useDidShow } from "@tarojs/taro";
 import { useState, useEffect, createContext } from "react";
 import "./index.scss";
@@ -17,6 +17,7 @@ import useActivityStore from "@/store/ActivityStore";
 import useUserStore from "@/store/userStore";
 import handleInteraction from "@/common/const/Interaction";
 import ReplyWindow from "@/modules/ReplyWindow";
+import { ScrollView } from "@tarojs/components";
 
 export const SetReponseContext = createContext<(params: any) => void>(() => {});
 
@@ -38,6 +39,8 @@ const Index = () => {
     subject: "activity",
     targetid: selectedItem.bid,
   };
+  console.log(selectedItem);
+    const [isTouchingHandle, setIsTouchingHandle] = useState(false);
   const reply_params = {
     studentid: studentid,
     parent_id: reply_id,
@@ -234,9 +237,77 @@ const Index = () => {
           url="/pages/indexHome/index"
           userInfo={selectedItem.userInfo}
         />
-        <View className="actComment-title">
-          共{selectedItem.commentNum}条评论
+    <ScrollView
+        scrollY={true}
+        enhanced={true}
+        showScrollbar={false}
+        style={{
+          height: "100vh",
+          paddingTop: "100rpx",
+        }}
+      >
+      <View style={{
+        top: "100rpx",
+        left: 0,
+        right: 0,
+        backgroundColor: "#fff",
+        zIndex: 1,
+        paddingBottom: "20rpx",
+      }}>
+          <View style={{padding:5,marginLeft:"40rpx",marginRight:"40rpx",}}>
+          <View style={{flexDirection: 'row',flexWrap: 'wrap',gap:10,marginTop:10}}>
+            <View style={{fontSize:20,fontWeight:400,color:"#170A1E"}}>{selectedItem.title}</View>
+            <View style={{fontSize:16,fontWeight:400,color:"#5E5064"}}>{selectedItem.introduce}</View>
+          </View>
+          <View style={{flexDirection: 'row',flexWrap: 'wrap',gap:10,marginTop:10}}>
+            {(selectedItem.showImg || []).map((item, index) => (
+              <Image
+                key={index}
+                src={item}
+                mode="widthFix"
+                style={{ width: "200rpx", height: "200rpx" ,marginRight:"10rpx",marginBottom:"10rpx",borderRadius:10}}
+              />
+            ))}
+          </View>
         </View>
+        </View>
+
+          {/*<View style={{
+            width:"50%",
+            marginLeft:"25%",
+          }}>
+            <View style={{
+            width: "60rpx",
+            height: "6rpx",
+            backgroundColor: "#5E5064",
+            borderRadius: "3rpx",
+          }}></View>
+          </View>*/}
+        <View style={{
+            width:"100%",
+            borderTop: "2rpx solid #F1EEFC",
+            marginTop:"30rpx",
+            paddingTop:"10rpx",
+          }}>
+            <Span style={{fontSize:14,fontWeight:400,marginLeft:"50rpx",marginRight:'30rpx',color:"#5E5064"}}>
+              回复 {selectedItem.commentNum}
+            </Span>
+            <Span style={{fontSize:14,fontWeight:400,margin:"20rpx",color:"#5E5064"}}>
+              点赞 {selectedItem.likeNum}
+            </Span>
+            <Span style={{fontSize:14,fontWeight:400,margin:"30rpx",color:"#5E5064"}}>
+              收藏 {selectedItem.collectNum}
+            </Span>
+          </View>
+        <ScrollView
+          scrollY={true}
+          enhanced={true}
+          showScrollbar={false}
+          style={{ height: "calc(150vh - 500rpx)" }}
+        >
+       {/* <View className="actComment-title">
+          共{selectedItem.commentNum}条评论
+        </View> */}
         <View className="actComment-container">
           {response.map((item, index) => (
             <PostComment
@@ -256,6 +327,8 @@ const Index = () => {
             />
           ))}
         </View>
+        </ScrollView>
+      </ScrollView>
         <View className="actComment-footer">
           <View className="actComment-footer-input">
             <Image

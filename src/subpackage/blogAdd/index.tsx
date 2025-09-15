@@ -21,6 +21,7 @@ const Index = () => {
   const [title, setTitle] = useState("");
   const [introduce, setIntroduce] = useState("");
   const { studentid } = useUserStore();
+  const [count,setCount]=useState(0)
 
   useDidShow(() => {
     get("/post/load").then((res) => {
@@ -69,7 +70,7 @@ const Index = () => {
     <>
       <View className="addblog-introduce">
         <View className="addblog-introduce-container">
-          <View className="addblog-introduce-container-title">12/1000</View>
+          <View className="addblog-introduce-container-title">{count}/1000</View>
           <View className="addblog-introduce-container-content">
             <Input
               style={"font-size: 44rpx;color: #170A1E;font-family: SimHei;"}
@@ -82,7 +83,10 @@ const Index = () => {
             <Textarea
               className="addblog-introduce-container-content-desc"
               value={introduce}
-              onInput={(e) => setIntroduce(e.detail.value)}
+              onInput={(e) => {
+                setIntroduce(e.detail.value)
+                setCount(e.detail.value.length)
+              }}
               placeholderClass="addblog-introduce-container-content-desc-placeholder"
               placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
             ></Textarea>

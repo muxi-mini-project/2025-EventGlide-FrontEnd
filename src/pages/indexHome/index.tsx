@@ -12,6 +12,7 @@ import post from "@/common/api/post";
 import useUserStore from "@/store/userStore";
 import usePostStore from "@/store/PostStore";
 import { NavigationBarTabBar } from "@/common/components/NavigationBar";
+import IndexPageNull from "@/modules/null/components/indexpagenull";
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
@@ -41,6 +42,7 @@ const Index = () => {
       get(`/act/all/${studentid}`)
         .then((res) => {
           setActiveList(res.data);
+          console.log(activeList);
         })
         .catch((err) => {
           console.log(err);
@@ -48,6 +50,12 @@ const Index = () => {
     }
   });
 
+    const filteredActivities = activeList?.filter((activeItem) => {
+    const isMatch =
+      (approximateTime === "" || judgeDate(approximateTime, activeItem.detailTime)) &&
+      (type === "" || activeItem.type === type);
+    return isMatch;
+  }) || [];
   return (
     <>
       <NavigationBarTabBar
@@ -68,31 +76,24 @@ const Index = () => {
           ></Sticky>
         </View>
         <View className="sticky-item">
-          {activeList === null
-            ? null
-            : activeList.map((activeItem, index) => {
-                const isMatch =
-                  (approximateTime === "" ||
-                    judgeDate(approximateTime, activeItem.detailTime)) &&
-                  (type === "" || activeItem.type === type);
-                if (isMatch) {
-                  return (
-                    <View
-                      key={index}
-                      onClick={() => {
-                        setSelectedItem(activeItem);
-                      }}
-                    >
-                      <Active
-                        key={index}
-                        activeItem={activeItem}
-                        setShowPostWindow={setShowPostWindow}
-                      />
-                    </View>
-                  );
-                }
-                return null;
-              })}
+          {filteredActivities.length === 0 ? (
+            <IndexPageNull />
+          ) : (
+            filteredActivities.map((activeItem, index) => (
+              <View
+                key={index}
+                onClick={() => {
+                  setSelectedItem(activeItem);
+                }}
+              >
+                <Active
+                  key={index}
+                  activeItem={activeItem}
+                  setShowPostWindow={setShowPostWindow}
+                />
+              </View>
+            ))
+          )}
         </View>
       </ScrollView>
       {showPostWindow && (

@@ -4,9 +4,13 @@ import logo from "@/common/svg/login/logo.svg";
 import eye from "@/common/assets/logo/小眼睛.png";
 import eye1 from "@/common/assets/logo/小眼睛1.png";
 import Logo from "@/common/assets/logo/mainlogo.png";
-import { useState } from "react";
+import get from "@/common/api/get";
+import useUserStore from "@/store/userStore";
+import usePostStore from "@/store/PostStore";
+import { useEffect, useState } from "react";
 import { switchTab } from "@tarojs/taro";
 import handleUserLogin from "@/common/api/Login";
+import Taro from "@tarojs/taro";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +18,9 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [showError, setShowError] = useState(false);
   const [isCheck, setIsCheck] = useState(true);
+
+  const { setStudentId, setId, setAvatar, setUsername, setSchool } = useUserStore.getState();
+  const { setPostStudentId } = usePostStore.getState();
 
   const handleLogin = () => {
     // switchTab({ url: "/pages/mineHome/index" });
@@ -27,12 +34,32 @@ const Index = () => {
   const quicklogin=()=>{
     setShowError(false);
     if (isCheck) {
-      handleUserLogin({ params: { studentid: "2024214381", password: "25YJ10yj", setShowError } })
+      handleUserLogin({ params: { studentid: "2024214381", password: "", setShowError } })
     }
   }
   const frocelogin=()=>{
     switchTab({ url: '/pages/indexHome/index' })
   }
+
+  useEffect(() => {
+    if (Taro.getStorageSync("token") && Taro.getStorageSync("sid")) {
+      const sid = Taro.getStorageSync("sid");
+      get(`/user/info/${sid}`)
+      .then((res) => {
+        console.log("userinfo",res.data);
+        setId(res.data.Id);
+        setStudentId(res.data.studentId);
+        setAvatar(res.data.avatar);
+        setUsername(res.data.name);
+        setSchool(res.data.school);
+        setPostStudentId(sid);
+        switchTab({ url: '/pages/indexHome/index' })
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }, []);
 
   return (
     <View className="login-page">
@@ -113,10 +140,10 @@ const Index = () => {
       <View className="login-page-btn" onClick={handleLogin}>
         登录
       </View>
-      <View onClick={quicklogin}>
+      {/*<View onClick={quicklogin}>
         快速登录
       </View>
-      {/*<View onClick={frocelogin}>
+      <View onClick={frocelogin}>
         强制登录
       </View>*/}
     </View>

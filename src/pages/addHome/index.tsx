@@ -51,7 +51,7 @@ const Index = () => {
             <View className="remind-text">查看注意事项</View>
           </View>
         </View>
-      </View>
+        </View>
     </>
   );
 };

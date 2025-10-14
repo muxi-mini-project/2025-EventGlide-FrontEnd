@@ -40,6 +40,7 @@ const Index = () => {
         setAvatar(res.data.avatar);
         setUsername(res.data.name);
         setSchool(res.data.school);
+        console.log("avatar",avatar);
       })
       .catch((err) => {
         console.log(err);

@@ -42,7 +42,7 @@ const Index = () => {
       get(`/act/all/${studentid}`)
         .then((res) => {
           setActiveList(res.data);
-          console.log(activeList);
+          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);

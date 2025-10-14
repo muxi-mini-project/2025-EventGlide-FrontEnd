@@ -1,5 +1,6 @@
 import Button from "@/common/components/Button";
 import { View, Image, Input, Textarea } from "@tarojs/components";
+import Taro from "@tarojs/taro";
 import { useState } from "react";
 import "./index.scss";
 import Picture from "@/common/components/Picture";
@@ -41,7 +42,6 @@ const Index = () => {
   });
 
   const btn = {
-    url: "/subpackage/addLabel/index",
     text: "下一步",
     backgroundColor: "#CF79FA",
     textColor: "#FFFEFF",
@@ -107,10 +107,32 @@ const Index = () => {
             ></Image>
             <View className="add-introduce-floor-draft-text">存草稿</View>
           </View>
-          <View
-            className="add-introduce-floor-btn"
-            onClick={() => setBasicInfo(title, description, imgUrl)}
-          >
+        <View
+          className="add-introduce-floor-btn"
+          onClick={() => {
+            if (!title.trim()) {
+              Taro.showToast({
+                title: '请输入活动标题',
+                icon: 'none'
+              });
+              return;
+            }
+            
+            if (!description.trim()) {
+              Taro.showToast({
+                title: '请输入活动介绍',
+                icon: 'none'
+              });
+              return;
+            }
+            if (title.trim() && description.trim()) {
+              setBasicInfo(title, description, imgUrl);
+              Taro.navigateTo({
+                url: '/subpackage/addLabel/index'
+              });
+            }
+          }}
+        >
             <Button {...btn} />
           </View>
         </View>

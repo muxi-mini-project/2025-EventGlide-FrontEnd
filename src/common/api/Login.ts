@@ -25,6 +25,7 @@ const handleUserLogin = async ({ params }) => {
     if (response.data.msg === "success") {
         console.log(response.data.data.token)
         Taro.setStorageSync('token', response.data.data.token)
+        Taro.setStorageSync('sid', response.data.data.sid)
         setStudentId(response.data.data.sid)
         setId(response.data.data.Id)
         setAvatar(response.data.data.avatar)

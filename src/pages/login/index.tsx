@@ -7,6 +7,7 @@ import Logo from "@/common/assets/logo/mainlogo.png";
 import { useState } from "react";
 import { switchTab } from "@tarojs/taro";
 import handleUserLogin from "@/common/api/Login";
+import PolicyWindow from "@/modules/PolicyWindow";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +15,7 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [showError, setShowError] = useState(false);
   const [isCheck, setIsCheck] = useState(true);
+  const [showPolicyWindow,setShowPolicyWindow]=useState(false);
 
   const handleLogin = () => {
     // switchTab({ url: "/pages/mineHome/index" });
@@ -32,6 +34,10 @@ const Index = () => {
   }
   const frocelogin=()=>{
     switchTab({ url: '/pages/indexHome/index' })
+  }
+
+  const handlePolicyClick=()=>{
+    setShowPolicyWindow(true);
   }
 
   return (
@@ -105,8 +111,8 @@ const Index = () => {
           )}
           <View className="login-page-form-privacy-text">
             我已阅读并同意
-            <Text style={"color: #A84ADF"}>《用户协议》</Text>及
-            <Text style={"color: #A84ADF"}>《隐私政策》</Text>
+            {/* <Text style={"color: #A84ADF"}>《用户协议》</Text>及 */}
+            <Text style={"color: #A84ADF"} onClick={handlePolicyClick}>《校灵通隐私政策》</Text>中的内容
           </View>
         </View>
       </View>
@@ -116,9 +122,10 @@ const Index = () => {
       <View onClick={quicklogin}>
         快速登录
       </View>
-      {/*<View onClick={frocelogin}>
+      <View onClick={frocelogin}>
         强制登录
-      </View>*/}
+      </View>
+      {showPolicyWindow && <PolicyWindow setShowPolicyWindow={setShowPolicyWindow}/>}
     </View>
   );
 };

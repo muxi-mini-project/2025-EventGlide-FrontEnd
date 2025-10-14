@@ -45,7 +45,7 @@ const formList: formType[] = [
   },
   {
     //2
-    text: "活动起始时间",
+    text: "活动开始时间",
     type: "dateChoice",
     required: true,
     reminder: "请选择",

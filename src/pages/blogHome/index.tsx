@@ -21,6 +21,7 @@ const Index = () => {
   const { showImg: imgUrl, setImgUrl } = usePostStore();
   const { blogList, setBlogList, setBackPage, setBlogIndex } = usePostStore();
   const { setIsSelect } = useActivityStore();
+  const [msgCount, setMsgCount] = useState(0);
   useDidShow(() => {
     setIsSelect(false);
   });
@@ -101,6 +102,14 @@ const Index = () => {
     }
   };
 
+  useEffect(() => {
+    get("/feed/total").then((res) => {
+      setMsgCount(res.data.total);
+    }).catch((err) => {
+      console.log(err);
+    })
+  }, [])
+
   return (
     <>
       <NavigationBarTabBar backgroundColor="#FFFFFF" title="发现" />
@@ -115,12 +124,15 @@ const Index = () => {
           type={"blog"}
         />
         <View className="search-container">
-          <Image
-            src={Info}
-            className="info-icon"
-            mode="widthFix"
-            onClick={() => navigateTo({ url: "/subpackage/blogInfo/index" })}
-          />
+          <View className="info-icon-container">
+            <Image
+              src={Info}
+              className="info-icon"
+              mode="widthFix"
+              onClick={() => navigateTo({ url: "/subpackage/blogInfo/index" })}
+            />
+            {msgCount > 0 && <View className="info-icon-msg">{msgCount < 100 ? msgCount : '99+'}</View>}
+          </View>
           <View className="sticky-search">
             <View className="search-input-box">
               <Image src={searchpic} className="gap" mode="widthFix" />
@@ -152,21 +164,21 @@ const Index = () => {
             {blogList === null
               ? null
               : blogList.map((item, index) => (
-                  <View
-                    key={index}
-                    id={`post-item-${index}`}
-                    onClick={() => {
-                      setBlogIndex(item.bid);
-                      setBackPage("blogHome");
-                    }}
-                  >
-                    <Post
-                      item={item}
-                      index={index}
-                      isShowImg={isShowList.includes(index)}
-                    />
-                  </View>
-                ))}
+                <View
+                  key={index}
+                  id={`post-item-${index}`}
+                  onClick={() => {
+                    setBlogIndex(item.bid);
+                    setBackPage("blogHome");
+                  }}
+                >
+                  <Post
+                    item={item}
+                    index={index}
+                    isShowImg={isShowList.includes(index)}
+                  />
+                </View>
+              ))}
           </GridView>
         </ScrollView>
       </View>

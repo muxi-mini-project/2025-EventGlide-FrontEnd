@@ -1,9 +1,10 @@
 .mine-page {
   width: 100%;
+  height: calc(100% - 180rpx);
   position: absolute;
   top: 180rpx;
   font-family: "SimHei";
-  overflow-x: hidden;
+  // overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 20rpx;

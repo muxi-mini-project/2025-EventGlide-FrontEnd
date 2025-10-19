@@ -31,7 +31,7 @@ const BlogAdd: React.FC<{ setIsVisiable: (value: boolean) => void }> = (
   }
   return (
     <View className="blog-add" onClick={() => handleClick()}>
-      ＋
+      +
     </View>
   );
 };

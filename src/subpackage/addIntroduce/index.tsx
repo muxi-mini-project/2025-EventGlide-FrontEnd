@@ -1,7 +1,8 @@
 import Button from "@/common/components/Button";
 import { View, Image, Input, Textarea } from "@tarojs/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./index.scss";
+import Taro from "@tarojs/taro";
 import Picture from "@/common/components/Picture";
 import draft from "@/common/svg/add/draft.svg";
 import DraftWinodw from "@/modules/draftWinow";
@@ -18,13 +19,13 @@ const Index = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const { setBasicInfo } = useActiveInfoStore();
-  const [count,setCount]=useState(0)
+  const [count, setCount] = useState(0)
 
   useDidShow(() => {
     get("/act/load").then((res) => {
       if (res.msg === "success") {
         setTitle(title || res.data.Title);
-        setDescription(description || res.data.Introduce );
+        setDescription(description || res.data.Introduce);
         if (Array.isArray(res.data.ShowImg)) {
           setImgUrl(res.data.ShowImg);
         } else if (
@@ -41,12 +42,42 @@ const Index = () => {
   });
 
   const btn = {
-    url: "/subpackage/addLabel/index",
+    // url: "",
     text: "下一步",
     backgroundColor: "#CF79FA",
     textColor: "#FFFEFF",
     isBorder: false,
   };
+  const handleNextClick = () => {
+    if (!title.trim()&&!description.trim()) {
+      Taro.showToast({
+        title: '请填写活动标题和活动内容',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    if (!title.trim()) {
+      Taro.showToast({
+        title: '请填写活动标题',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    if (!description.trim()) {
+      Taro.showToast({
+        title: '请填写活动内容',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    Taro.navigateTo({
+      url: '/subpackage/addLabel/index',
+    });
+    setBasicInfo(title, description, imgUrl)
+  }
 
   return (
     <>
@@ -109,7 +140,7 @@ const Index = () => {
           </View>
           <View
             className="add-introduce-floor-btn"
-            onClick={() => setBasicInfo(title, description, imgUrl)}
+            onClick={handleNextClick}
           >
             <Button {...btn} />
           </View>

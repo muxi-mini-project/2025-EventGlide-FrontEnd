@@ -20,7 +20,7 @@ import BlogComment from "@/modules/BlogComment/components";
 import ReplyWindow from "@/modules/ReplyWindow";
 
 export const SetBlogReponseContext = createContext<(params: any) => void>(
-  () => {},
+  () => { },
 );
 
 const Index = () => {
@@ -30,13 +30,14 @@ const Index = () => {
   const [response, setResponse] = useState<responseType[]>([]);
   const [inputValue, setInputValue] = useState("");
   const { studentid, avatar } = useUserStore((state) => state);
-  const { blogList, blogIndex, setCommentNumChange, backPage } = usePostStore(
+  const { blogList, blogIndex, setCommentNumChange, backPage, setBlogList } = usePostStore(
     (state) => state,
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRequest, setIsRequest] = useState(true);
   const [reply_id, setReply_id] = useState("");
   const [isVisible, setIsVisible] = useState(false);
+  const [commentInput, setCommentInput] = useState(false);
   const { setLikeNumChange, setCollectNumChange } = usePostStore(
     (state) => state,
   );
@@ -115,7 +116,7 @@ const Index = () => {
     query.select(".blogDetail-content").boundingClientRect();
     query.exec((res) => {
       console.log(res[0]);
-      setMarginTop(res[0].height + 110);
+      setMarginTop(res[0].height + 100);
     });
   }, [blogIndex]);
 
@@ -287,20 +288,10 @@ const Index = () => {
               mode="scaleToFill"
               src={avatar}
             ></Image>
-            <View className="blogDetail-comment-input-text">
-              <Input
-                className="blogDetail-comment-input-text-input"
-                placeholder="让大家听到你的声音"
-                placeholderClass="blogDetail-comment-input-text-input"
-                value={inputValue}
-                onInput={(e) => handleInput(e)}
-                onConfirm={handleSubmit}
-              ></Input>
-              <Image
-                className="blogDetail-comment-input-text-icon"
-                mode="widthFix"
-                src={iconr}
-              ></Image>
+            <View
+              className="blogDetail-comment-input-text"
+              onClick={() => setCommentInput(true)}>
+              让大家听到你的声音
             </View>
           </View>
           <View className="blogDetail-comment-list">
@@ -323,23 +314,18 @@ const Index = () => {
                 ></BlogComment>
               ))}
           </View>
-          <View className="gap"></View>
         </View>
         <View className="blogDetail-footer">
-          <View className="blogDetail-footer-input">
+          <View 
+          className="blogDetail-footer-input"
+          onClick={() => setCommentInput(true)}>
             <Image
               className="blogDetail-footer-input-icon"
               mode="widthFix"
               src={icon}
             ></Image>
-            <Input
-              className="blogDetail-footer-input-text"
-              placeholder="说点什么"
-              placeholderClass="blogDetail-footer-input-text"
-              value={inputValue}
-              onInput={(e) => handleInput(e)}
-              onConfirm={handleSubmit}
-            ></Input>
+            <View 
+            className="blogDetail-footer-input-text">说点什么</View>
           </View>
           <View className="blogDetail-footer-desc">
             <Image
@@ -368,6 +354,29 @@ const Index = () => {
             </View>
           </View>
         </View>
+        {commentInput && (
+          <View className="comment-popup">
+            <View className="comment-popup-cancel" onClick={() => setCommentInput(false)} />
+            <View className="comment-popup-box">
+              <Input
+                className="comment-popup-box-input"
+                placeholder="在此输入"
+                placeholderClass="blogDetail-comment-input-text-input"
+                value={inputValue}
+                focus={true}
+                onInput={(e) => handleInput(e)}
+              ></Input>
+              <View 
+              className={`comment-popup-box-send ${inputValue?"comment-popup-box-send-active":""}`}
+              onClick={()=>{
+                handleSubmit();
+                setCommentInput(false);
+              }}>
+                发送
+                </View>
+            </View>
+          </View>
+        )}
       </View>
       <SetBlogReponseContext.Provider value={setBlogReponseContext}>
         <ReplyWindow

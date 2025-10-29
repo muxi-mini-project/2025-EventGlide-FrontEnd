@@ -10,7 +10,7 @@ import usePostStore from "@/store/PostStore";
 import { useEffect, useState } from "react";
 import { switchTab } from "@tarojs/taro";
 import handleUserLogin from "@/common/api/Login";
-import Taro from "@tarojs/taro";
+import PolicyWindow from "@/modules/PolicyWindow";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +18,7 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [showError, setShowError] = useState(false);
   const [isCheck, setIsCheck] = useState(true);
+  const [showPolicyWindow,setShowPolicyWindow]=useState(false);
 
   const { setStudentId, setId, setAvatar, setUsername, setSchool } = useUserStore.getState();
   const { setPostStudentId } = usePostStore.getState();
@@ -41,25 +42,9 @@ const Index = () => {
     switchTab({ url: '/pages/indexHome/index' })
   }
 
-  useEffect(() => {
-    if (Taro.getStorageSync("token") && Taro.getStorageSync("sid")) {
-      const sid = Taro.getStorageSync("sid");
-      get(`/user/info/${sid}`)
-      .then((res) => {
-        console.log("userinfo",res.data);
-        setId(res.data.Id);
-        setStudentId(res.data.studentId);
-        setAvatar(res.data.avatar);
-        setUsername(res.data.name);
-        setSchool(res.data.school);
-        setPostStudentId(sid);
-        switchTab({ url: '/pages/indexHome/index' })
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    }
-  }, []);
+  const handlePolicyClick=()=>{
+    setShowPolicyWindow(true);
+  }
 
   return (
     <View className="login-page">
@@ -132,8 +117,8 @@ const Index = () => {
           )}
           <View className="login-page-form-privacy-text">
             我已阅读并同意
-            <Text style={"color: #A84ADF"}>《用户协议》</Text>及
-            <Text style={"color: #A84ADF"}>《隐私政策》</Text>
+            {/* <Text style={"color: #A84ADF"}>《用户协议》</Text>及 */}
+            <Text style={"color: #A84ADF"} onClick={handlePolicyClick}>《校灵通隐私政策》</Text>中的内容
           </View>
         </View>
       </View>
@@ -145,7 +130,8 @@ const Index = () => {
       </View>
       <View onClick={frocelogin}>
         强制登录
-      </View>*/}
+      </View>
+      {showPolicyWindow && <PolicyWindow setShowPolicyWindow={setShowPolicyWindow}/>}
     </View>
   );
 };

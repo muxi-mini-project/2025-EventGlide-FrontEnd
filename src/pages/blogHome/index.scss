@@ -16,9 +16,33 @@
   //搜索栏
   .info-icon {
     position: absolute;
-    left: 40rpx;
     width: 50rpx;
-    top: 25rpx;
+    position: relative;
+    &-container{
+      display: inline-block;
+      position: relative;
+      left: 40rpx;
+      top: 25rpx;
+    }
+    &-msg{
+      position: absolute;
+      min-width: 25rpx;
+      width: max-content;
+      height: 25rpx;
+      top: -16rpx;
+      right: -20rpx;
+      -ms-transform-origin-x: 50%;
+      padding: 0 6rpx 2rpx 10rpx;
+      border-radius: 50%;
+      font-size: 20rpx;
+      line-height: 20rpx;
+      font-weight: 700;
+      white-space: nowrap;
+      background-color: red;
+      align-content: center;
+      justify-content: center;
+      color: white;
+    }
   }
   .search-container {
     width: 100%;
@@ -27,6 +51,7 @@
     margin-bottom: 20rpx;
     position: sticky;
     top: 0;
+    display: flex;
     .sticky-search {
       width: 80%;
       height: 100rpx;

@@ -1,6 +1,7 @@
 import { View, Image } from "@tarojs/components";
 import { useState } from "react";
 import "./index.scss";
+import Taro from "@tarojs/taro";
 import { Form, FormWindow } from "@/modules/Form";
 import formList from "@/common/const/Formconst";
 import Button from "@/common/components/Button";
@@ -40,7 +41,7 @@ const Index = () => {
   });
   useDidShow(() => {
     get("/act/load").then((res) => {
-      console.log("label",res);
+      console.log("label", res);
       if (res.msg === "success") {
         const newLabelForm: LabelForm = {
           type: formValue.type || res.data.Type,
@@ -74,6 +75,34 @@ const Index = () => {
   };
 
   const handleFormSubmit = () => {
+    const { type, holderType, startTime, endTime, position, if_register, register_method } = formValue;
+    const start = new Date(startTime).getTime();
+    const end = new Date(endTime).getTime();
+    const minTimeDiff = 30 * 60 * 1000;
+    if (start >= end || end - start < minTimeDiff) {
+      Taro.showToast({
+        title: '请填写正确的开始时间和结束时间',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    if (!type || !holderType || !startTime || !endTime || !position || !if_register) {
+      Taro.showToast({
+        title: '还有必填项未选择，请检查',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    if (if_register === "是" && !register_method) {
+      Taro.showToast({
+        title: '请填写报名方式',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
     setLabelForm({ ...labelform, ...formValue, signer: signers });
     setShowPostWindow(true);
   };

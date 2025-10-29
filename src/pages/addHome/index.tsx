@@ -7,8 +7,12 @@ import BtnType from "@/common/types/BtnType";
 import useActivityStore from "@/store/ActivityStore";
 import { useDidShow } from "@tarojs/taro";
 import { NavigationBarTabBar } from "@/common/components/NavigationBar";
+import { useState } from "react";
+import ActivityAddRules from "@/modules/ActivityAddRules";
 
 const Index = () => {
+  const [showAddRules,setShowAddRules]=useState(false);
+
   const addBtn: BtnType = {
     url: "/subpackage/addIntroduce/index",
     text: "去填写",
@@ -20,6 +24,10 @@ const Index = () => {
   useDidShow(() => {
     setIsSelect(false);
   });
+
+  const handleAddRulesClick=()=>{
+    setShowAddRules(true);
+  }
 
   return (
     <>
@@ -48,10 +56,11 @@ const Index = () => {
               className="remind-pic"
               mode="widthFix"
             ></Image>
-            <View className="remind-text">查看注意事项</View>
+            <View className="remind-text" onClick={handleAddRulesClick}>查看注意事项</View>
           </View>
         </View>
-        </View>
+      </View>
+      {showAddRules && <ActivityAddRules setShowAddRules={setShowAddRules}/>}
     </>
   );
 };

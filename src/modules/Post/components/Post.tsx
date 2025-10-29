@@ -64,7 +64,7 @@ const Post: React.FC<any> = memo(function ({ item, index, isShowImg }) {
               src={item.userInfo.avatar}
               mode="widthFix"
             ></Image>
-            <Text className="username">{item.userInfo.username}</Text>
+          <Text className="username">{item.userInfo.username}</Text>
           </View>
           <View className="post-favorite">
             <Image

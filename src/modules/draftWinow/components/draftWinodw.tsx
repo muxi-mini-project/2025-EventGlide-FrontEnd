@@ -34,6 +34,7 @@ const DraftWinodw: React.FC<{
       };
       console.log(data);
       post("/act/draft", data).then((res) => {
+        console.log(res);
         if (res.msg === "success") {
           Taro.showToast({
             title: `${res.msg}`,

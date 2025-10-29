@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { switchTab } from "@tarojs/taro";
 import handleUserLogin from "@/common/api/Login";
 import PolicyWindow from "@/modules/PolicyWindow";
+import Taro from "@tarojs/taro";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,6 +42,25 @@ const Index = () => {
   const frocelogin=()=>{
     switchTab({ url: '/pages/indexHome/index' })
   }
+    useEffect(() => {
+    if (Taro.getStorageSync("token") && Taro.getStorageSync("sid")) {
+      const sid = Taro.getStorageSync("sid");
+      get(`/user/info/${sid}`)
+      .then((res) => {
+        console.log("userinfo",res.data);
+        setId(res.data.Id);
+        setStudentId(res.data.studentId);
+        setAvatar(res.data.avatar);
+        setUsername(res.data.name);
+        setSchool(res.data.school);
+        setPostStudentId(sid);
+        switchTab({ url: '/pages/indexHome/index' })
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  }, []);
 
   const handlePolicyClick=()=>{
     setShowPolicyWindow(true);
@@ -130,7 +150,7 @@ const Index = () => {
       </View>
       <View onClick={frocelogin}>
         强制登录
-      </View>
+      </View>*/}
       {showPolicyWindow && <PolicyWindow setShowPolicyWindow={setShowPolicyWindow}/>}
     </View>
   );

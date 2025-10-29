@@ -24,6 +24,7 @@ const Index = () => {
   useDidShow(() => {
     get("/act/load").then((res) => {
       if (res.msg === "success") {
+        console.log(res.data);
         setTitle(title || res.data.Title);
         setDescription(description || res.data.Introduce );
         if (Array.isArray(res.data.ShowImg)) {

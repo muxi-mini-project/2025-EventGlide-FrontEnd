@@ -97,7 +97,7 @@ const Index = () => {
           </View>
         </View>
       ))}
-      <View className="isCheckingPage-state">
+      {/*<View className="isCheckingPage-state">
         <Image
           src={alPost}
           mode="widthFix"
@@ -128,7 +128,7 @@ const Index = () => {
             ></Picture>
           ))}
         </View>
-      </View>
+      </View>*/}
       <View style={{height: "100rpx"}}/>
       </ScrollView>
     </View>

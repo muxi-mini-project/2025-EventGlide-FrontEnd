@@ -4,6 +4,7 @@ import { View, PageContainer } from "@tarojs/components";
 import DatePicker from "@/modules/DatePicker";
 import AlbumWindow from "@/modules/albumWindow";
 import { year, month, day, hour, minute } from "@/common/const/DateList";
+import { it } from "node:test";
 
 const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
   const [selectedValue, setSelectedValue] = useState<number>(-1);
@@ -23,10 +24,10 @@ const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (item) => {
     props.setIsVisiable(false);
     if (props.type === "dateChoice") {
-      const date = `${year[activeYearIndex]}-${month[activeMonthIndex]}-${day[activeDayIndex]} ${hour[activeHourIndex]}:${minute[activeMinuteIndex]}`;
+      const date = `${item.date} ${item.time}`;
       console.log(date);
       props.setFormValue({
         ...props.formValue,

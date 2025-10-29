@@ -44,6 +44,7 @@ const Index = () => {
   const [showPage, setShowPage] = useState<"favor" | "letter">("favor");
   const [favor, setFavor] = useState<LetterType[]>([]);
   const [letter, setLetter] = useState<LetterType[]>([]);
+  const [notice, setNotice] = useState(false);
 
   useDidShow(() => {
     get("/feed/list").then((res) => {
@@ -52,11 +53,15 @@ const Index = () => {
       const collects = res.data.collects || [];
       const mergedFavor = mergeSortedArrays(likes, collects);
       setFavor(mergedFavor);
+      readnotice(mergedFavor);
 
       const comments = res.data?.comments || [];
       const ats = res.data.ats || [];
       const mergedLetter = mergeSortedArrays(comments, ats);
       setLetter(mergedLetter);
+      if (mergedLetter[0] && mergedLetter[0].status === "未读") {
+        setNotice(true);
+      }
     }).catch((err) => {
       console.log(err);
     });
@@ -95,6 +100,18 @@ const Index = () => {
     return new Date(dateString).getTime();
   };
 
+  const readnotice = (notices: string | any[]) => {
+    for (let i = 0; i < notices.length; i++) {
+      if (notices[i].status === "未读") {
+        get(`/feed/read/detail/${notices[i].id}`).then((res) => {
+          console.log(res.data);
+        });
+      }else{
+        break;
+      }
+    }
+  };
+
   return (
     <View className="blogInfo-page">
       <View className="blogInfo-page-header">
@@ -107,12 +124,28 @@ const Index = () => {
           赞和收藏
         </View>
         <View
-          onClick={() => handleClick("letter")}
+          onClick={() => {
+            handleClick("letter");
+            setNotice(false);
+            readnotice(letter);
+          }}
           className={classnames("blogInfo-page-header-item", {
             activeItem: !isActive,
           })}
         >
-          评论和@
+          <View>评论和@</View>
+          <View style={{
+            display: notice ? "block" : "none",
+            position: "absolute",
+            width: "10rpx",
+            height: "10rpx", 
+            borderRadius: "5rpx", 
+            backgroundColor: "#FF4D4F",
+            right:0,
+            top:0,
+            marginRight: "90rpx",
+            marginTop: "40rpx",
+            }}/>
         </View>
       </View>
       <View className="blogInfo-page-content">

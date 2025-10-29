@@ -29,6 +29,9 @@ const Index = () => {
     get("/post/all").then((res) => {
       setBlogList(res.data);
     });
+    get("/feed/total").then((res) => {
+      console.log(res.data);
+    });
     setImgUrl([]);
   });
 

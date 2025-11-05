@@ -1,25 +1,25 @@
-import { memo, useEffect, useState } from "react";
-import { View } from "@tarojs/components";
-import "./style.scss";
-import MineActivityItem from "@/modules/mineActiveItem";
-import get from "@/common/api/get";
-import post from "@/common/api/post";
-import useUserStore from "@/store/userStore";
-import useActivityStore from "@/store/ActivityStore";
-import { ActivityDetailList } from "@/common/types/ActiveList";
-import MinePageNull from "@/modules/null/components/minepagenull";
+import { memo, useEffect, useState } from 'react';
+import { View } from '@tarojs/components';
+import './style.scss';
+import MineActivityItem from '@/modules/mineActiveItem';
+import get from '@/common/api/get';
+import post from '@/common/api/post';
+import useUserStore from '@/store/userStore';
+import useActivityStore from '@/store/ActivityStore';
+import { ActivityDetailList } from '@/common/types/ActiveList';
+import MinePageNull from '@/modules/null/components/minepagenull';
 const MineActivity: React.FC<{
-  activeIndex: "release" | "like" | "favourite";
+  activeIndex: 'release' | 'like' | 'favourite';
   setIsShowActivityWindow: (isShow: boolean) => void;
 }> = memo(function ({ activeIndex, setIsShowActivityWindow }) {
   const { studentid } = useUserStore();
   const [activeList, setActiveList] = useState<ActivityDetailList[]>([]);
   const { setSelectedItem } = useActivityStore();
   useEffect(() => {
-    if (activeIndex === "release") {
+    if (activeIndex === 'release') {
       get(`/act/own/${studentid}`)
         .then((res) => {
-          console.log('发布活动：',res.data);
+          console.log('发布活动：', res.data);
           if (res.data === null) {
             setActiveList([]);
             return;
@@ -27,7 +27,7 @@ const MineActivity: React.FC<{
           const newActiveList: ActivityDetailList[] = [];
           res.data.forEach((item) => {
             newActiveList.push({
-                ...item,
+              ...item,
             });
           });
           setActiveList(newActiveList);
@@ -35,19 +35,19 @@ const MineActivity: React.FC<{
         .catch((err) => {
           console.log(err);
         });
-    } else if (activeIndex === "favourite") {
-      post("/user/collect/act", { studentid })
+    } else if (activeIndex === 'favourite') {
+      post('/user/collect/act', { studentid })
         .then((res) => {
-          console.log('收藏活动：',res);
+          console.log('收藏活动：', res);
           if (res.data === null) {
             setActiveList([]);
             return;
           }
           const newActiveList: ActivityDetailList[] = [];
           res.data.forEach((item) => {
-            if (item.title !== "")
+            if (item.title !== '')
               newActiveList.push({
-                  ...item,
+                ...item,
               });
           });
           setActiveList(newActiveList);
@@ -55,19 +55,19 @@ const MineActivity: React.FC<{
         .catch((err) => {
           console.log(err);
         });
-    } else if (activeIndex === "like") {
-      post("/user/like/act", { studentid })
+    } else if (activeIndex === 'like') {
+      post('/user/like/act', { studentid })
         .then((res) => {
-          console.log('点赞活动：',res);
+          console.log('点赞活动：', res);
           if (res.data === null) {
             setActiveList([]);
             return;
           }
           const newActiveList: ActivityDetailList[] = [];
           res.data.forEach((item) => {
-            if (item.title !== "")
+            if (item.title !== '')
               newActiveList.push({
-                  ...item,
+                ...item,
               });
           });
           setActiveList(newActiveList);
@@ -80,14 +80,18 @@ const MineActivity: React.FC<{
 
   return (
     <View className="mine-activity-page">
-      {activeList.length === 0
-        ? <MinePageNull />
-        : activeList.map((item, index) => {
+      {activeList.length === 0 ? (
+        <MinePageNull />
+      ) : (
+        activeList.map((item, index) => {
           return (
-            <View key={index} onClick={() => {
-              setSelectedItem(item);
-              setIsShowActivityWindow(true);
-            }}>
+            <View
+              key={index}
+              onClick={() => {
+                setSelectedItem(item);
+                setIsShowActivityWindow(true);
+              }}
+            >
               <MineActivityItem
                 key={index}
                 avatar={item.userInfo.avatar}
@@ -101,9 +105,10 @@ const MineActivity: React.FC<{
                 isCollect={item.isCollect}
                 collectNum={item.collectNum}
               />
-              </View>
-            );
-          })}
+            </View>
+          );
+        })
+      )}
     </View>
   );
 });

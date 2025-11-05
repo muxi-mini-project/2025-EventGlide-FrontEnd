@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 type blogType = {
   bid: string;
@@ -39,12 +39,12 @@ interface PostStoreType {
 
 const usePostStore = create<PostStoreType>((set, get) => ({
   showImg: [],
-  title: "",
-  introduce: "",
-  studentid: "",
+  title: '',
+  introduce: '',
+  studentid: '',
   blogList: [],
   blogIndex: -1,
-  backPage: "",
+  backPage: '',
   setBackPage: (page) => set(() => ({ backPage: page })),
   setBlogList: (blogList) => set(() => ({ blogList })),
   setBlogIndex: (bid) => {
@@ -59,7 +59,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
         return {
           ...b,
           likeNum: type === 1 ? b.likeNum + 1 : b.likeNum - 1,
-          isLike: type === 1 ? "true" : "false",
+          isLike: type === 1 ? 'true' : 'false',
         };
       }
       return b;
@@ -73,7 +73,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
         return {
           ...b,
           collectNum: type === 1 ? b.collectNum + 1 : b.collectNum - 1,
-          isCollect: type === 1 ? "true" : "false",
+          isCollect: type === 1 ? 'true' : 'false',
         };
       }
       return b;
@@ -96,7 +96,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       return b;
     });
     set(() => ({ blogList: updatedBlogList }));
-  }
+  },
 }));
 
 export default usePostStore;

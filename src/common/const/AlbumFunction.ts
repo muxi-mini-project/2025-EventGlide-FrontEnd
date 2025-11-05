@@ -1,7 +1,7 @@
-import Taro, { navigateTo } from "@tarojs/taro";
-import { fetchToQiniu } from "../api/qiniu";
-import post from "../api/post";
-import useUserStore from "@/store/userStore";
+import Taro, { navigateTo } from '@tarojs/taro';
+import { fetchToQiniu } from '../api/qiniu';
+import post from '../api/post';
+import useUserStore from '@/store/userStore';
 type AlbumFunctionProps = {
   setIsVisiable: (isVisiable: boolean) => void;
   setImgUrl: (imgUrl: string[]) => void;
@@ -24,8 +24,8 @@ const handleChooseImage = ({
   const { studentid: studentId, setAvatar } = useUserStore.getState();
   Taro.chooseImage({
     count: count,
-    sizeType: ["original", "compressed"],
-    sourceType: isAlbum ? ["album"] : ["camera"],
+    sizeType: ['original', 'compressed'],
+    sourceType: isAlbum ? ['album'] : ['camera'],
     success: async (res) => {
       let newImgUrl: string[] = [...imgUrl];
 
@@ -37,23 +37,23 @@ const handleChooseImage = ({
       if (isRequest) {
         newImgUrl = newImgUrl.filter((item) => !imgUrl.includes(item));
         console.log(newImgUrl[0]);
-        const response = await post("/user/avatar", {
+        const response = await post('/user/avatar', {
           avatar_url: newImgUrl[0],
           studentid: studentId,
         });
-        if (response.msg === "success") {
+        if (response.msg === 'success') {
           setImgUrl(newImgUrl);
           setAvatar(newImgUrl[0]);
         }
       } else setImgUrl(newImgUrl);
       setIsVisiable(false);
       console.log(url);
-      if (url !== "") navigateTo({ url: url });
+      if (url !== '') navigateTo({ url: url });
     },
     fail: (err) => {
       Taro.showToast({
         title: err.errMsg,
-        icon: "none",
+        icon: 'none',
         duration: 2000,
       });
       console.error(err);

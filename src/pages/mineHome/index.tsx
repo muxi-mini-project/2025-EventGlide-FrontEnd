@@ -1,32 +1,29 @@
-import { View, Image, ScrollView, GridView } from "@tarojs/components";
-import "./index.scss";
-import MineActivity from "@/modules/mineActivity/index";
-import Taro, { navigateTo, useDidShow } from "@tarojs/taro";
-import { useState, useEffect } from "react";
-import classnames from "classnames";
-import arrowheadw from "@/common/assets/arrowhead/引导箭头-白.png";
-import arrowheadp from "@/common/assets/arrowhead/引导箭头-紫.png";
-import get from "@/common/api/get";
-import post from "@/common/api/post";
-import useUserStore from "@/store/userStore";
-import useActivityStore from "@/store/ActivityStore";
-import { blogType } from "@/store/PostStore";
-import { NavigationBarTabBar } from "@/common/components/NavigationBar";
-import Post from "@/modules/Post";
-import usePostStore from "@/store/PostStore";
-import PostWindow from "@/modules/PostWindow";
-import MinePageNull from "@/modules/null/components/minepagenull";
+import { View, Image, ScrollView, GridView } from '@tarojs/components';
+import './index.scss';
+import MineActivity from '@/modules/mineActivity/index';
+import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
+import { useState, useEffect } from 'react';
+import classnames from 'classnames';
+import arrowheadw from '@/common/assets/arrowhead/引导箭头-白.png';
+import arrowheadp from '@/common/assets/arrowhead/引导箭头-紫.png';
+import get from '@/common/api/get';
+import post from '@/common/api/post';
+import useUserStore from '@/store/userStore';
+import useActivityStore from '@/store/ActivityStore';
+import { blogType } from '@/store/PostStore';
+import { NavigationBarTabBar } from '@/common/components/NavigationBar';
+import Post from '@/modules/Post';
+import usePostStore from '@/store/PostStore';
+import PostWindow from '@/modules/PostWindow';
+import MinePageNull from '@/modules/null/components/minepagenull';
 const Index = () => {
-  const [activePage, setActivePage] = useState<"activity" | "post">("post");
-  const [activeIndex, setActiveIndex] = useState<"release" |"like"| "favourite">(
-    "release",
-  );
+  const [activePage, setActivePage] = useState<'activity' | 'post'>('post');
+  const [activeIndex, setActiveIndex] = useState<'release' | 'like' | 'favourite'>('release');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const { setBlogIndex, setBackPage } = usePostStore();
   const [minePostList, setMinePostList] = useState<blogType[]>([]);
-  const { avatar, studentid, username, school, setAvatar, setUsername, setSchool } =
-    useUserStore();
+  const { avatar, studentid, username, school, setAvatar, setUsername, setSchool } = useUserStore();
   const { setIsSelect } = useActivityStore();
 
   useDidShow(() => {
@@ -40,7 +37,7 @@ const Index = () => {
         setAvatar(res.data.avatar);
         setUsername(res.data.name);
         setSchool(res.data.school);
-        console.log("avatar",avatar);
+        console.log('avatar', avatar);
       })
       .catch((err) => {
         console.log(err);
@@ -48,72 +45,72 @@ const Index = () => {
   });
 
   useEffect(() => {
-    if (activePage === "post") {
-    if (activeIndex === "release") {
-      get(`/post/own/${studentid}`)
-        .then((res) => {
-          console.log('发布：',res.data);
-          if (res.data === null) {
-            setMinePostList([]);
-            return;
-          }
-          const newPostList: blogType[] = [];
-          res.data.forEach((item) => {
-            newPostList.push(item as blogType);
+    if (activePage === 'post') {
+      if (activeIndex === 'release') {
+        get(`/post/own/${studentid}`)
+          .then((res) => {
+            console.log('发布：', res.data);
+            if (res.data === null) {
+              setMinePostList([]);
+              return;
+            }
+            const newPostList: blogType[] = [];
+            res.data.forEach((item) => {
+              newPostList.push(item as blogType);
+            });
+            setMinePostList(newPostList);
+            handleScroll();
+          })
+          .catch((err) => {
+            console.log(err);
           });
-          setMinePostList(newPostList);
-          handleScroll();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else if (activeIndex === "favourite") {
-      post("/user/collect/post", { studentid })
-        .then((res) => {
-          console.log('收藏：',res);
-          if (res.data === null) {
-            setMinePostList([]);
-            return;
-          }
-          const newPostList: blogType[] = [];
-          if (res.msg === "success") {
-            res.data.forEach((item) => {
-              newPostList.push(item as blogType);
-            });
-            setMinePostList(newPostList);
-          }
-          handleScroll();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else if (activeIndex === "like") {
-      post("/user/like/post", { studentid })
-        .then((res) => {
-          console.log('点赞：',res);
-          if (res.data === null) {
-            setMinePostList([]);
-            return;
-          }
-          const newPostList: blogType[] = [];
-          if (res.msg === "success") {
-            res.data.forEach((item) => {
-              newPostList.push(item as blogType);
-            });
-            setMinePostList(newPostList);
-          }
-          handleScroll();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      } else if (activeIndex === 'favourite') {
+        post('/user/collect/post', { studentid })
+          .then((res) => {
+            console.log('收藏：', res);
+            if (res.data === null) {
+              setMinePostList([]);
+              return;
+            }
+            const newPostList: blogType[] = [];
+            if (res.msg === 'success') {
+              res.data.forEach((item) => {
+                newPostList.push(item as blogType);
+              });
+              setMinePostList(newPostList);
+            }
+            handleScroll();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (activeIndex === 'like') {
+        post('/user/like/post', { studentid })
+          .then((res) => {
+            console.log('点赞：', res);
+            if (res.data === null) {
+              setMinePostList([]);
+              return;
+            }
+            const newPostList: blogType[] = [];
+            if (res.msg === 'success') {
+              res.data.forEach((item) => {
+                newPostList.push(item as blogType);
+              });
+              setMinePostList(newPostList);
+            }
+            handleScroll();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
-  }
-  }, [activeIndex,activePage]);
+  }, [activeIndex, activePage]);
 
   useEffect(() => {
-    if (minePostList.length > 0 && activePage === "post") {
-      console.log("handleScroll");
+    if (minePostList.length > 0 && activePage === 'post') {
+      console.log('handleScroll');
       handleScroll();
     }
   }, [activePage, minePostList]);
@@ -155,16 +152,12 @@ const Index = () => {
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}
-        style={{ height: "calc(100vh - 180rpx)" }}
+        style={{ height: 'calc(100vh - 180rpx)' }}
         id="scrollView"
       >
         <View className="mine-user">
           <View className="mine-user-content">
-            <Image
-              className="mine-user-avatar"
-              mode="aspectFit"
-              src={avatar}
-            ></Image>
+            <Image className="mine-user-avatar" mode="aspectFit" src={avatar}></Image>
             <View className="mine-user-info">
               <View className="mine-user-name">{username}</View>
               <View className="mine-user-school">{school}</View>
@@ -173,36 +166,35 @@ const Index = () => {
               className="mine-user-arrowhead"
               mode="widthFix"
               src={arrowheadw}
-              onClick={() => navigateTo({ url: "/subpackage/mineInfo/index" })}
+              onClick={() => navigateTo({ url: '/subpackage/mineInfo/index' })}
             ></Image>
           </View>
 
-        <View className="mine-user-check">
-          <View className="mine-user-check-info">审核中</View>
-          <Image
-            className="mine-user-check-arrowhead"
-            onClick={() => navigateTo({ url: "/subpackage/isChecking/index" })}
-            mode="widthFix"
-            src={arrowheadp}
-          ></Image>
-        </View>
-
+          <View className="mine-user-check">
+            <View className="mine-user-check-info">审核中</View>
+            <Image
+              className="mine-user-check-arrowhead"
+              onClick={() => navigateTo({ url: '/subpackage/isChecking/index' })}
+              mode="widthFix"
+              src={arrowheadp}
+            ></Image>
+          </View>
         </View>
         <View className="mine-order-title" id="scrollView">
           <View className="mine-order-title-choice">
             <View
-              className={classnames("mine-order-title-choice-left", {
-                "active-decoration-left": activePage === "post",
+              className={classnames('mine-order-title-choice-left', {
+                'active-decoration-left': activePage === 'post',
               })}
-              onClick={() => setActivePage("post")}
+              onClick={() => setActivePage('post')}
             >
               帖子
             </View>
             <View
-              className={classnames("mine-order-title-choice-right", {
-                "active-decoration-right": activePage === "activity",
+              className={classnames('mine-order-title-choice-right', {
+                'active-decoration-right': activePage === 'activity',
               })}
-              onClick={() => setActivePage("activity")}
+              onClick={() => setActivePage('activity')}
             >
               活动
             </View>
@@ -210,32 +202,32 @@ const Index = () => {
           <View className="mine-order-title-line"></View>
           <View className="mine-order-title-index">
             <View
-              className={classnames("mine-order-title-index-left", {
-                "active-decoration-item": activeIndex === "release",
+              className={classnames('mine-order-title-index-left', {
+                'active-decoration-item': activeIndex === 'release',
               })}
-              onClick={() => setActiveIndex("release")}
+              onClick={() => setActiveIndex('release')}
             >
               发布
             </View>
             <View
-              className={classnames("mine-order-title-index-mid", {
-                "active-decoration-item": activeIndex === "like",
+              className={classnames('mine-order-title-index-mid', {
+                'active-decoration-item': activeIndex === 'like',
               })}
-              onClick={() => setActiveIndex("like")}
+              onClick={() => setActiveIndex('like')}
             >
               点赞
             </View>
             <View
-              className={classnames("mine-order-title-index-right", {
-                "active-decoration-item": activeIndex === "favourite",
+              className={classnames('mine-order-title-index-right', {
+                'active-decoration-item': activeIndex === 'favourite',
               })}
-              onClick={() => setActiveIndex("favourite")}
+              onClick={() => setActiveIndex('favourite')}
             >
               收藏
             </View>
           </View>
         </View>
-        {activePage === "post" ? (
+        {activePage === 'post' ? (
           minePostList.length === 0 ? (
             <MinePageNull />
           ) : (
@@ -246,27 +238,23 @@ const Index = () => {
                   id={`post-item-${index}`}
                   onClick={() => {
                     setBlogIndex(item.bid);
-                    setBackPage("mineHome");
+                    setBackPage('mineHome');
                   }}
                 >
-                  <Post
-                    item={item}
-                    index={index}
-                    isShowImg={isShowList.includes(index)}
-                  />
+                  <Post item={item} index={index} isShowImg={isShowList.includes(index)} />
                 </View>
               ))}
             </GridView>
           )
         ) : (
-          <MineActivity activeIndex={activeIndex} setIsShowActivityWindow={setIsShowActivityWindow} />
+          <MineActivity
+            activeIndex={activeIndex}
+            setIsShowActivityWindow={setIsShowActivityWindow}
+          />
         )}
       </ScrollView>
       {isShowActivityWindow && (
-        <PostWindow
-          WindowType="active"
-          setShowPostWindow={setIsShowActivityWindow}
-        ></PostWindow>
+        <PostWindow WindowType="active" setShowPostWindow={setIsShowActivityWindow}></PostWindow>
       )}
     </>
   );

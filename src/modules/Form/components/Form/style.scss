@@ -1,49 +1,49 @@
 .form {
-    width: 690rpx;
-    height: 200rpx;
-    background-color: #fff;
-    border-radius: 10rpx;
-    position: relative;
-    font-family: SimHei;
-    .form-title-container {
-        position: absolute;
-        top: 30rpx;
-        left: 20rpx;
-        font-size: 40rpx;
-        .form-required {
-            color: rgb(217, 2, 32);
-            margin-right: 10rpx;
-        }
-        .form-title {
-            color: #170A1E;
-        }
+  width: 690rpx;
+  height: 200rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+  position: relative;
+  font-family: SimHei;
+  .form-title-container {
+    position: absolute;
+    top: 30rpx;
+    left: 20rpx;
+    font-size: 40rpx;
+    .form-required {
+      color: rgb(217, 2, 32);
+      margin-right: 10rpx;
     }
-    .form-item {
-        position: absolute;
-        top: 100rpx;
-        left: 50rpx;
-        width: 600rpx;
-        height: 60rpx;
-        border: 2rpx solid #B36AEB;
-        border-radius: 16rpx;
-        display: flex;
-        align-items: center;
-        .form-item-gap {
-            width: 15rpx;
-        }
-        .form-input {
-            flex: 1;
-        }
+    .form-title {
+      color: #170a1e;
     }
-    .form-item-img {
-        position: absolute;
-        top: 100rpx;
-        left: 50rpx;
-        width: 600rpx;
-        height: 120rpx;
+  }
+  .form-item {
+    position: absolute;
+    top: 100rpx;
+    left: 50rpx;
+    width: 600rpx;
+    height: 60rpx;
+    border: 2rpx solid #b36aeb;
+    border-radius: 16rpx;
+    display: flex;
+    align-items: center;
+    .form-item-gap {
+      width: 15rpx;
     }
+    .form-input {
+      flex: 1;
+    }
+  }
+  .form-item-img {
+    position: absolute;
+    top: 100rpx;
+    left: 50rpx;
+    width: 600rpx;
+    height: 120rpx;
+  }
 }
 
 .none {
-    display: none;
+  display: none;
 }

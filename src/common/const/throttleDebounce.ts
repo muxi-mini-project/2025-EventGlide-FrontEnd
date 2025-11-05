@@ -16,7 +16,7 @@ const throttle = (func, limit) => {
             lastRan = Date.now();
           }
         },
-        limit - (Date.now() - lastRan),
+        limit - (Date.now() - lastRan)
       );
     }
   };

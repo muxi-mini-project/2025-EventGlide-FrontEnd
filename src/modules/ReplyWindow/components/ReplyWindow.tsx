@@ -1,8 +1,8 @@
-import { memo, useState, useContext } from "react";
-import { View, Input, PageContainer } from "@tarojs/components";
-import { SetReponseContext } from "@/subpackage/actComment";
-import { SetBlogReponseContext } from "@/subpackage/blogDetail";
-import "./style.scss";
+import { memo, useState, useContext } from 'react';
+import { View, Input, PageContainer } from '@tarojs/components';
+import { SetReponseContext } from '@/subpackage/actComment';
+import { SetBlogReponseContext } from '@/subpackage/blogDetail';
+import './style.scss';
 
 interface replyWindowProps {
   isVisible: boolean;
@@ -17,7 +17,7 @@ interface replyWindowProps {
 }
 
 const ReplyWindow: React.FC<replyWindowProps> = memo(({ ...props }) => {
-  const [replyText, setReplyText] = useState("");
+  const [replyText, setReplyText] = useState('');
   const setResponse = useContext(SetReponseContext);
   const setBlogReponseContext = useContext(SetBlogReponseContext);
 
@@ -27,15 +27,14 @@ const ReplyWindow: React.FC<replyWindowProps> = memo(({ ...props }) => {
     const data = {
       ...params,
       content: replyText,
-      parent_id: props.reply_id?? params.parent_id,
-    }
+      parent_id: props.reply_id ?? params.parent_id,
+    };
     if (page === 'activity') {
       setResponse(data);
-    }
-    else if (page === 'post') {
+    } else if (page === 'post') {
       setBlogReponseContext(data);
-    } 
-    setReplyText("");
+    }
+    setReplyText('');
     props.setIsVisible(false);
   };
 
@@ -52,14 +51,16 @@ const ReplyWindow: React.FC<replyWindowProps> = memo(({ ...props }) => {
           <Input
             placeholder="请输入回复内容"
             placeholderClass="reply-window-input-placeholder"
-            placeholderStyle={"font-family: SimHei;font-size: 30rpx;"}
+            placeholderStyle={'font-family: SimHei;font-size: 30rpx;'}
             value={replyText}
             onInput={(e) => setReplyText(e.detail.value)}
             focus={true}
             onConfirm={() => handleSubmit()}
           />
         </View>
-        <View className="reply-window-btn" onClick={() => handleSubmit()}>发布</View>
+        <View className="reply-window-btn" onClick={() => handleSubmit()}>
+          发布
+        </View>
       </View>
     </PageContainer>
   );

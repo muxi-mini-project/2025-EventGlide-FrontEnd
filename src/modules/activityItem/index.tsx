@@ -1,3 +1,3 @@
-import Active from './components/active'
+import Active from './components/active';
 
-export default Active
+export default Active;

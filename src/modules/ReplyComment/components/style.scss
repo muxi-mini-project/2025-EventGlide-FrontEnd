@@ -1,51 +1,51 @@
 .ReplyComment {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #f1eefc;
+  &-content {
     width: 100%;
+    height: 240rpx;
     position: relative;
+  }
+  &-avatar {
+    position: absolute;
+    top: 40rpx;
+    left: 40rpx;
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+  }
+  &-favor {
+    position: absolute;
+    top: 40rpx;
+    right: 40rpx;
+    width: 40rpx;
+    height: 40rpx;
+  }
+  &-info {
+    position: absolute;
+    top: 40rpx;
+    left: 140rpx;
     display: flex;
     flex-direction: column;
-    border-top: 1px solid #F1EEFC;
+    gap: 20rpx;
+    &-name {
+      font-size: 30rpx;
+      color: #5e5064;
+      opacity: 0.5;
+    }
     &-content {
-        width: 100%;
-        height: 240rpx;
-        position: relative;
+      width: 80%;
+      font-size: 32rpx;
+      color: #5e5064;
     }
-    &-avatar {
-        position: absolute;
-        top: 40rpx;
-        left: 40rpx;
-        width: 80rpx;
-        height: 80rpx;
-        border-radius: 50%;
+    &-timesite {
+      font-size: 24rpx;
+      color: rgba(94, 80, 100, 0.5);
+      display: flex;
+      gap: 20rpx;
     }
-    &-favor {
-        position: absolute;
-        top: 40rpx;
-        right: 40rpx;
-        width: 40rpx;
-        height: 40rpx;
-    }
-    &-info {
-        position: absolute;
-        top: 40rpx;
-        left: 140rpx;
-        display: flex;
-        flex-direction: column;
-        gap: 20rpx;
-        &-name {
-            font-size: 30rpx;
-            color: #5E5064;
-            opacity: 0.5;
-        }
-        &-content {
-            width: 80%;
-            font-size: 32rpx;
-            color: #5E5064;
-        }
-        &-timesite {
-            font-size: 24rpx;
-            color: rgba(94, 80, 100, 0.5);
-            display: flex;
-            gap: 20rpx;
-        }
-    }
+  }
 }

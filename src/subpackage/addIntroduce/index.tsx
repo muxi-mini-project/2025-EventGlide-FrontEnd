@@ -1,38 +1,35 @@
-import Button from "@/common/components/Button";
-import { View, Image, Input, Textarea } from "@tarojs/components";
-import { useEffect, useState } from "react";
-import "./index.scss";
-import Taro from "@tarojs/taro";
-import Picture from "@/common/components/Picture";
-import draft from "@/common/svg/add/draft.svg";
-import DraftWinodw from "@/modules/draftWinow";
-import AlbumWindow from "@/modules/albumWindow";
-import useActiveInfoStore from "@/store/activeInfoStore";
-import { useDidShow } from "@tarojs/taro";
-import get from "@/common/api/get";
-import LabelForm from "@/common/types/LabelForm";
+import Button from '@/common/components/Button';
+import { View, Image, Input, Textarea } from '@tarojs/components';
+import { useEffect, useState } from 'react';
+import './index.scss';
+import Taro from '@tarojs/taro';
+import Picture from '@/common/components/Picture';
+import draft from '@/common/svg/add/draft.svg';
+import DraftWinodw from '@/modules/draftWinow';
+import AlbumWindow from '@/modules/albumWindow';
+import useActiveInfoStore from '@/store/activeInfoStore';
+import { useDidShow } from '@tarojs/taro';
+import get from '@/common/api/get';
+import LabelForm from '@/common/types/LabelForm';
 
 const Index = () => {
   const [isShowDraft, setIsShowDraft] = useState(false);
   const [isShowAlbum, setIsShowAlbum] = useState(false);
   const [imgUrl, setImgUrl] = useState<string[]>([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const { setBasicInfo } = useActiveInfoStore();
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   useDidShow(() => {
-    get("/act/load").then((res) => {
-      if (res.msg === "success") {
+    get('/act/load').then((res) => {
+      if (res.msg === 'success') {
         console.log(res.data);
         setTitle(title || res.data.Title);
         setDescription(description || res.data.Introduce);
         if (Array.isArray(res.data.ShowImg)) {
           setImgUrl(res.data.ShowImg);
-        } else if (
-          typeof res.data.ShowImg === "string" &&
-          res.data.ShowImg !== ""
-        ) {
+        } else if (typeof res.data.ShowImg === 'string' && res.data.ShowImg !== '') {
           setImgUrl([res.data.ShowImg]);
         } else {
           setImgUrl([]);
@@ -44,17 +41,17 @@ const Index = () => {
 
   const btn = {
     // url: "",
-    text: "下一步",
-    backgroundColor: "#CF79FA",
-    textColor: "#FFFEFF",
+    text: '下一步',
+    backgroundColor: '#CF79FA',
+    textColor: '#FFFEFF',
     isBorder: false,
   };
   const handleNextClick = () => {
-    if (!title.trim()&&!description.trim()) {
+    if (!title.trim() && !description.trim()) {
       Taro.showToast({
         title: '请填写活动标题和活动内容',
         icon: 'none',
-        duration: 2000
+        duration: 2000,
       });
       return;
     }
@@ -62,7 +59,7 @@ const Index = () => {
       Taro.showToast({
         title: '请填写活动标题',
         icon: 'none',
-        duration: 2000
+        duration: 2000,
       });
       return;
     }
@@ -70,15 +67,15 @@ const Index = () => {
       Taro.showToast({
         title: '请填写活动内容',
         icon: 'none',
-        duration: 2000
+        duration: 2000,
       });
       return;
     }
     Taro.navigateTo({
       url: '/subpackage/addLabel/index',
     });
-    setBasicInfo(title, description, imgUrl)
-  }
+    setBasicInfo(title, description, imgUrl);
+  };
 
   return (
     <>
@@ -87,7 +84,7 @@ const Index = () => {
           <View className="add-introduce-container-title">{count}/1000</View>
           <View className="add-introduce-container-content">
             <Input
-              style={"font-size: 44rpx;color: #170A1E;font-family: SimHei;height: 50rpx;"}
+              style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;height: 50rpx;'}
               className="add-introduce-container-content-title"
               value={title}
               onInput={(e) => setTitle(e.detail.value)}
@@ -128,21 +125,11 @@ const Index = () => {
           </View>
         </View>
         <View className="add-introduce-floor">
-          <View
-            className="add-introduce-floor-draft"
-            onClick={() => setIsShowDraft(true)}
-          >
-            <Image
-              src={draft}
-              mode="widthFix"
-              style={{ width: "60rpx" }}
-            ></Image>
+          <View className="add-introduce-floor-draft" onClick={() => setIsShowDraft(true)}>
+            <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
             <View className="add-introduce-floor-draft-text">存草稿</View>
           </View>
-          <View
-            className="add-introduce-floor-btn"
-            onClick={handleNextClick}
-          >
+          <View className="add-introduce-floor-btn" onClick={handleNextClick}>
             <Button {...btn} />
           </View>
         </View>
@@ -165,7 +152,7 @@ const Index = () => {
           isOverlay={true}
           imgUrl={imgUrl}
           setImgUrl={setImgUrl}
-          type={"event"}
+          type={'event'}
         />
       )}
     </>

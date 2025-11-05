@@ -1,2 +1,2 @@
-import Picture from "./components/Picture";
+import Picture from './components/Picture';
 export default Picture;

@@ -18,13 +18,13 @@
     position: absolute;
     width: 50rpx;
     position: relative;
-    &-container{
+    &-container {
       display: inline-block;
       position: relative;
       left: 40rpx;
       top: 25rpx;
     }
-    &-msg{
+    &-msg {
       position: absolute;
       width: 25rpx;
       height: 25rpx;
@@ -67,7 +67,7 @@
         background-color: #fff;
         font: {
           size: 24rpx;
-          family: "SimHei";
+          family: 'SimHei';
         }
         .gap {
           position: absolute;
@@ -98,7 +98,7 @@
         background: linear-gradient(90deg, #efc3f7 0%, #c780ed 100%);
         font: {
           size: 25rpx;
-          family: "SimHei";
+          family: 'SimHei';
         }
         color: #fff;
       }

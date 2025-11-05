@@ -1,2 +1,2 @@
-import BlogAdd from "./components/blogAdd";
+import BlogAdd from './components/blogAdd';
 export default BlogAdd;

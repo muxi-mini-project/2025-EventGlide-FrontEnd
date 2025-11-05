@@ -1,20 +1,17 @@
-import { View } from "@tarojs/components";
-import "./index.scss";
+import { View } from '@tarojs/components';
+import './index.scss';
 import {
   activeOrganizerOption,
   activeTypeOption,
   activeSiteOption,
-} from "@/common/const/Formconst";
-import classnames from "classnames";
-import { useState } from "react";
-import DatePicker from "@/modules/DatePicker";
-import useActivityStore from "@/store/ActivityStore";
-import { year, month, day, hour, minute } from "@/common/const/DateList";
-import { switchTab, useDidShow } from "@tarojs/taro";
-import {
-  NavigationBar,
-  NavigationBarBack,
-} from "@/common/components/NavigationBar";
+} from '@/common/const/Formconst';
+import classnames from 'classnames';
+import { useState } from 'react';
+import DatePicker from '@/modules/DatePicker';
+import useActivityStore from '@/store/ActivityStore';
+import { year, month, day, hour, minute } from '@/common/const/DateList';
+import { switchTab, useDidShow } from '@tarojs/taro';
+import { NavigationBar, NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
   const [activeOrganizer, setActiveOrganizer] = useState<number[]>([0]);
@@ -24,16 +21,16 @@ const Index = () => {
   const [activeTypeAll, setActiveTypeAll] = useState(false);
   const [activeSiteAll, setActiveSiteAll] = useState(false);
   const [activeSign, setActiveSign] = useState(false);
-  const [activeSignText, setActiveSignText] = useState("否");
+  const [activeSignText, setActiveSignText] = useState('否');
   const [isDatePickerVisiable, setIsDatePickerVisiable] = useState(false);
   const [activeYearIndex, setActiveYearIndex] = useState(0);
   const [activeMonthIndex, setActiveMonthIndex] = useState(0);
   const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [activeHourIndex, setActiveHourIndex] = useState(0);
   const [activeMinuteIndex, setActiveMinuteIndex] = useState(0);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [timeType, setTimeType] = useState("start");
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [timeType, setTimeType] = useState('start');
 
   const { setSelectInfo, setIsSelect } = useActivityStore();
   useDidShow(() => {
@@ -41,46 +38,39 @@ const Index = () => {
   });
 
   const handleOnclick = (index: number, type: string) => {
-    if (type === "organizer") {
-      if (!activeOrganizer.includes(index))
-        setActiveOrganizer([...activeOrganizer, index]);
+    if (type === 'organizer') {
+      if (!activeOrganizer.includes(index)) setActiveOrganizer([...activeOrganizer, index]);
       else setActiveOrganizer(activeOrganizer.filter((item) => item !== index));
-    } else if (type === "type") {
+    } else if (type === 'type') {
       if (!activeType.includes(index)) setActiveType([...activeType, index]);
       else setActiveType(activeType.filter((item) => item !== index));
-    } else if (type === "site") {
+    } else if (type === 'site') {
       if (!activeSite.includes(index)) setActiveSite([...activeSite, index]);
       else setActiveSite(activeSite.filter((item) => item !== index));
     }
   };
   const handleAllClick = (type: string) => {
-    if (type === "organizer") {
+    if (type === 'organizer') {
       setActiveOrganizerAll(!activeOrganizerAll);
       setActiveOrganizer(
-        activeOrganizerAll
-          ? []
-          : [...activeOrganizerOption.map((_, index) => index)],
+        activeOrganizerAll ? [] : [...activeOrganizerOption.map((_, index) => index)]
       );
-    } else if (type === "type") {
+    } else if (type === 'type') {
       setActiveTypeAll(!activeTypeAll);
-      setActiveType(
-        activeTypeAll ? [] : [...activeTypeOption.map((_, index) => index)],
-      );
-    } else if (type === "site") {
+      setActiveType(activeTypeAll ? [] : [...activeTypeOption.map((_, index) => index)]);
+    } else if (type === 'site') {
       setActiveSiteAll(!activeSiteAll);
-      setActiveSite(
-        activeSiteAll ? [] : [...activeSiteOption.map((_, index) => index)],
-      );
+      setActiveSite(activeSiteAll ? [] : [...activeSiteOption.map((_, index) => index)]);
     }
   };
-  const handleSignClick = (type: string = "否") => {
-    if (type === "否") {
+  const handleSignClick = (type: string = '否') => {
+    if (type === '否') {
       setActiveSign(false);
-      setActiveSignText("否");
-    } else if (type === "是") {
+      setActiveSignText('否');
+    } else if (type === '是') {
       setActiveSign(true);
-      setActiveSignText("是");
-    } else if (type === "") {
+      setActiveSignText('是');
+    } else if (type === '') {
       setActiveSign(activeSign);
       setActiveSignText(activeSignText);
     }
@@ -97,13 +87,9 @@ const Index = () => {
 
   const handleConfirm = () => {
     const selectedInfo = {
-      holderType: activeOrganizerOption.filter((_, index) =>
-        activeOrganizer.includes(index),
-      ),
+      holderType: activeOrganizerOption.filter((_, index) => activeOrganizer.includes(index)),
       type: activeTypeOption.filter((_, index) => activeType.includes(index)),
-      position: activeSiteOption.filter((_, index) =>
-        activeSite.includes(index),
-      ),
+      position: activeSiteOption.filter((_, index) => activeSite.includes(index)),
       if_register: activeSignText,
       detailTime: {
         startTime: startTime,
@@ -111,17 +97,17 @@ const Index = () => {
       },
     };
     setSelectInfo(selectedInfo);
-    switchTab({ url: "/pages/indexHome/index" });
+    switchTab({ url: '/pages/indexHome/index' });
   };
 
   const handleTimeConfirm = (type: string) => {
-    if (type === "start") {
+    if (type === 'start') {
       setStartTime(
-        `${year[activeYearIndex]}-${month[activeMonthIndex]}-${day[activeDayIndex]} ${hour[activeHourIndex]}:${minute[activeMinuteIndex]}`,
+        `${year[activeYearIndex]}-${month[activeMonthIndex]}-${day[activeDayIndex]} ${hour[activeHourIndex]}:${minute[activeMinuteIndex]}`
       );
-    } else if (type === "end") {
+    } else if (type === 'end') {
       setEndTime(
-        `${year[activeYearIndex]}-${month[activeMonthIndex]}-${day[activeDayIndex]} ${hour[activeHourIndex]}:${minute[activeMinuteIndex]}`,
+        `${year[activeYearIndex]}-${month[activeMonthIndex]}-${day[activeDayIndex]} ${hour[activeHourIndex]}:${minute[activeMinuteIndex]}`
       );
     }
     setIsDatePickerVisiable(false);
@@ -142,24 +128,24 @@ const Index = () => {
             {activeOrganizerAll === true ? (
               <View
                 className="actScreen-page-container-all-radio-active"
-                onClick={() => handleAllClick("organizer")}
+                onClick={() => handleAllClick('organizer')}
               >
                 <View className="actScreen-page-container-all-radio-active-icon"></View>
               </View>
             ) : (
               <View
                 className="actScreen-page-container-all-radio"
-                onClick={() => handleAllClick("organizer")}
+                onClick={() => handleAllClick('organizer')}
               ></View>
             )}
           </View>
           <View className="actScreen-page-container-choice">
             {activeOrganizerOption.map((item, index) => (
               <View
-                className={classnames("label", {
-                  "active-label": activeOrganizer.includes(index),
+                className={classnames('label', {
+                  'active-label': activeOrganizer.includes(index),
                 })}
-                onClick={() => handleOnclick(index, "organizer")}
+                onClick={() => handleOnclick(index, 'organizer')}
                 key={index}
               >
                 {item}
@@ -174,24 +160,24 @@ const Index = () => {
             {activeTypeAll === true ? (
               <View
                 className="actScreen-page-container-all-radio-active"
-                onClick={() => handleAllClick("type")}
+                onClick={() => handleAllClick('type')}
               >
                 <View className="actScreen-page-container-all-radio-active-icon"></View>
               </View>
             ) : (
               <View
                 className="actScreen-page-container-all-radio"
-                onClick={() => handleAllClick("type")}
+                onClick={() => handleAllClick('type')}
               ></View>
             )}
           </View>
           <View className="actScreen-page-container-choice">
             {activeTypeOption.map((item, index) => (
               <View
-                className={classnames("label", {
-                  "active-label": activeType.includes(index),
+                className={classnames('label', {
+                  'active-label': activeType.includes(index),
                 })}
-                onClick={() => handleOnclick(index, "type")}
+                onClick={() => handleOnclick(index, 'type')}
                 key={index}
               >
                 {item}
@@ -206,20 +192,20 @@ const Index = () => {
               className="actScreen-page-time-choice-item"
               onClick={() => {
                 setIsDatePickerVisiable(true);
-                setTimeType("start");
+                setTimeType('start');
               }}
             >
-              {startTime === "" ? "请选择开始时间" : startTime}
+              {startTime === '' ? '请选择开始时间' : startTime}
             </View>
             <View className="actScreen-page-time-choice-text">-</View>
             <View
               className="actScreen-page-time-choice-item"
               onClick={() => {
                 setIsDatePickerVisiable(true);
-                setTimeType("end");
+                setTimeType('end');
               }}
             >
-              {endTime === "" ? "请选择结束时间" : endTime}
+              {endTime === '' ? '请选择结束时间' : endTime}
             </View>
           </View>
         </View>
@@ -230,26 +216,26 @@ const Index = () => {
             {activeSiteAll === true ? (
               <View
                 className="actScreen-page-container-all-radio-active"
-                onClick={() => handleAllClick("site")}
+                onClick={() => handleAllClick('site')}
               >
                 <View className="actScreen-page-container-all-radio-active-icon"></View>
               </View>
             ) : (
               <View
                 className="actScreen-page-container-all-radio"
-                onClick={() => handleAllClick("site")}
+                onClick={() => handleAllClick('site')}
               ></View>
             )}
           </View>
           <View className="actScreen-page-container-choice">
             {activeSiteOption.map((item, index) => (
               <View
-                className={classnames("label", {
-                  "active-label": activeSite.includes(index),
+                className={classnames('label', {
+                  'active-label': activeSite.includes(index),
                 })}
-                onClick={() => handleOnclick(index, "site")}
+                onClick={() => handleOnclick(index, 'site')}
                 key={index}
-                style={{ fontSize: "24rpx" }}
+                style={{ fontSize: '24rpx' }}
               >
                 {item}
               </View>
@@ -262,38 +248,35 @@ const Index = () => {
             {activeSign === true ? (
               <View
                 className="actScreen-page-sign-choice-active"
-                onClick={() => handleSignClick("")}
+                onClick={() => handleSignClick('')}
               >
                 <View className="actScreen-page-container-all-radio-active-icon"></View>
               </View>
             ) : (
               <View
                 className="actScreen-page-sign-choice-radio"
-                onClick={() => handleSignClick("是")}
+                onClick={() => handleSignClick('是')}
               ></View>
             )}
             <View className="actScreen-page-sign-choice-text">是</View>
             {activeSign === false ? (
               <View
                 className="actScreen-page-sign-choice-active"
-                onClick={() => handleSignClick("")}
+                onClick={() => handleSignClick('')}
               >
                 <View className="actScreen-page-container-all-radio-active-icon"></View>
               </View>
             ) : (
               <View
                 className="actScreen-page-sign-choice-radio"
-                onClick={() => handleSignClick("否")}
+                onClick={() => handleSignClick('否')}
               ></View>
             )}
             <View className="actScreen-page-sign-choice-text">否</View>
           </View>
         </View>
         <View className="actScreen-page-floor">
-          <View
-            className="actScreen-page-floor-btn"
-            onClick={() => handlereset()}
-          >
+          <View className="actScreen-page-floor-btn" onClick={() => handlereset()}>
             重置
           </View>
           <View className="actScreen-page-floor-btn" onClick={handleConfirm}>

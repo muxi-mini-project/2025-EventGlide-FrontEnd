@@ -1,2 +1,2 @@
-import ActivityAddRules from "./components/ActivityAddRules";
+import ActivityAddRules from './components/ActivityAddRules';
 export default ActivityAddRules;

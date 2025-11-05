@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { selectedInfo, ActivityDetailList } from "@/common/types/ActiveList";
+import { create } from 'zustand';
+import { selectedInfo, ActivityDetailList } from '@/common/types/ActiveList';
 
 interface ActivityStoreState {
   selectedInfo: selectedInfo | null;
@@ -25,13 +25,13 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
   setSelectedItem: (Item) => set(() => ({ selectedItem: Item })),
   setLikeNumChange: (id, type) => {
     const currentActiveList = useActivityStore.getState().activeList;
-    const updatedActiveList = currentActiveList.map((item) => { 
+    const updatedActiveList = currentActiveList.map((item) => {
       if (item.bid === id) {
         return {
           ...item,
-          likeNum: type === "add" ? item.likeNum + 1 : item.likeNum - 1,
-          isLike: type === "add" ? "true" : "false"
-        }
+          likeNum: type === 'add' ? item.likeNum + 1 : item.likeNum - 1,
+          isLike: type === 'add' ? 'true' : 'false',
+        };
       }
       return item;
     });
@@ -39,18 +39,18 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
   },
   setCollectNumChange: (id, type) => {
     const currentActiveList = useActivityStore.getState().activeList;
-    const updatedActiveList = currentActiveList.map((item) => { 
+    const updatedActiveList = currentActiveList.map((item) => {
       if (item.bid === id) {
         return {
           ...item,
-          collectNum: type === "add" ? item.collectNum + 1 : item.collectNum - 1,
-          isCollect: type === "add" ? "true" : "false"
-        }
+          collectNum: type === 'add' ? item.collectNum + 1 : item.collectNum - 1,
+          isCollect: type === 'add' ? 'true' : 'false',
+        };
       }
       return item;
     });
     set(() => ({ activeList: updatedActiveList }));
-  }
+  },
 }));
 
 export default useActivityStore;

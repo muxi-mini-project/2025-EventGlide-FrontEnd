@@ -1,2 +1,2 @@
-import ReplyWindow from "./components/ReplyWindow";
+import ReplyWindow from './components/ReplyWindow';
 export default ReplyWindow;

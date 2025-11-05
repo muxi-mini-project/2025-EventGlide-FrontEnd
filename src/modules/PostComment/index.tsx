@@ -1,2 +1,2 @@
-import PostComment from "./components/PostComment";
+import PostComment from './components/PostComment';
 export default PostComment;

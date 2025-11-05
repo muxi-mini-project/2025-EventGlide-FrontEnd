@@ -1,2 +1,2 @@
-import PolicyWindow from "./components/PolicyWindow";
+import PolicyWindow from './components/PolicyWindow';
 export default PolicyWindow;

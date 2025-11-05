@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import LabelForm from "@/common/types/LabelForm";
+import { create } from 'zustand';
+import LabelForm from '@/common/types/LabelForm';
 
 interface activeInfoState {
   title: string;
@@ -11,18 +11,18 @@ interface activeInfoState {
 }
 
 const useActiveInfoStore = create<activeInfoState>((set) => ({
-  title: "",
-  introduce: "",
+  title: '',
+  introduce: '',
   showImg: [],
   labelform: {
-    type: "",
-    holderType: "",
-    startTime: "",
-    endTime: "",
-    position: "",
-    if_register: "",
-    activeForm: "",
-    register_method: "",
+    type: '',
+    holderType: '',
+    startTime: '',
+    endTime: '',
+    position: '',
+    if_register: '',
+    activeForm: '',
+    register_method: '',
     signer: [],
   },
   setBasicInfo: (title: string, description: string, imgUrl?: string[]) => {

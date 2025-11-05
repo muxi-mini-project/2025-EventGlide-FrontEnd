@@ -1,23 +1,23 @@
-import { View, ScrollView, GridView, Image, Input } from "@tarojs/components";
-import Taro, { navigateTo, useDidShow } from "@tarojs/taro";
-import { useState, useEffect } from "react";
-import "./index.scss";
-import Post from "@/modules/Post/index";
-import BlogAdd from "@/modules/blogAdd";
-import AlbumWindow from "@/modules/albumWindow";
-import searchpic from "@/common/assets/Postlist/搜索.png";
-import Info from "@/common/assets/Postlist/info.png";
-import usePostStore, { blogType } from "@/store/PostStore";
-import get from "@/common/api/get";
-import useActivityStore from "@/store/ActivityStore";
-import post from "@/common/api/post";
-import { NavigationBarTabBar } from "@/common/components/NavigationBar";
+import { View, ScrollView, GridView, Image, Input } from '@tarojs/components';
+import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
+import { useState, useEffect } from 'react';
+import './index.scss';
+import Post from '@/modules/Post/index';
+import BlogAdd from '@/modules/blogAdd';
+import AlbumWindow from '@/modules/albumWindow';
+import searchpic from '@/common/assets/Postlist/搜索.png';
+import Info from '@/common/assets/Postlist/info.png';
+import usePostStore, { blogType } from '@/store/PostStore';
+import get from '@/common/api/get';
+import useActivityStore from '@/store/ActivityStore';
+import post from '@/common/api/post';
+import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 
 const Index = () => {
   const [isAlbumVisiable, setIsAlbumVisiable] = useState(false);
   const [windowHeight, setWindowHeight] = useState(0);
   const [isShowList, setIsShowList] = useState<number[]>([]);
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>('');
   const { showImg: imgUrl, setImgUrl } = usePostStore();
   const { blogList, setBlogList, setBackPage, setBlogIndex } = usePostStore();
   const { setIsSelect } = useActivityStore();
@@ -27,10 +27,10 @@ const Index = () => {
   });
 
   useDidShow(() => {
-    get("/post/all").then((res) => {
+    get('/post/all').then((res) => {
       setBlogList(res.data);
     });
-    get("/feed/total").then((res) => {
+    get('/feed/total').then((res) => {
       console.log(res.data);
     });
     setImgUrl([]);
@@ -78,26 +78,26 @@ const Index = () => {
   };
 
   const handleSearch = () => {
-    if (searchValue === "") {
+    if (searchValue === '') {
       get(`/post/all`).then((res) => {
-        if (res.msg === "success") {
+        if (res.msg === 'success') {
           setBlogList(res.data);
         } else {
           Taro.showToast({
             title: `${res.msg}`,
-            icon: "none",
+            icon: 'none',
             duration: 1000,
           });
         }
       });
     } else {
-      post("/post/find", { name: searchValue }).then((res) => {
-        if (res.msg === "success") {
+      post('/post/find', { name: searchValue }).then((res) => {
+        if (res.msg === 'success') {
           setBlogList(res.data);
         } else {
           Taro.showToast({
             title: `${res.msg}`,
-            icon: "none",
+            icon: 'none',
             duration: 1000,
           });
         }
@@ -106,12 +106,14 @@ const Index = () => {
   };
 
   useDidShow(() => {
-    get("/feed/total").then((res) => {
-      setMsgCount(res.data.total);
-    }).catch((err) => {
-      console.log(err);
-    })
-  })
+    get('/feed/total')
+      .then((res) => {
+        setMsgCount(res.data.total);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 
   return (
     <>
@@ -124,7 +126,7 @@ const Index = () => {
           isOverlay={true}
           imgUrl={imgUrl}
           setImgUrl={setImgUrl}
-          type={"blog"}
+          type={'blog'}
         />
         <View className="search-container">
           <View className="info-icon-container">
@@ -132,9 +134,11 @@ const Index = () => {
               src={Info}
               className="info-icon"
               mode="widthFix"
-              onClick={() => navigateTo({ url: "/subpackage/blogInfo/index" })}
+              onClick={() => navigateTo({ url: '/subpackage/blogInfo/index' })}
             />
-            {msgCount > 0 && <View className="info-icon-msg">{msgCount < 100 ? msgCount : '99+'}</View>}
+            {msgCount > 0 && (
+              <View className="info-icon-msg">{msgCount < 100 ? msgCount : '99+'}</View>
+            )}
           </View>
           <View className="sticky-search">
             <View className="search-input-box">
@@ -157,7 +161,7 @@ const Index = () => {
         <ScrollView
           className="blog-container"
           type="custom"
-          style={{ height: "calc(100vh - 270rpx)" }}
+          style={{ height: 'calc(100vh - 270rpx)' }}
           scrollY={true}
           onScroll={() => handleScroll()}
           enhanced={true}
@@ -167,21 +171,17 @@ const Index = () => {
             {blogList === null
               ? null
               : blogList.map((item, index) => (
-                <View
-                  key={index}
-                  id={`post-item-${index}`}
-                  onClick={() => {
-                    setBlogIndex(item.bid);
-                    setBackPage("blogHome");
-                  }}
-                >
-                  <Post
-                    item={item}
-                    index={index}
-                    isShowImg={isShowList.includes(index)}
-                  />
-                </View>
-              ))}
+                  <View
+                    key={index}
+                    id={`post-item-${index}`}
+                    onClick={() => {
+                      setBlogIndex(item.bid);
+                      setBackPage('blogHome');
+                    }}
+                  >
+                    <Post item={item} index={index} isShowImg={isShowList.includes(index)} />
+                  </View>
+                ))}
           </GridView>
         </ScrollView>
       </View>

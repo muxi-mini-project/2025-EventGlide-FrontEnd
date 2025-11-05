@@ -29,3 +29,20 @@
   color: #8A8A8A;
   text-align: center;
 }
+
+.notice-page-null {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 50vh;
+  margin-top: 200rpx;
+}
+
+.notice-page-null-text {
+  font-size: 36px;
+  font-weight: 400;
+  color: #8A8A8A;
+  text-align: center;
+}

@@ -5,6 +5,7 @@ import LetterType from "@/common/types/LetterType";
 import classnames from "classnames";
 import get from "@/common/api/get";
 import { useDidShow } from "@tarojs/taro";
+import NoticePageNull from "@/modules/null/components/noticepagenull";
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
   return (
@@ -149,8 +150,10 @@ const Index = () => {
         </View>
       </View>
       <View className="blogInfo-page-content">
+        {showPage === "favor" && favor.length === 0 && <NoticePageNull />}
         {showPage === "favor" && 
           favor.map((item, index) => <LetterListItem key={index} {...item} />)}
+        {showPage === "letter" && letter.length === 0 && <NoticePageNull />}
         {showPage === "letter" &&
           letter.map((item, index) => <LetterListItem key={index} {...item} />)}
       </View>

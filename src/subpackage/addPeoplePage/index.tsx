@@ -1,13 +1,13 @@
-import { View, Input } from "@tarojs/components";
-import { navigateBack } from "@tarojs/taro";
-import { useState } from "react";
-import "./index.scss";
-import useSignersStore from "@/store/SignersStore";
+import { View, Input } from '@tarojs/components';
+import { navigateBack } from '@tarojs/taro';
+import { useState } from 'react';
+import './index.scss';
+import useSignersStore from '@/store/SignersStore';
 
 const Index = () => {
   const { signers, setAddSigner } = useSignersStore();
-  const [name, setName] = useState("");
-  const [idCard, setIdCard] = useState("");
+  const [name, setName] = useState('');
+  const [idCard, setIdCard] = useState('');
   const handleClick = () => {
     setAddSigner({ id: signers.length + 1, name, studentid: idCard });
     navigateBack();
@@ -22,7 +22,7 @@ const Index = () => {
             value={name}
             onInput={(e) => setName(e.detail.value)}
             placeholder="输入姓名"
-            placeholderClass={"placeholder"}
+            placeholderClass={'placeholder'}
           ></Input>
         </View>
         <View className="addPeoplepage-form-item">
@@ -31,7 +31,7 @@ const Index = () => {
             value={idCard}
             onInput={(e) => setIdCard(e.detail.value)}
             placeholder="输入一站式账号"
-            placeholderClass={"placeholder"}
+            placeholderClass={'placeholder'}
           ></Input>
         </View>
       </View>

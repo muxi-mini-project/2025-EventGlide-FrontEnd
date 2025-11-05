@@ -1,2 +1,2 @@
-import BlogComment from "./BlogComment/BlogComment";
+import BlogComment from './BlogComment/BlogComment';
 export default BlogComment;

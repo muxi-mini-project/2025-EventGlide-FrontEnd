@@ -1,10 +1,10 @@
-import "./style.scss";
-import { View, Input, Text } from "@tarojs/components";
-import React, { memo } from "react";
-import formType from "@/common/types/FormType";
-import classnames from "classnames";
-import LabelForm from "@/common/types/LabelForm";
-import Picture from "@/common/components/Picture";
+import './style.scss';
+import { View, Input, Text } from '@tarojs/components';
+import React, { memo } from 'react';
+import formType from '@/common/types/FormType';
+import classnames from 'classnames';
+import LabelForm from '@/common/types/LabelForm';
+import Picture from '@/common/components/Picture';
 
 interface formProps extends formType {
   id: number;
@@ -19,8 +19,7 @@ interface formProps extends formType {
 
 const Form: React.FC<formProps> = memo(function ({ ...props }) {
   const handleInput = (e: any) => {
-    if (props.id === 4)
-      props.setFormValue({ ...props.formValue, position: e.detail.value });
+    if (props.id === 4) props.setFormValue({ ...props.formValue, position: e.detail.value });
     else if (props.id === 7)
       props.setFormValue({ ...props.formValue, register_method: e.detail.value });
   };
@@ -29,7 +28,7 @@ const Form: React.FC<formProps> = memo(function ({ ...props }) {
       <View className="form">
         <View className="form-title-container">
           <Text
-            className={classnames("form-title-required", {
+            className={classnames('form-title-required', {
               none: !props.required,
             })}
           >
@@ -37,13 +36,7 @@ const Form: React.FC<formProps> = memo(function ({ ...props }) {
           </Text>
           <Text className="form-title">{props.text}</Text>
         </View>
-        <View
-          className={
-            props.id === 6 && props.activeForm.length !== 0
-              ? "none"
-              : "form-item"
-          }
-        >
+        <View className={props.id === 6 && props.activeForm.length !== 0 ? 'none' : 'form-item'}>
           <View className="form-item-gap"></View>
           <Input
             className="form-input"

@@ -1,9 +1,10 @@
-import "./style.scss";
-import { memo, useState } from "react";
-import { View, PageContainer } from "@tarojs/components";
-import DatePicker from "@/modules/DatePicker";
-import AlbumWindow from "@/modules/albumWindow";
-import { year, month, day, hour, minute } from "@/common/const/DateList";
+import './style.scss';
+import { memo, useState } from 'react';
+import { View, PageContainer } from '@tarojs/components';
+import DatePicker from '@/modules/DatePicker';
+import AlbumWindow from '@/modules/albumWindow';
+import { year, month, day, hour, minute } from '@/common/const/DateList';
+import { it } from 'node:test';
 
 const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
   const [selectedValue, setSelectedValue] = useState<number>(-1);
@@ -23,10 +24,10 @@ const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (item) => {
     props.setIsVisiable(false);
-    if (props.type === "dateChoice") {
-      const date = `${year[activeYearIndex]}-${month[activeMonthIndex]}-${day[activeDayIndex]} ${hour[activeHourIndex]}:${minute[activeMinuteIndex]}`;
+    if (props.type === 'dateChoice') {
+      const date = `${item.date} ${item.time}`;
       console.log(date);
       props.setFormValue({
         ...props.formValue,
@@ -43,7 +44,7 @@ const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
     }
   };
   switch (props.type) {
-    case "albumChoice":
+    case 'albumChoice':
       return (
         <AlbumWindow
           isVisiable={props.isVisiable}
@@ -54,7 +55,7 @@ const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
           type="event"
         />
       );
-    case "dateChoice":
+    case 'dateChoice':
       return (
         <DatePicker
           isVisiable={props.isVisiable}
@@ -72,7 +73,7 @@ const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
           setActiveMinuteIndex={setActiveMinuteIndex}
         />
       );
-    case "SimpChoice":
+    case 'SimpChoice':
       return (
         <PageContainer
           show={props.isVisiable && showLIst.includes(props.showFormIndex)}
@@ -94,8 +95,7 @@ const FormWindow: React.FC<any> = memo(function FormWindow({ ...props }) {
                 <View
                   className="formWindow-item-btn"
                   style={{
-                    backgroundColor:
-                      selectedValue === index ? "#D8C6EF" : "#FFFFFF",
+                    backgroundColor: selectedValue === index ? '#D8C6EF' : '#FFFFFF',
                   }}
                   onClick={() => handleSelect(index)}
                 ></View>

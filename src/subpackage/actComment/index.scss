@@ -1,77 +1,168 @@
 .actComment {
+  width: 100%;
+  font-family: SimHei;
+  overflow-y: hidden;
+  height: 100vh;
+
+  // 帖子内容区域
+  .post-content {
+    position: relative;
+    background: #fff;
+    z-index: 1;
+    padding-bottom: 20rpx;
+  }
+
+  // 拖动把手
+  .drag-handle {
+    position: relative;
+    height: 100rpx;
+    background: #fff;
+    z-index: 20;
+    border-top: 2rpx solid #f1eefc;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    &-bar {
+      margin-top: 20px;
+      margin-left: 50%;
+      transform: translateX(-60rpx);
+      width: 120rpx;
+      height: 8rpx;
+      background: #e0e0e0;
+      border-radius: 4rpx;
+    }
+  }
+
+  // 评论面板
+  .comment-panel {
+    position: relative;
+    background: #fff;
+    z-index: 10;
+    border-radius: 20rpx 20rpx 0 0;
+    overflow: hidden;
+    min-height: 200rpx;
+  }
+
+  &-container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    font-family: SimHei;
-    overflow-y: scroll;
-    &-gap {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 100rpx;
+    min-height: 100%;
+  }
+
+  &-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 100rpx;
+    padding-bottom: 60rpx;
+    border-top: 2rpx solid #f1eefc;
+    display: flex;
+    gap: 60rpx;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    z-index: 30;
+
+    &-input {
+      width: 330rpx;
+      height: 60rpx;
+      border-radius: 40rpx;
+      background-color: #f9f8fc;
+      display: flex;
+      gap: 10rpx;
+      align-items: center;
+
+      &-icon {
+        width: 40rpx;
+        margin-left: 20rpx;
+      }
+
+      &-text {
+        font-size: 28rpx;
+        color: #5e5064;
+        font-family: SimHei;
+      }
     }
-    &-title {
-        position: absolute;
-        top: 180rpx;
-        height: 80rpx;
-        width: 100%;
-        line-height: 80rpx;
-        border-top: 2rpx solid #F1EEFC;
-        font-size: 30rpx;
-        padding-left: 40rpx;
-        color: rgba(94, 80, 100, 0.7);
+
+    &-desc {
+      display: flex;
+      align-items: center;
+      gap: 10rpx;
+      color: #736f80;
+
+      &-icon1 {
+        width: 40rpx;
+      }
+
+      &-icon2 {
+        width: 42rpx;
+      }
+
+      &-icon3 {
+        width: 40rpx;
+      }
     }
-    &-container {
-        margin-top: 10rpx;
-        display: flex;
-        flex-direction: column;
-        overflow-y: scroll;
-        width: 100%;
-        height: calc(100% - 260rpx - 100rpx);
+  }
+}
+
+.comment-popup {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 9999;
+
+  &-cancel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  &-box {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10rpx 15rpx 20rpx 15rpx;
+
+    &-input {
+      flex: 1;
+      width: 600rpx;
+      height: 120rpx;
+      border-radius: 40rpx;
+      background-color: #f9f8fc;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40rpx;
+      font-size: 30rpx;
+      font-family: SimHei;
+      margin-right: 10rpx;
     }
-    &-footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        height: 100rpx;
-        padding-bottom: 60rpx;
-        border-top: 2rpx solid #F1EEFC;
-        display: flex;
-        gap: 60rpx;
-        justify-content: center;
-        align-items: center;
-        background-color: #fff;
-        &-input {
-            width: 330rpx;
-            height: 60rpx;
-            border-radius: 40rpx;
-            background-color: #F9F8FC;
-            display: flex;
-            gap: 10rpx;
-            align-items: center;
-            &-icon {
-                width: 40rpx;
-                margin-left: 20rpx;
-            }
-            &-text {
-                font-size: 28rpx;
-                color: #5E5064;
-                font-family: SimHei;
-            }
-        }
-        &-desc {
-            display: flex;
-            align-items: center;
-            gap: 10rpx;
-            color: #736F80;;
-            &-icon1 {
-                width: 40rpx;
-            }
-            &-icon2 {
-                width: 42rpx;
-            }
-            &-icon3 {
-                width: 40rpx;   
-            }
-        }
+
+    &-send {
+      display: flex;
+      background-color: #d7ccf9;
+      border-radius: 30rpx;
+      height: 60rpx;
+      width: 130rpx;
+      align-items: center;
+      justify-content: center;
+      font-size: 35rpx;
+      color: #fff;
+      line-height: 50rpx;
+      padding: 6rpx 6rpx 6rpx 6rpx;
+      margin-right: 15rpx;
+
+      &-active {
+        background-color: #b36aeb;
+      }
     }
-    
+  }
 }

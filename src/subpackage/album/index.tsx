@@ -1,12 +1,8 @@
-import { View } from "@tarojs/components";
-import './index.scss'
+import { View } from '@tarojs/components';
+import './index.scss';
 
 const Index = () => {
-
-  return (
-    <View className="wrapper">
-    </View>
-  );
+  return <View className="wrapper"></View>;
 };
 
 export default Index;

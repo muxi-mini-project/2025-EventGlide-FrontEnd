@@ -1,3 +1,3 @@
-import ReplyComment from "./components/ReplyComment";
+import ReplyComment from './components/ReplyComment';
 
 export default ReplyComment;

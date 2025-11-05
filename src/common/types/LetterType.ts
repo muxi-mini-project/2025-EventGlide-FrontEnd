@@ -8,7 +8,6 @@ interface LetterType {
     studentid: string;
     username: string;
   };
-};
+}
 
 export default LetterType;
-

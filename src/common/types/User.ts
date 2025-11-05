@@ -1,10 +1,10 @@
 interface user {
-    id?: number,
-    avatar: string,
-    username: string,
-    school: string,
-    college?: string,
-    studentid: string,
+  id?: number;
+  avatar: string;
+  username: string;
+  school: string;
+  college?: string;
+  studentid: string;
 }
 
 /*

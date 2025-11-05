@@ -1,59 +1,59 @@
 .add-label {
+  width: 100%;
+  height: 100vh;
+  overflow-x: scroll;
+  background-color: #f9f8fc;
+  display: flex;
+  flex-direction: column;
+  font-family: SimHei;
+  align-items: center;
+  &-form-container {
     width: 100%;
-    height: 100vh;
+    height: 88vh;
     overflow-x: scroll;
-    background-color: #F9F8FC;
     display: flex;
     flex-direction: column;
-    font-family: SimHei;
     align-items: center;
-    &-form-container {
-        width: 100%;
-        height: 88vh;
-        overflow-x: scroll;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+  }
+  &-title {
+    height: 140rpx;
+    width: 670rpx;
+    background-color: #fff;
+    font-size: 40rpx;
+    padding-left: 20rpx;
+    line-height: 140rpx;
+    border-radius: 10rpx;
+    margin-bottom: 15rpx;
+  }
+  &-form {
+    width: 690rpx;
+    margin-bottom: 10rpx;
+  }
+  &-last {
+    @extend.add-label-title;
+    margin-bottom: 30rpx;
+  }
+  &-floor {
+    width: 100%;
+    position: absolute;
+    bottom: 94rpx;
+    display: flex;
+    align-items: center;
+    &-draft {
+      position: absolute;
+      left: 60rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      &-text {
+        margin-top: 10rpx;
+        font-size: 30rpx;
+        color: #606266;
+      }
     }
-    &-title {
-        height: 140rpx;
-        width: 670rpx;
-        background-color: #fff;
-        font-size: 40rpx;
-        padding-left: 20rpx;
-        line-height: 140rpx;
-        border-radius: 10rpx;
-        margin-bottom: 15rpx;
+    &-btn {
+      position: absolute;
+      left: 180rpx;
     }
-    &-form {
-        width: 690rpx;
-        margin-bottom: 10rpx;
-    }
-    &-last {
-        @extend.add-label-title;
-        margin-bottom: 30rpx;
-    }
-    &-floor {
-        width: 100%;
-        position: absolute;
-        bottom: 94rpx;
-        display: flex;
-        align-items: center;
-        &-draft {
-            position: absolute;
-            left: 60rpx;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            &-text {
-                margin-top: 10rpx;
-                font-size: 30rpx;
-                color: #606266;
-            }
-        }
-        &-btn {
-            position: absolute;
-            left: 180rpx;
-        }
-    }
+  }
 }

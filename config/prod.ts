@@ -1,4 +1,4 @@
-import type { UserConfigExport } from "@tarojs/cli";
+import type { UserConfigExport } from '@tarojs/cli';
 export default {
   mini: {},
   h5: {
@@ -28,5 +28,5 @@ export default {
     //       postProcess: (context) => ({ ...context, outputPath: path.join(staticDir, 'index.html') })
     //     }))
     // }
-  }
-} satisfies UserConfigExport<'vite'>
+  },
+} satisfies UserConfigExport<'vite'>;

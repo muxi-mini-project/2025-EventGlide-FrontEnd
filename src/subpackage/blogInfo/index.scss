@@ -1,77 +1,77 @@
-@import url('../../pages/mineHome/index.scss'); 
+@import url('../../pages/mineHome/index.scss');
 
 .blogInfo-page {
-    width: 100%;
-    height: 100vh;
-    font-family: SimHei;
-    overflow-y: scroll;
+  width: 100%;
+  height: 100vh;
+  font-family: SimHei;
+  overflow-y: scroll;
 
-    &-header {
-        height: 120rpx;
-        width: 100%;
-        display: flex;
-        border-bottom: 2rpx solid  #F1EEFC;
-        &-item {
-            width: 50%;
-            align-items: center;
-            line-height: 120rpx;
-            text-align: center;
-            color: #828283;
-            font-size: 44rpx;
-        }
+  &-header {
+    height: 120rpx;
+    width: 100%;
+    display: flex;
+    border-bottom: 2rpx solid #f1eefc;
+    &-item {
+      width: 50%;
+      align-items: center;
+      line-height: 120rpx;
+      text-align: center;
+      color: #828283;
+      font-size: 44rpx;
     }
+  }
 }
 
 .letter-list-item {
-    position: relative;
-    width: 100%;
-    height: 150rpx;
-    border-bottom: 2rpx solid  #F1EEFC;
-    &-avatar {
-        position: absolute;
-        width: 100rpx;
-        top: 50%;
-        left: 20rpx;
-        transform: translateY(-50%);
-        border-radius: 100rpx;
+  position: relative;
+  width: 100%;
+  height: 150rpx;
+  border-bottom: 2rpx solid #f1eefc;
+  &-avatar {
+    position: absolute;
+    width: 100rpx;
+    top: 50%;
+    left: 20rpx;
+    transform: translateY(-50%);
+    border-radius: 100rpx;
+  }
+  &-content {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 150rpx;
+    &-username {
+      color: #4d4d4e;
+      font-size: 36rpx;
+      margin-bottom: 10rpx;
     }
-    &-content {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: 150rpx;
-        &-username {
-            color: #4D4D4E;
-            font-size: 36rpx;
-            margin-bottom: 10rpx;
-        }
-        &-message {
-            color: #5E5064;
-            font-size: 25rpx;
-        }
+    &-message {
+      color: #5e5064;
+      font-size: 25rpx;
     }
-    &-decPic {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: 25rpx;
-        width: 100rpx;
-        height: 100rpx;
-        border-radius: 10rpx;
-    }
+  }
+  &-decPic {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 25rpx;
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 10rpx;
+  }
 }
 
 //active
 .activeItem {
-    color: #4D4D4E;
-    position: relative;
-    &::after {
-        content: "";
-        position: absolute;
-        bottom: 20rpx;
-        width: 70rpx;
-        height: 6rpx;
-        background-color: #CF79FA;
-        left: 150rpx;
-    }
+  color: #4d4d4e;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 20rpx;
+    width: 70rpx;
+    height: 6rpx;
+    background-color: #cf79fa;
+    left: 150rpx;
+  }
 }

@@ -1,2 +1,2 @@
-import AlbumWindow from "./components/albumWindow";
+import AlbumWindow from './components/albumWindow';
 export default AlbumWindow;

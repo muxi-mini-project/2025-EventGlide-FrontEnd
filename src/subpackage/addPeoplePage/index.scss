@@ -1,70 +1,70 @@
 .addPeoplepage {
-    width: 100%;
-    height: 100vh;
-    background-color: #F9F8FC;
-    font-family: SimHei;
-    position: relative;
-    &-title {
-        @extend.index;
-        top: 40rpx;
-        font-size: 48rpx;
-        color: #222222;
+  width: 100%;
+  height: 100vh;
+  background-color: #f9f8fc;
+  font-family: SimHei;
+  position: relative;
+  &-title {
+    @extend.index;
+    top: 40rpx;
+    font-size: 48rpx;
+    color: #222222;
+  }
+  &-form {
+    @extend.index;
+    top: 160rpx;
+    width: 90%;
+    display: flex;
+    gap: 30rpx;
+    flex-direction: column;
+    align-items: center;
+    &-item {
+      background-color: #fff;
+      width: 600rpx;
+      height: 112rpx;
+      display: flex;
+      align-items: center;
+      border-radius: 30rpx;
     }
-    &-form {
-        @extend.index;
-        top: 160rpx;
-        width: 90%;
-        display: flex;
-        gap: 30rpx;
-        flex-direction: column;
-        align-items: center;
-        &-item {
-            background-color: #fff;
-            width: 600rpx;
-            height: 112rpx;
-            display: flex;
-            align-items: center;
-            border-radius: 30rpx;
-        }
-        &-input1 {
-            position: absolute;
-            left: 270rpx;
-            @extend.input;
-        }
-        &-input2 {
-            @extend.input;
-            position: absolute;
-            left: 210rpx;
-        }
+    &-input1 {
+      position: absolute;
+      left: 270rpx;
+      @extend.input;
     }
-    &-button {
-        @extend.index;
-        top: 500rpx;
-        width: 600rpx;
-        height: 112rpx;
-        background-color: #CF79FA;
-        border-radius: 30rpx;
-        line-height: 112rpx;
-        text-align: center;
-        color: #FFFEFF;
-        font-size: 42rpx;
+    &-input2 {
+      @extend.input;
+      position: absolute;
+      left: 210rpx;
     }
+  }
+  &-button {
+    @extend.index;
+    top: 500rpx;
+    width: 600rpx;
+    height: 112rpx;
+    background-color: #cf79fa;
+    border-radius: 30rpx;
+    line-height: 112rpx;
+    text-align: center;
+    color: #fffeff;
+    font-size: 42rpx;
+  }
 }
 
 .index {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .placeholder {
-    color: #AEA7B1;
-    font-family: SimHei;
-    font-size: 36rpx;
+  color: #aea7b1;
+  font-family: SimHei;
+  font-size: 36rpx;
 }
 
 .input {
-    font-family: SimHei;
-    font-size: 36rpx;
-    color: #5E5064;
+  font-family: SimHei;
+  font-size: 36rpx;
+  color: #5e5064;
 }

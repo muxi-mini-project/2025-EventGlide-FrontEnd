@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface SignersStoreType {
   signers: { id: number; name: string; studentid: string }[];
@@ -14,12 +14,10 @@ const useSignersStore = create<SignersStoreType>((set) => ({
     })),
   setRemoveSigner: (signerid) =>
     set((state) => {
-      const updatedSigners = state.signers.filter(
-        (signer) => signer.id !== signerid,
-      );
+      const updatedSigners = state.signers.filter((signer) => signer.id !== signerid);
       const reindexedSigners = updatedSigners.map((signer, index) => ({
         ...signer,
-        
+
         id: index + 1,
       }));
       return { signers: reindexedSigners };

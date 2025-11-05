@@ -1,77 +1,264 @@
-.Scrolled-title {
-    height: 90px;
-    width: 100%;
-    background-color: #fff;
-    border-bottom: 2px solid #D8C6EF;
-    border-radius: 20px 20px 0 0;
-    font-family: SimHei;
-    position: relative;
-    &-text1 {
-        position: absolute;
-        top: 24px;
-        left: 26px;
-        font-size: 28px;
-        color: #828283;
-    }
-    &-text2 {
-        position: absolute;
-        top: 22px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 30px;
-        color: #131415;
-    }
-    &-text3 {
-        position: absolute;
-        top: 24px;
-        right: 26px;
-        font-size: 28px;
-        color: #B36AEB;
-    }
+.scrolled-title {
+  height: 90px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 20px 20px 0 0;
+  font-family: SimHei;
+  position: relative;
+
+  &-text {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    color: #3d3d3d;
+  }
 }
 
-.Scrolled-container {
-    height: 520px;
-    width: 100%;
-    background-color: #fff;
-    position: relative;
-    display: flex;
+// 日期选择层样式
+.date-picker-layer {
+  background-color: #fff;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: row;
 }
 
-.Scrolled-content {
-    position: relative;
-    width: 20%;
-    height: 520px;
+.date-scroll-view {
+  white-space: nowrap;
+  width: 85%;
+}
+
+.date-list {
+  display: inline-flex;
+  padding: 0 20px;
+}
+
+.date-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+  height: 100px;
+  margin: 0 10px;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background: #f8f8fa;
+
+  &.active {
+    border-color: #b36aeb;
+    background: #f5f2fe;
+  }
+}
+
+.date-label {
+  font-size: 26px;
+  color: #333;
+}
+
+.date-sublabel {
+  font-size: 26px;
+  color: #333;
+}
+
+.all-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
+.all-date-label {
+  font-size: 22px;
+  color: #333;
+  text-align: center;
+}
+
+// 时间选择层样式
+.time-picker-layer {
+  background-color: #fff;
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.time-slot {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 24px;
+  color: #333;
+  background: #f8f8f8;
+  border: 2px solid transparent;
+
+  &.active {
+    border-color: #b36aeb;
+    background: #f5f2fe;
+    color: #b36aeb;
+    font-weight: bold;
+  }
+}
+
+// 全部日期选择器样式
+.full-date-picker {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: 20px;
+  bottom: 10px;
+  z-index: 1000;
+}
+
+.scrolled-title {
+  &-text1,
+  &-text3 {
+    position: absolute;
+    top: 24px;
     font-size: 28px;
-    font-family: SimHei;
     color: #828283;
-    overflow: scroll;   
-    text-align: center;
-    mask-image: linear-gradient(to bottom, transparent , #fff, transparent);
-    ::-webkit-scrollbar {
-        display: none;
-    }
-}
+  }
 
-.Scrolled-snap {
-    position: sticky;
-    z-index: -1;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 104px;
-    flex: none;
-    background-color: #F9F8FC;
-}
+  &-text1 {
+    left: 26px;
+  }
 
-
-.Scrolled-item {
-    height: 104px;
-    width: 100%;
-    line-height: 104px;
-    text-align: center;
-}
-
-.active {
+  &-text2 {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
     color: #131415;
+  }
+
+  &-text3 {
+    right: 26px;
+    color: #b36aeb;
+  }
+}
+
+// 日历样式
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+
+  .nav-button {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #333;
+    background: #f8f8f8;
+    border-radius: 50%;
+  }
+
+  .month-year {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  .week-day {
+    text-align: center;
+    font-size: 24px;
+    color: #666;
+    padding: 10px 0;
+  }
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 20px;
+
+  .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    position: relative;
+
+    .day-number {
+      font-size: 24px;
+      z-index: 1;
+    }
+
+    &.current-month {
+      .day-number {
+        color: #333;
+      }
+    }
+
+    &:not(.current-month) {
+      .day-number {
+        color: #ccc;
+      }
+    }
+
+    &.today {
+      .today-indicator {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 8px;
+        height: 8px;
+        background: #b36aeb;
+        border-radius: 50%;
+      }
+    }
+
+    &.selected {
+      background: #b36aeb;
+
+      .day-number {
+        color: white;
+      }
+
+      .today-indicator {
+        background: white;
+      }
+    }
+  }
+}
+
+.confirm {
+  background-color: white;
+  padding: 20px;
+  padding-bottom: 100px;
+  padding-top: 30px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+.confirm-btn {
+  background: #b36aeb;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 28px;
+  padding: 20px 0px;
+  text-align: center;
 }

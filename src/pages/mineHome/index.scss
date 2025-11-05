@@ -3,7 +3,7 @@
   height: calc(100% - 180rpx);
   position: absolute;
   top: 180rpx;
-  font-family: "SimHei";
+  font-family: 'SimHei';
   // overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -127,7 +127,7 @@
   color: #4d4d4e;
   position: relative;
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: -10rpx;
     width: 50rpx;

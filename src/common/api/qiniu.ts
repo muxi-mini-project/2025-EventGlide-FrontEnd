@@ -52,10 +52,10 @@ export const fetchToQiniu = async (filepath: string) => {
           token: access_token,
         },
         success: (res) => {
-          resolve(`http://${domain_name}/${JSON.parse(res.data)?.key}`);
+          resolve(`https://${domain_name}/${JSON.parse(res.data)?.key}`);
         },
         fail: (err) => {
-          reject(err);  
+          reject(err);
         },
       });
     });

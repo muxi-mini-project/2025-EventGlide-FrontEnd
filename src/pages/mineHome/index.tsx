@@ -48,9 +48,15 @@ const Index = () => {
   });
 
   useEffect(() => {
+    if (activePage === "post") {
     if (activeIndex === "release") {
       get(`/post/own/${studentid}`)
         .then((res) => {
+          console.log('发布：',res.data);
+          if (res.data === null) {
+            setMinePostList([]);
+            return;
+          }
           const newPostList: blogType[] = [];
           res.data.forEach((item) => {
             newPostList.push(item as blogType);
@@ -65,6 +71,10 @@ const Index = () => {
       post("/user/collect/post", { studentid })
         .then((res) => {
           console.log('收藏：',res);
+          if (res.data === null) {
+            setMinePostList([]);
+            return;
+          }
           const newPostList: blogType[] = [];
           if (res.msg === "success") {
             res.data.forEach((item) => {
@@ -81,6 +91,10 @@ const Index = () => {
       post("/user/like/post", { studentid })
         .then((res) => {
           console.log('点赞：',res);
+          if (res.data === null) {
+            setMinePostList([]);
+            return;
+          }
           const newPostList: blogType[] = [];
           if (res.msg === "success") {
             res.data.forEach((item) => {
@@ -94,7 +108,8 @@ const Index = () => {
           console.log(err);
         });
     }
-  }, [activeIndex]);
+  }
+  }, [activeIndex,activePage]);
 
   useEffect(() => {
     if (minePostList.length > 0 && activePage === "post") {

@@ -114,6 +114,10 @@
                 font-size: 30rpx;
                 color: rgba(94, 80, 100, 0.4);
                 font-family: SimHei;
+
+                &-input{
+                    color: rgba(94, 80, 100, 0.4);
+                }
             }
         }
 
@@ -215,7 +219,6 @@
             justify-content: space-between;
             padding: 0 40rpx;
             font-size: 30rpx;
-            color: rgba(94, 80, 100, 0.4);
             font-family: SimHei;
             margin-right: 10rpx;
         }

@@ -29,7 +29,8 @@ const Index = () => {
   const [marginTop, setMarginTop] = useState(0);
   const [response, setResponse] = useState<responseType[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const { studentid, avatar } = useUserStore((state) => state);
+  const {avatar } = useUserStore((state) => state);
+  const studentid = Taro.getStorageSync('sid')
   const { blogList, blogIndex, setCommentNumChange, backPage, setBlogList } = usePostStore(
     (state) => state,
   );
@@ -291,7 +292,7 @@ const Index = () => {
             <View
               className="blogDetail-comment-input-text"
               onClick={() => setCommentInput(true)}>
-              让大家听到你的声音
+              {inputValue?inputValue:"让大家听到你的声音"}
             </View>
           </View>
           <View className="blogDetail-comment-list">
@@ -325,7 +326,7 @@ const Index = () => {
               src={icon}
             ></Image>
             <View 
-            className="blogDetail-footer-input-text">说点什么</View>
+            className="blogDetail-footer-input-text">{inputValue?inputValue:"说点什么"}</View>
           </View>
           <View className="blogDetail-footer-desc">
             <Image

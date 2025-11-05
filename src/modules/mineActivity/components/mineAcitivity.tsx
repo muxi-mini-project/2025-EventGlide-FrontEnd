@@ -19,6 +19,11 @@ const MineActivity: React.FC<{
     if (activeIndex === "release") {
       get(`/act/own/${studentid}`)
         .then((res) => {
+          console.log('发布活动：',res.data);
+          if (res.data === null) {
+            setActiveList([]);
+            return;
+          }
           const newActiveList: ActivityDetailList[] = [];
           res.data.forEach((item) => {
             newActiveList.push({

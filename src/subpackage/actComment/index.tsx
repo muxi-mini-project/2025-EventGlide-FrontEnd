@@ -33,7 +33,8 @@ const Index = () => {
   const [response, setResponse] = useState<responseType[]>([]);
   const [reply_id, setReply_id] = useState("");
   const [isVisible, setIsVisible] = useState(false);
-  const { studentid } = useUserStore();
+  const [commentInput, setCommentInput] = useState(false);
+  const studentid = Taro.getStorageSync('sid')
   const params = {
     studentid: studentid,
     subject: "activity",
@@ -362,20 +363,21 @@ const Index = () => {
         </View>
 
         <View className="actComment-footer">
-          <View className="actComment-footer-input">
+          <View className="actComment-footer-input" onClick={() => setCommentInput(true)}>
             <Image
               className="actComment-footer-input-icon"
               mode="widthFix"
               src={icon}
             ></Image>
-            <Input
+            {/*<Input
               className="actComment-footer-input-text"
               placeholder="说点什么"
               placeholderClass="actComment-footer-input-text"
               value={inputValue}
               onInput={(e) => handleInput(e)}
               onConfirm={() => handleSubmit()}
-            ></Input>
+            ></Input>*/}
+            <View className="actComment-footer-input-text">{inputValue?inputValue:"说点什么"}</View>
           </View>
           <View className="actComment-footer-desc">
             <Image
@@ -406,6 +408,29 @@ const Index = () => {
             </View>
           </View>
         </View>
+        {commentInput && (
+          <View className="comment-popup">
+            <View className="comment-popup-cancel" onClick={() => setCommentInput(false)} />
+            <View className="comment-popup-box">
+              <Input
+                className="comment-popup-box-input"
+                placeholder="在此输入"
+                placeholderClass="blogDetail-comment-input-text-input"
+                value={inputValue}
+                focus={true}
+                onInput={(e) => handleInput(e)}
+              ></Input>
+              <View 
+              className={`comment-popup-box-send ${inputValue?"comment-popup-box-send-active":""}`}
+              onClick={()=>{
+                handleSubmit();
+                setCommentInput(false);
+              }}>
+                发送
+                </View>
+            </View>
+          </View>
+        )}
       </View>
 
       <SetReponseContext.Provider value={setReponseContext}>

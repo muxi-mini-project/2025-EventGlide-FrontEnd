@@ -105,13 +105,13 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
+  useDidShow(() => {
     get("/feed/total").then((res) => {
       setMsgCount(res.data.total);
     }).catch((err) => {
       console.log(err);
     })
-  }, [])
+  })
 
   return (
     <>

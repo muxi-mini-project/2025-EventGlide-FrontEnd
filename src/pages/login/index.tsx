@@ -36,7 +36,7 @@ const Index = () => {
   const quicklogin=()=>{
     setShowError(false);
     if (isCheck) {
-      handleUserLogin({ params: { studentid: "2024214381", password: "", setShowError } })
+      handleUserLogin({ params: { studentid: "", password: "", setShowError } })
     }
   }
   const frocelogin=()=>{

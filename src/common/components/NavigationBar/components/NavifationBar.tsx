@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { switchTab } from '@tarojs/taro';
 import './style.scss';
 import avatar from '@/common/assets/Postlist/波奇.jpg';
-import Naviarrow from '@/common/assets/arrowhead/Naviarrow.png';
+import Naviarrow from '@/common/svg/arrowhead/Naviarrow.svg';
 import { UserInfo } from '@/common/types';
 
 const NavigationBar: React.FC<{ url: string; userInfo: UserInfo }> = memo(({ url, userInfo }) => {

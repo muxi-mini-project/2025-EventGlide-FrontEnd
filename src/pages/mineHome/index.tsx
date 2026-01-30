@@ -4,7 +4,7 @@ import { MyActivityTab } from '@/modules/MyPageContent';
 import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
 import { useState, useEffect } from 'react';
 import classnames from 'classnames';
-import arrowheadw from '@/common/assets/arrowhead/引导箭头-白.png';
+import arrowheadw from '@/common/svg/arrowhead/引导箭头-白.svg';
 import check from '@/common/assets/Postlist/check.png';
 import { getMyPostList, getUserInfo } from '@/common/api';
 import useUserStore from '@/store/userStore';

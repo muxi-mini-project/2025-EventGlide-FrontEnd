@@ -7,8 +7,8 @@ import favor from '@/common/svg/post/heart.svg';
 import collect from '@/common/svg/post/star.svg';
 import collectActive from '@/common/svg/post/starAct.svg';
 import favorActive from '@/common/svg/post/heartAct.svg';
-import comment from '@/common/assets/Postlist/comment.png';
-import icon from '@/common/assets/Postlist/inputIcon.png';
+import comment from '@/common/svg/post/comment.svg';
+import icon from '@/common/svg/post/inputIcon.svg';
 import { CreatorType } from '@/common/types';
 import useUserStore from '@/store/userStore';
 import usePostStore from '@/store/PostStore';
@@ -371,22 +371,28 @@ const Index = () => {
             </View>
           </View>
           <View className="postDetail-footer-desc">
-            <Image
-              className="postDetail-footer-desc-icon1"
-              mode="widthFix"
-              src={Item.isLike === 'true' ? favorActive : favor}
-              onClick={handleLike}
-            ></Image>
-            <View className="postDetail-footer-desc-text">{Item.likeNum}</View>
-            <Image
-              className="postDetail-footer-desc-icon2"
-              mode="widthFix"
-              src={Item.isCollect === 'true' ? collectActive : collect}
-              onClick={handleCollect}
-            ></Image>
-            <View className="postDetail-footer-desc-text">{Item.collectNum}</View>
-            <Image className="postDetail-footer-desc-icon3" mode="widthFix" src={comment}></Image>
-            <View className="postDetail-footer-desc-text">{Item.commentNum}</View>
+            <View className="actComment-footer-desc-item">
+              <Image
+                className="postDetail-footer-desc-icon1"
+                mode="widthFix"
+                src={Item.isLike === 'true' ? favorActive : favor}
+                onClick={handleLike}
+              ></Image>
+              <View className="postDetail-footer-desc-text">{Item.likeNum}</View>
+            </View>
+            <View className="actComment-footer-desc-item">
+              <Image
+                className="postDetail-footer-desc-icon2"
+                mode="widthFix"
+                src={Item.isCollect === 'true' ? collectActive : collect}
+                onClick={handleCollect}
+              ></Image>
+              <View className="postDetail-footer-desc-text">{Item.collectNum}</View>
+            </View>
+            <View className="actComment-footer-desc-item">
+              <Image className="postDetail-footer-desc-icon3" mode="widthFix" src={comment}></Image>
+              <View className="postDetail-footer-desc-text">{Item.commentNum}</View>
+            </View>
           </View>
         </View>
         {commentInput && (

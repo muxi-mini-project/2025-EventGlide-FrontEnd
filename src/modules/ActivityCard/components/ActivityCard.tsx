@@ -1,7 +1,7 @@
 import './style.scss';
 import { View, Image } from '@tarojs/components';
-import pos from '@/common/assets/activity/pos.png';
-import date from '@/common/assets/activity/act.png';
+import pos from '@/common/svg/activity/pos.svg';
+import date from '@/common/svg/activity/date.svg';
 import { memo } from 'react';
 import { ActivityDetailInfo } from '@/common/types';
 import { activeColor } from '@/common/const/Formconst';

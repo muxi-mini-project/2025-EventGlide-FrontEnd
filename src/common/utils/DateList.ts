@@ -11,40 +11,52 @@ const minute = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 export { year, month, day, hour, minute };
 
 const judgeDate = (showTime: string, activeTime: { startTime: string; endTime: string }) => {
+  // 将字符串时间转换为Date对象
   const parseDate = (time: string) => {
     return new Date(time);
   };
 
-  const now = new Date();
-
-  // 计算本周的开始时间（周日）和结束时间（周六）
-  const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
-  const endOfWeek = new Date(startOfWeek.getTime() + 6 * 24 * 60 * 60 * 1000);
-
   const startTime = parseDate(activeTime.startTime);
   const endTime = parseDate(activeTime.endTime);
 
-  // 根据 showTime 计算对应的日期范围
-  const getDayRange = (day: string) => {
-    const dayIndex = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'].indexOf(day);
-    if (dayIndex === -1) return null;
+  // 获取目标星期几的索引（周日为0，周一为1，...，周六为6）
+  const targetDayIndex = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'].indexOf(showTime);
+  if (targetDayIndex === -1) return false;
 
-    const startOfDay = new Date(startOfWeek.getTime() + dayIndex * 24 * 60 * 60 * 1000);
-    const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+  // 创建一个当前检查的日期，从活动开始时间的00:00:00开始
+  const currentDate = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate());
 
-    return { startOfDay, endOfDay };
-  };
+  // 遍历活动时间段内的每一天
+  while (currentDate <= endTime) {
+    // 检查当前日期是否是目标星期几
+    if (currentDate.getDay() === targetDayIndex) {
+      // 检查当前日期是否在活动时间段内
+      // 考虑两种情况：
+      // 1. 活动开始和结束在同一天
+      // 2. 活动跨越多天，当前日期是其中一天
 
-  const { startOfDay, endOfDay } = getDayRange(showTime) || { startOfDay: null, endOfDay: null };
+      // 如果当前日期是活动开始的那一天
+      if (currentDate.toDateString() === startTime.toDateString()) {
+        // 只要活动在这一天有任何时间，就返回true
+        return true;
+      }
+      // 如果当前日期是活动结束的那一天
+      else if (currentDate.toDateString() === endTime.toDateString()) {
+        // 只要活动在这一天有任何时间，就返回true
+        return true;
+      }
+      // 如果当前日期是活动中间的某一天
+      else {
+        // 完整的一天都在活动时间段内，返回true
+        return true;
+      }
+    }
 
-  if (!startOfDay || !endOfDay) return false;
+    // 移动到下一天
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
-  // 判断时间段是否包含本周的某一天
-  return (
-    (startTime <= startOfDay && endTime >= startOfDay) || // 包含开始时间
-    (startTime <= endOfDay && endTime >= endOfDay) || // 包含结束时间
-    (startTime >= startOfDay && endTime <= endOfDay) // 完全包含在当天内
-  );
+  // 遍历完所有日期都没有找到目标星期几
+  return false;
 };
-
 export { judgeDate };

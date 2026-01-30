@@ -4,7 +4,7 @@ import { useDidShow, useLoad } from '@tarojs/taro';
 import './index.scss';
 import ActivityTabs from '@/modules/ActivityTabs/index';
 import ActivityModal from '@/modules/ActivityModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useActivityStore from '@/store/ActivityStore';
 import { judgeDate } from '@/common/utils/DateList';
 import usePostStore from '@/store/PostStore';
@@ -17,7 +17,7 @@ const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
   const { activeList, setActiveList, setSelectedItem, selectedInfo, isSelect } = useActivityStore();
   const [approximateTime, setApproximateTime] = useState<string>('');
-  const [type, setType] = useState<string>('');
+  const [type, setType] = useState<string[]>([]);
   const { setPostList } = usePostStore();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
@@ -33,6 +33,7 @@ const Index = () => {
   });
 
   useDidShow(async () => {
+    console.log(selectedInfo);
     if (isSelect) {
       try {
         const res = await filterActivity(selectedInfo);
@@ -52,6 +53,19 @@ const Index = () => {
     }
   });
 
+  useEffect(() => {
+    const fetchFilteredActivities = async () => {
+      try {
+        const res = await filterActivity(selectedInfo);
+        console.log(res.data);
+        setActiveList(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchFilteredActivities();
+  }, [type]);
+
   const handleScroll = (e: any) => {
     const { scrollTop } = e.detail;
     if (scrollTop > 200) {
@@ -63,9 +77,7 @@ const Index = () => {
 
   const filteredActivities =
     activeList?.filter((activeItem) => {
-      const isMatch =
-        (approximateTime === '' || judgeDate(approximateTime, activeItem.detailTime)) &&
-        (type === '' || activeItem.type === type);
+      const isMatch = approximateTime === '' || judgeDate(approximateTime, activeItem.detailTime);
       return isMatch;
     }) || [];
 

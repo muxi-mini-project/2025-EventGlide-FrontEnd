@@ -13,13 +13,13 @@ import { switchTab, useDidShow } from '@tarojs/taro';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
-  const [activeOrganizer, setActiveOrganizer] = useState<number[]>([0]);
-  const [activeType, setActiveType] = useState<number[]>([0]);
-  const [activeSite, setActiveSite] = useState<number[]>([0]);
+  const [activeOrganizer, setActiveOrganizer] = useState<number[]>([]);
+  const [activeType, setActiveType] = useState<number[]>([]);
+  const [activeSite, setActiveSite] = useState<number[]>([]);
   const [activeOrganizerAll, setActiveOrganizerAll] = useState(false);
   const [activeTypeAll, setActiveTypeAll] = useState(false);
   const [activeSiteAll, setActiveSiteAll] = useState(false);
-  const [needSign, setNeedSign] = useState(true);
+  const [needSign, setNeedSign] = useState(false);
   const [notSign, setNotSign] = useState(false);
   const [signText, setSignText] = useState('');
   const [load, setLoad] = useState(false);
@@ -35,27 +35,30 @@ const Index = () => {
       const organizerIndexes = selectedInfo.holderType
         .map((type) => activeOrganizerOption.indexOf(type))
         .filter((index) => index !== -1);
-      setActiveOrganizer(organizerIndexes.length > 0 ? organizerIndexes : [0]);
+      setActiveOrganizer(organizerIndexes.length > 0 ? organizerIndexes : []);
       setActiveOrganizerAll(organizerIndexes.length === activeOrganizerOption.length);
 
       const typeIndexes = selectedInfo.type
         .map((type) => activeTypeOption.indexOf(type))
         .filter((index) => index !== -1);
-      setActiveType(typeIndexes.length > 0 ? typeIndexes : [0]);
+      setActiveType(typeIndexes.length > 0 ? typeIndexes : []);
       setActiveTypeAll(typeIndexes.length === activeTypeOption.length);
 
       const siteIndexes = selectedInfo.position
         .map((type) => activeSiteOption.indexOf(type))
         .filter((index) => index !== -1);
-      setActiveSite(siteIndexes.length > 0 ? siteIndexes : [0]);
+      setActiveSite(siteIndexes.length > 0 ? siteIndexes : []);
       setActiveSiteAll(siteIndexes.length === activeSiteOption.length);
 
       setSignText(selectedInfo.ifRegister);
       if (selectedInfo.ifRegister === '否') {
         setNeedSign(false);
         setNotSign(true);
-      } else {
+      } else if (selectedInfo.ifRegister === '是') {
         setNeedSign(true);
+        setNotSign(false);
+      } else {
+        setNeedSign(false);
         setNotSign(false);
       }
 
@@ -65,7 +68,7 @@ const Index = () => {
     setLoad(true);
   });
 
-  useEffect(() => {
+  /*useEffect(() => {
     const updatedInfo = {
       holderType: activeOrganizerOption.filter((_, index) => activeOrganizer.includes(index)),
       type: activeTypeOption.filter((_, index) => activeType.includes(index)),
@@ -78,7 +81,7 @@ const Index = () => {
     };
     console.log(updatedInfo);
     if (load) setSelectInfo(updatedInfo);
-  }, [activeOrganizer, activeType, activeSite, signText, startTime, endTime]);
+  }, [activeOrganizer, activeType, activeSite, signText, startTime, endTime]);*/
 
   const handleOnclick = (index: number, type: string) => {
     if (type === 'organizer') {
@@ -110,33 +113,34 @@ const Index = () => {
     if (type === 0) {
       setNeedSign(!needSign);
       setNotSign(false);
-      if (signText === '') {
-        setSignText('是');
-      } else {
+      if (signText === '是') {
         setSignText('');
+      } else {
+        setSignText('是');
       }
     } else {
       setNotSign(!notSign);
       setNeedSign(false);
-      if (signText === '') {
-        setSignText('否');
-      } else {
+      if (signText === '否') {
         setSignText('');
+      } else {
+        setSignText('否');
       }
     }
   };
   const handlereset = () => {
-    setActiveOrganizer([0]);
-    setActiveType([0]);
-    setActiveSite([0]);
+    setActiveOrganizer([]);
+    setActiveType([]);
+    setActiveSite([]);
     setActiveOrganizerAll(false);
     setActiveTypeAll(false);
     setActiveSiteAll(false);
-    setNeedSign(true);
+    setNeedSign(false);
     setNotSign(false);
+    setSignText('');
     setStartTime('');
     setEndTime('');
-    setIsSelect(false);
+    //setIsSelect(false);
   };
 
   const handleConfirm = () => {
@@ -153,6 +157,7 @@ const Index = () => {
     setIsSelect(true);
     setSelectInfo(selectedInfo);
     switchTab({ url: '/pages/indexHome/index' });
+    console.log(selectedInfo);
   };
 
   const handleTimeConfirm = (item) => {
@@ -260,39 +265,6 @@ const Index = () => {
             </View>
           </View>
         </View>
-        {/*<View className="actScreen-page-container">
-          <View className="actScreen-page-container-title">活动地点</View>
-          <View className="actScreen-page-container-all">
-            <View className="actScreen-page-container-all-text">全选</View>
-            {activeSiteAll === true ? (
-              <View
-                className="actScreen-page-container-all-radio-active"
-                onClick={() => handleAllClick('site')}
-              >
-                <View className="actScreen-page-container-all-radio-active-icon"></View>
-              </View>
-            ) : (
-              <View
-                className="actScreen-page-container-all-radio"
-                onClick={() => handleAllClick('site')}
-              ></View>
-            )}
-          </View>
-          <View className="actScreen-page-container-choice">
-            {activeSiteOption.map((item, index) => (
-              <View
-                className={classnames('label', {
-                  'active-label': activeSite.includes(index),
-                })}
-                onClick={() => handleOnclick(index, 'site')}
-                key={index}
-                style={{ fontSize: '24rpx' }}
-              >
-                {item}
-              </View>
-            ))}
-          </View>
-        </View>*/}
         <View className="actScreen-page-sign">
           <View className="actScreen-page-sign-title">是否需要报名</View>
           <View className="actScreen-page-sign-choice">

@@ -1,6 +1,6 @@
 import './style.scss';
 import { View, Radio, RadioGroup, Input, Label, Image } from '@tarojs/components';
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import Taro, { navigateTo } from '@tarojs/taro';
 import classnames from 'classnames';
 import searchpic from '@/common/assets/Postlist/搜索.png';
@@ -12,13 +12,21 @@ const typelist = ['文艺', '体育', '竞赛', '游戏', '学术'];
 
 const ActivityTabs: React.FC<{
   setApproximateTime: (value: string) => void;
-  setType: (value: string) => void;
+  setType: (value: string[]) => void;
 }> = memo(function ({ ...props }) {
   const [checkDateIndex, setCheckDateIndex] = useState<number>(-1);
-  const [checkTypeIndex, setCheckTypeIndex] = useState<number>(-1);
+  const [checkTypeIndex, setCheckTypeIndex] = useState<number[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
-  const { setActiveList } = useActivityStore();
+  const { setActiveList, setSelectInfo, selectedInfo } = useActivityStore();
   const [placeholder, setPlaceholder] = useState<string>('在这里可以查找你想要的活动哦');
+
+  useEffect(() => {
+    const typeIndexes = selectedInfo.type
+      .map((type) => typelist.indexOf(type))
+      .filter((index) => index !== -1);
+    setCheckTypeIndex(typeIndexes);
+  }, [selectedInfo]);
+
   const handleDateClick = (index: number) => {
     if (checkDateIndex === index) {
       setCheckDateIndex(-1);
@@ -29,13 +37,19 @@ const ActivityTabs: React.FC<{
     }
   };
   const handleTypeClick = (index: number) => {
-    if (checkTypeIndex === index) {
-      setCheckTypeIndex(-1);
-      props.setType('');
+    let newCheckTypeIndex: number[];
+    if (checkTypeIndex.includes(index)) {
+      newCheckTypeIndex = checkTypeIndex.filter((item) => item !== index);
     } else {
-      setCheckTypeIndex(index);
-      props.setType(typelist[index]);
+      newCheckTypeIndex = [...checkTypeIndex, index];
     }
+    setCheckTypeIndex(newCheckTypeIndex);
+    const selectedTypes = typelist.filter((_, idx) => newCheckTypeIndex.includes(idx));
+    props.setType(selectedTypes);
+    setSelectInfo({
+      ...selectedInfo,
+      type: selectedTypes,
+    });
   };
   const handleFocusChange = () => {
     setPlaceholder('');
@@ -140,7 +154,7 @@ const ActivityTabs: React.FC<{
             <View className="type-list-view-box" key={index} onClick={() => handleTypeClick(index)}>
               <Label
                 className={classnames('type-list-view', {
-                  'type-checked': checkTypeIndex === index,
+                  'type-checked': checkTypeIndex.includes(index),
                 })}
                 for={'index'}
               >

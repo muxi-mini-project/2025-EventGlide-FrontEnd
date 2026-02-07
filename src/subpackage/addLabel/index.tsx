@@ -18,8 +18,16 @@ import { getActivityDraft } from '@/common/api';
 const Index = () => {
   const { setLabelForm } = useActiveInfoStore();
   const { labelform } = useActiveInfoStore();
+  const { setAddSigner, setRemoveSigner } = useSignersStore();
 
   const { title, introduce, showImg } = useActiveInfoStore();
+  const parseSignersString = (signersStr: string) => {
+    if (!signersStr) return [];
+    return signersStr.split(',').map((pair) => {
+      const [studentId, name] = pair.split(':');
+      return { name, studentId };
+    });
+  };
   const signers = useSignersStore((state) => state.signers).map((signer) => {
     const { id, ...rest } = signer;
     return rest;
@@ -64,6 +72,10 @@ const Index = () => {
       const res = await getActivityDraft();
       console.log('label', res);
       if (res.msg === 'success') {
+        const signerArray =
+          typeof res.data.Signer === 'string'
+            ? parseSignersString(res.data.Signer)
+            : res.data.Signer || [];
         const newLabelForm: LabelForm = {
           type: formValue.type || res.data.Type,
           holderType: formValue.holderType || res.data.HolderType,
@@ -73,13 +85,20 @@ const Index = () => {
           ifRegister: formValue.ifRegister || res.data.IfRegister,
           activeForm: formValue.activeForm || res.data.ActiveForm || '',
           registerMethod: formValue.registerMethod || res.data.RegisterMethod || '',
-          signer: (signers || res.data.Signer).map((signer) => ({
-            name: signer.name,
-            studentId: signer.studentId,
-          })),
+          signer: signers.length > 0 ? signers : signerArray,
         };
         console.log('newLabelForm', newLabelForm);
         setFormValue(newLabelForm);
+        if (newLabelForm.activeForm && newLabelForm.activeForm.length > 0) {
+          const array = [newLabelForm.activeForm];
+          setActiveForm(array);
+        }
+        if (signerArray.length > 0 && signers.length === 0) {
+          for (let i = 0; i < signerArray.length; i++) {
+            setAddSigner(signerArray[i]);
+          }
+          setRemoveSigner(0);
+        }
       }
     } catch (error) {
       console.error('获取活动草稿失败:', error);

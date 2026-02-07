@@ -1,4 +1,4 @@
-import { View } from '@tarojs/components';
+import { View, Image } from '@tarojs/components';
 import { useState, memo } from 'react';
 import { navigateTo, navigateBack } from '@tarojs/taro';
 import './index.scss';
@@ -6,6 +6,8 @@ import { AddPeopleProps } from '@/common/types';
 import classnames from 'classnames';
 import useSignersStore from '@/store/SignersStore';
 import ConfirmModal from '@/modules/ConfirmModal';
+import addlogo from '@/common/svg/add/addLogo.svg';
+import deleteLogo from '@/common/svg/add/deleteLogo.svg';
 
 const AddPeopleItem: React.FC<AddPeopleProps> = memo(
   ({ id, name, number, isEditormode, setIsVisible, setSelectedId }) => {
@@ -25,7 +27,7 @@ const AddPeopleItem: React.FC<AddPeopleProps> = memo(
         >
           {isEditormode && (
             <View className="addPeopleItem-edit" onClick={(e) => handleClick(e)}>
-              －
+              <Image src={deleteLogo} className="addPeopleItem-edit-img" />
             </View>
           )}
           <View className="addPeopleItem-id">{id}</View>
@@ -74,7 +76,7 @@ const Index = () => {
             className="addPeopleIndex-add-icon"
             onClick={() => navigateTo({ url: '/subpackage/addPeoplePage/index' })}
           >
-            +
+            <Image src={addlogo} className="addPeopleIndex-add-icon-img" />
           </View>
           <View className="addPeopleIndex-add-text">继续添加</View>
         </View>

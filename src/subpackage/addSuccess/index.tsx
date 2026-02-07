@@ -29,7 +29,7 @@ const Index = () => {
         </View>
       </View>
       <View className="addSuccess-page-btn">
-        <Button {...btn1}></Button>
+        {/*<Button {...btn1}></Button>*/}
         <Button {...btn2}></Button>
       </View>
     </View>

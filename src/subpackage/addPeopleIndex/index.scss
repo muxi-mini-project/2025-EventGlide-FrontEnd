@@ -31,10 +31,13 @@
       height: 60rpx;
       border-radius: 50%;
       background-color: rgba(0, 0, 0, 0.0784);
-      line-height: 60rpx;
-      text-align: center;
-      color: #736f80;
-      font-size: 50rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &-img {
+        width: 30rpx;
+        height: 30rpx;
+      }
     }
     &-text {
       margin-left: 30rpx;
@@ -72,11 +75,13 @@
     border: 4rpx solid #dbd2d2;
     box-sizing: border-box;
     background-color: #ee604a;
-    color: #fff;
-    font-size: 50rpx;
-    font-weight: 700;
-    text-align: center;
-    line-height: 60rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &-img {
+      width: 30rpx;
+      height: 30rpx;
+    }
   }
   &-id {
     margin-left: 30rpx;

@@ -27,7 +27,7 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
     const params = {
       subject: 'post',
       studentId: studentId,
-      targetid: item.bid,
+      targetId: item.bid,
       receiver: item.userInfo.studentId,
     };
     if (islike) {

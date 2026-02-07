@@ -51,11 +51,6 @@ const Index = () => {
 
   console.log(selectedItem);
 
-  const [isTouchingHandle, setIsTouchingHandle] = useState(false);
-  const [commentPanelPosition, setCommentPanelPosition] = useState(0);
-  const [commentPanelHeight, setCommentPanelHeight] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [currentPosition, setCurrentPosition] = useState(0);
   const scrollViewRef = useRef<any>(null);
 
   const reply_params = {
@@ -285,42 +280,66 @@ const Index = () => {
       }
     }
   };
-
-  const handleTouchStart = (e: any) => {
-    setStartY(e.touches[0].clientY);
-    setIsTouchingHandle(true);
-  };
-
-  const handleTouchMove = (e: any) => {
-    if (!isTouchingHandle) return;
-
-    const currentY = e.touches[0].clientY;
-    const deltaY = currentY - startY;
-
-    let newPosition = currentPosition - deltaY;
-    const maxPosition = 140 + 220 * ((selectedItem.showImg?.length ?? 0) % 3);
-
-    if (newPosition < 0) newPosition = 0;
-    if (newPosition > maxPosition) newPosition = maxPosition;
-    setCommentPanelPosition(newPosition);
-    setCommentPanelHeight(newPosition);
-    setStartY(currentY);
-    setCurrentPosition(newPosition);
-  };
-
-  const handleTouchEnd = () => {
-    setIsTouchingHandle(false);
-  };
   const replyCom = () => {
     setCommentInput(true);
     setReplytype('reply');
+  };
+  const [sheetTop, setSheetTop] = useState(0);
+
+  const startYRef = useRef(0);
+  const startTopRef = useRef(0);
+
+  const minTopRef = useRef(0);
+  const maxTopRef = useRef(0);
+
+  useEffect(() => {
+    const query = Taro.createSelectorQuery();
+
+    query
+      .select('.post-top')
+      .boundingClientRect()
+      .select('.post-content')
+      .boundingClientRect()
+      .exec((res) => {
+        const topRect = res[0];
+        const contentRect = res[1];
+        if (!topRect || !contentRect) return;
+
+        const snapTop = topRect.bottom;
+
+        minTopRef.current = snapTop;
+        maxTopRef.current = contentRect.bottom;
+
+        setSheetTop(maxTopRef.current);
+      });
+  }, []);
+
+  const onDragStart = (e) => {
+    startYRef.current = e.touches[0].clientY;
+    startTopRef.current = sheetTop;
+  };
+
+  const onDragMove = (e) => {
+    const deltaY = e.touches[0].clientY - startYRef.current;
+    let nextTop = startTopRef.current + deltaY;
+
+    if (nextTop < minTopRef.current) nextTop = minTopRef.current;
+    if (nextTop > maxTopRef.current) nextTop = maxTopRef.current;
+
+    setSheetTop(nextTop);
+  };
+
+  const onDragEnd = () => {
+    const middle = (minTopRef.current + maxTopRef.current) / 2;
+
+    setSheetTop(sheetTop < middle ? minTopRef.current : maxTopRef.current);
   };
 
   return (
     <>
       <View className="actComment">
         <NavigationBar url="/pages/indexHome/index" userInfo={selectedItem.userInfo} />
-        <View style={{ height: '150rpx' }} />
+        <View className="post-top" style={{ height: '160rpx' }} />
         <View className="post-content">
           <View style={{ padding: 5, marginLeft: '40rpx', marginRight: '40rpx' }}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 }}>
@@ -334,7 +353,6 @@ const Index = () => {
             <View
               style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 }}
               onClick={() => {
-                setCurrentPosition(0);
                 handleImageClick();
               }}
             >
@@ -361,73 +379,45 @@ const Index = () => {
         </View>
 
         <View
-          className="drag-handle"
+          className="sheet-wrapper"
           style={{
-            transform: `translateY(-${commentPanelPosition}rpx)`,
-            transition: isTouchingHandle ? 'none' : 'transform 0.3s ease',
+            transform: `translateY(${sheetTop}px)`,
+            height: `calc(100vh - ${sheetTop}px)`,
           }}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
         >
-          <View className="drag-handle-bar"></View>
           <View
-            style={{
-              width: '100%',
-              marginTop: '10rpx',
-            }}
+            className="drag-handle"
+            onTouchStart={onDragStart}
+            onTouchMove={onDragMove}
+            onTouchEnd={onDragEnd}
           >
-            <Span
-              style={{
-                fontSize: 14,
-                fontWeight: 400,
-                marginLeft: '50rpx',
-                marginRight: '30rpx',
-                color: '#5E5064',
-              }}
-            >
-              回复 {selectedItem.commentNum}
-            </Span>
-            <Span style={{ fontSize: 14, fontWeight: 400, margin: '20rpx', color: '#5E5064' }}>
-              点赞 {selectedItem.likeNum}
-            </Span>
-            <Span style={{ fontSize: 14, fontWeight: 400, margin: '30rpx', color: '#5E5064' }}>
-              收藏 {selectedItem.collectNum}
-            </Span>
-          </View>
-        </View>
-
-        <View
-          className="comment-panel"
-          style={{
-            transform: `translateY(-${commentPanelPosition}rpx)`,
-            transition: isTouchingHandle ? 'none' : 'transform 0.3s ease',
-          }}
-        >
-          <ScrollView
-            scrollY={true}
-            showScrollbar={false}
-            style={{
-              height:
-                commentPanelHeight > 0
-                  ? `calc(100vh - 600rpx + ${commentPanelPosition}rpx)`
-                  : 'calc(100vh - 600rpx)',
-            }}
-            ref={scrollViewRef}
-          >
-            <View className="actComment-container">
-              <CommentList
-                comments={response}
-                replycomment={replyCom}
-                setReplyId={setReplyId}
-                longClick={() => setCommentOperation(true)}
-                setCommentItems={setCommentItems}
-                setCommentCreator={setCommentCreator}
-                setCommentid={setCommentid}
-              />
+            <View className="drag-handle-bar" />
+            <View style={{ width: '100%', marginTop: '10rpx' }}>
+              <Span style={{ fontSize: 14, marginLeft: '50rpx', color: '#5E5064' }}>
+                回复 {selectedItem.commentNum}
+              </Span>
+              <Span style={{ margin: '20rpx', color: '#5E5064' }}>点赞 {selectedItem.likeNum}</Span>
+              <Span style={{ margin: '30rpx', color: '#5E5064' }}>
+                收藏 {selectedItem.collectNum}
+              </Span>
             </View>
-          </ScrollView>
+          </View>
+
+          <View className="comment-panel">
+            <ScrollView scrollY style={{ height: '100%' }} showScrollbar={false}>
+              <View className="actComment-container">
+                <CommentList
+                  comments={response}
+                  replycomment={replyCom}
+                  setReplyId={setReplyId}
+                  longClick={() => setCommentOperation(true)}
+                  setCommentItems={setCommentItems}
+                  setCommentCreator={setCommentCreator}
+                  setCommentid={setCommentid}
+                />
+              </View>
+            </ScrollView>
+          </View>
         </View>
 
         <View className="actComment-footer">

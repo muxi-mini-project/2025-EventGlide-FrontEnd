@@ -1,15 +1,29 @@
 .actComment {
+  position: relative;
   width: 100%;
   font-family: SimHei;
   overflow-y: hidden;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 
   // 帖子内容区域
   .post-content {
     position: relative;
     background: #fff;
     z-index: 1;
-    padding-bottom: 20rpx;
+    //padding-bottom: 20rpx;
+  }
+  .sheet-wrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20rpx;
+    z-index: 10;
   }
 
   // 拖动把手
@@ -19,8 +33,6 @@
     background: #fff;
     z-index: 20;
     border-top: 2rpx solid #f1eefc;
-    transform: translateY(0);
-    transition: transform 0.3s ease;
     &-bar {
       margin-top: 20px;
       margin-left: 50%;
@@ -39,7 +51,10 @@
     z-index: 10;
     border-radius: 20rpx 20rpx 0 0;
     overflow: hidden;
-    min-height: 200rpx;
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+    padding-bottom: 160rpx;
   }
 
   &-container {
@@ -205,10 +220,10 @@
   width: 100%;
   display: flex;
   align-items: center;
-  overflow-y:auto;
+  overflow-y: auto;
 }
 .showpicture-swiper-heigthimg {
   width: 100%;
   display: flex;
-  overflow-y:auto;
+  overflow-y: auto;
 }

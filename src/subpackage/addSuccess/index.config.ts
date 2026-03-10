@@ -1,5 +1,5 @@
 export default {
-  navigationBarTitleText: '提交成功',
+  navigationBarTitleText: '',
   enableShareAppMessage: true,
-  navigationBarBackgroundColor: '#ffffff',
+  navigationStyle: 'custom',
 };

@@ -1,6 +1,6 @@
 .blog-page {
   width: 100%;
-  height: calc(100vh - 180rpx);
+  height: calc(100vh - 300rpx);
   overflow: hidden;
   background-color: #f9f8fc;
   display: flex;
@@ -16,13 +16,13 @@
   //搜索栏
   .info-icon {
     position: absolute;
-    width: 50rpx;
+    width: 55rpx;
     position: relative;
     &-container {
       display: inline-block;
       position: relative;
       left: 40rpx;
-      top: 25rpx;
+      top: 24rpx;
     }
     &-msg {
       position: absolute;
@@ -58,11 +58,10 @@
       .search-input-box {
         display: flex;
         position: absolute;
-        left: 8rpx;
-        width: 76%;
-        height: 60rpx;
-        border: 3.5rpx solid #a84adf;
-        border-radius: 18rpx;
+        width: 100%;
+        height: 50rpx;
+        border: 3.5rpx solid #7d73f0;
+        border-radius: 25rpx;
         justify-content: center;
         background-color: #fff;
         font: {
@@ -71,18 +70,20 @@
         }
         .gap {
           position: absolute;
-          top: 16rpx;
-          left: 10rpx;
-          height: 25rpx;
-          width: 28rpx;
+          top: 8rpx;
+          left: 15rpx;
+          height: 35rpx;
+          width: 35rpx;
           margin: 0 10rpx;
-          // background-color: #000;
         }
         .search-input {
-          width: 100%;
-          height: 60rpx;
+          width: 80%;
+          height: 50rpx;
           position: absolute;
-          left: 54rpx;
+          left: 75rpx;
+        }
+        .input-placeholder {
+          color: #999999;
         }
       }
       .search-btn {

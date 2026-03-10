@@ -211,6 +211,18 @@ const DatePicker: React.FC<any> = memo(({ isVisiable, setIsVisiable, handleConfi
     });
     setIsVisiable(false);
   };
+  const resetDatePicker = () => {
+    setDateList(generateDateList(undefined, true));
+    setTimeSlots(generateTimeSlots());
+
+    const today = new Date().toISOString().split('T')[0];
+    setSelectedDate(today);
+    setFullDateValue(today);
+    setSelectedTime('00:00');
+    const now = new Date();
+    setCurrentYear(now.getFullYear());
+    setCurrentMonth(now.getMonth());
+  };
 
   const monthNames = [
     '一月',
@@ -280,6 +292,9 @@ const DatePicker: React.FC<any> = memo(({ isVisiable, setIsVisiable, handleConfi
         </View>
 
         <View className="confirm">
+          <View className="confirm-reset" onClick={resetDatePicker}>
+            重置
+          </View>
           <View className="confirm-btn" onClick={onConfirm}>
             确定
           </View>

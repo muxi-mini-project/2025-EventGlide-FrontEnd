@@ -1,4 +1,5 @@
 export default {
-  navigationBarTitleText: '添加',
+  navigationBarTitleText: '',
   enableShareAppMessage: true,
+  navigationStyle: 'custom',
 };

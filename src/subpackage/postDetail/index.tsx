@@ -18,6 +18,7 @@ import { getCommentsBySubject, createComment, replyComment } from '@/common/api/
 import ReplyInput from '@/modules/ReplyInput';
 import CommentActionSheet from '@/modules/CommentActionSheet';
 import CommentList from '@/modules/Comment';
+import formatTime from '@/common/utils/FormatTime';
 
 export const SetBlogReponseContext = createContext<(params: any) => void>(() => {});
 export const SetBlogComment = createContext<(params: any) => void>(() => {});
@@ -30,7 +31,6 @@ const Index = () => {
   const studentId = Taro.getStorageSync('sid');
   const { PostList, PostIndex, setCommentNumChange, backPage } = usePostStore((state) => state);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isRequest, setIsRequest] = useState(true);
   const [replyId, setReplyId] = useState('');
   const [commentInput, setCommentInput] = useState(false);
   const [replytype, setReplytype] = useState('create');
@@ -168,22 +168,15 @@ const Index = () => {
     loadImageRatios();
   }, [PostIndex]);
 
-  useEffect(() => {
-    if (isRequest) {
-      const fetchComments = async () => {
-        try {
-          const res = await getCommentsBySubject(Item.bid);
-          setResponse(res.data);
-          setIsRequest(false);
-        } catch (err) {
-          console.log(err);
-          setIsRequest(false);
-        }
-      };
-
-      fetchComments();
+  const getCommentsAgain = async () => {
+    try {
+      const res = await getCommentsBySubject(Item.bid);
+      setResponse(res.data);
+    } catch (err) {
+      console.log(err);
+      setResponse([]);
     }
-  }, [isRequest]);
+  };
 
   const handleLike = async () => {
     if (Item.isLike === 'true') {
@@ -321,9 +314,11 @@ const Index = () => {
               </Swiper>
             </View>
           )}
-          <View className="postDetail-content-title">{Item.title}</View>
-          <View className="postDetail-content-desc">{Item.introduce || ''}</View>
-          <View className="postDetail-content-timesite">{Item.publishTime}</View>
+          <View className="postDetail-content-info">
+            <View className="postDetail-content-title">{Item.title}</View>
+            <View className="postDetail-content-desc">{Item.introduce || ''}</View>
+            <View className="postDetail-content-timesite">{formatTime(Item.publishTime)}</View>
+          </View>
         </View>
         <View className="postDetail-comment" style={{ top: `${marginTop}px` }}>
           <View className="postDetail-comment-number">共{Item.commentNum}条评论</View>
@@ -433,6 +428,7 @@ const Index = () => {
             commentItems={commentItems}
             commentCreator={commentCreator}
             commentid={commentid}
+            getComments={getCommentsAgain}
           />
         )}
       </View>

@@ -1,11 +1,12 @@
 .addSuccess-page {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 180rpx);
+  margin-top: 180rpx;
   font-family: SimHei;
   &-content {
     position: absolute;
     left: 50%;
-    top: 300rpx;
+    top: 500rpx;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -16,19 +17,19 @@
     }
     &-title {
       font-size: 46rpx;
-      color: #a84adf;
+      color: #7d73f0;
       margin-bottom: 18rpx;
     }
     &-desc {
       font-size: 30rpx;
-      color: #c378e3;
+      color: #9d89f9;
       width: 450rpx;
       text-align: center;
     }
   }
   &-btn {
     position: absolute;
-    top: 800rpx;
+    top: 1000rpx;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

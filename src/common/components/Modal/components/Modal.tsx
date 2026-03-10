@@ -42,7 +42,10 @@ const Modal: React.FC<ModalProps> = memo(({ ...props }) => {
           <View className={`modal-header ${props.headerClassName || ''}`}>
             <Text className="modal-title">{props.title || '提示'}</Text>
             <Image className="modal-close" src={deleteSvg} onClick={props.onClose} />
-            <View className="modal-gapline"></View>
+            <View
+              className="modal-gapline"
+              style={{ backgroundColor: '#d8d6f0', height: '2rpx' }}
+            ></View>
           </View>
         )}
 
@@ -50,7 +53,10 @@ const Modal: React.FC<ModalProps> = memo(({ ...props }) => {
         {props.showContent !== false && (
           <View className="modal-content">
             {props.children}
-            <View className="modal-gapline"></View>
+            <View
+              className="modal-gapline"
+              style={{ backgroundColor: '#c8c3ff', height: '4rpx' }}
+            ></View>
           </View>
         )}
 

@@ -21,14 +21,13 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    height: 4rpx;
     width: 92%;
-    background-color: #d8c6ef;
   }
 
   &-container {
     background-color: #fff;
     border-radius: 15rpx;
+    overflow: hidden;
     width: 88%;
     max-width: 92%;
     position: relative;
@@ -113,7 +112,7 @@
   }
 
   &-confirm {
-    color: #b36aeb;
+    color: #7d73f0;
     margin-left: 20rpx;
   }
 }

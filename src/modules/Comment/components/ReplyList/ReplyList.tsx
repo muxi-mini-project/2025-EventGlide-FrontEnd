@@ -50,6 +50,7 @@ const ReplyList: React.FC<ReplyListProps> = ({
           setCommentCreator={setCommentCreator}
           setCommentid={setCommentid}
           longClick={longClick}
+          son={true}
         />
       ))}
 

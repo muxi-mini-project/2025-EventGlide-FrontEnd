@@ -29,20 +29,19 @@
     }
   }
 
-  &-label {
+  &-types {
     display: flex;
     flex-wrap: wrap;
     gap: 10rpx;
+    font-size: 18rpx;
     &-item {
-      font-size: 24rpx;
-      color: #5e5064;
-      height: 40rpx;
-      min-width: 120rpx;
-      background-color: #f3f3fb;
-      border-radius: 20rpx;
-      line-height: 40rpx;
+      color: #fff;
+      padding: 0 20rpx;
+      height: 30rpx;
+      line-height: 30rpx;
       text-align: center;
-      padding: 0 15rpx;
+      border-radius: 10rpx;
+      background-color: #bd96ee;
     }
   }
 

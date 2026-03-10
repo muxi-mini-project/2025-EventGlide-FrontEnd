@@ -1,20 +1,17 @@
 import { View, Image } from '@tarojs/components';
 import { memo } from 'react';
-import { switchTab } from '@tarojs/taro';
+import Taro from '@tarojs/taro';
 import './style.scss';
 import avatar from '@/common/assets/Postlist/波奇.jpg';
 import Naviarrow from '@/common/svg/arrowhead/Naviarrow.svg';
 import { UserInfo } from '@/common/types';
 
-const NavigationBar: React.FC<{ url: string; userInfo: UserInfo }> = memo(({ url, userInfo }) => {
+const NavigationBar: React.FC<{ url: string; userInfo: UserInfo }> = memo(({ userInfo }) => {
   return (
     <View className="navigationBar">
-      <Image
-        onClick={() => switchTab({ url: url })}
-        className="navigationBar-back"
-        mode="widthFix"
-        src={Naviarrow}
-      ></Image>
+      <View className="navigationBar-back" onClick={() => Taro.navigateBack()}>
+        <Image className="navigationBar-back-icon" mode="widthFix" src={Naviarrow}></Image>
+      </View>
       <View className="navigationBar-user">
         <Image
           className="navigationBar-user-avatar"
@@ -42,15 +39,12 @@ const NavigationBarBack: React.FC<{
   backgroundColor: string;
   title: string;
   url: string;
-}> = memo(({ backgroundColor, title, url }) => {
+}> = memo(({ backgroundColor, title }) => {
   return (
     <View className="navigationBar" style={{ backgroundColor }}>
-      <Image
-        onClick={() => switchTab({ url: url })}
-        className="navigationBar-back"
-        mode="widthFix"
-        src={Naviarrow}
-      ></Image>
+      <View onClick={() => Taro.navigateBack()} className="navigationBar-back">
+        <Image className="navigationBar-back-icon" mode="widthFix" src={Naviarrow}></Image>
+      </View>
       <View className="navigationBar-title">{title}</View>
     </View>
   );

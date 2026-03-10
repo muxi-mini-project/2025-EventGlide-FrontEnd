@@ -12,6 +12,7 @@ import { createPost, loadPostDraft } from '@/common/api/PostRequest';
 import Taro from '@tarojs/taro';
 import { useSaveDraft } from '@/common/hooks/useSaveDraft';
 import { LabelForm } from '@/common/types';
+import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
   const { showImg: imgUrl } = usePostStore();
@@ -46,7 +47,7 @@ const Index = () => {
         if (Array.isArray(res.data.showImg)) {
           const imgUrls = res.data.showImg.filter((item) => item !== '');
           setPageImgUrl(imgUrls);
-        } else if (res.data.showImg !== '') {
+        } else if (res.data.showImg !== '' && res.data.showImg !== null) {
           setPageImgUrl([res.data.showImg]);
         } else {
           setPageImgUrl([]);
@@ -92,98 +93,101 @@ const Index = () => {
   const btn = {
     url: '/pages/postHome/index',
     text: '发布',
-    backgroundColor: '#CF79FA',
+    backgroundColor: '#7D73F0',
     textColor: '#FFFEFF',
     isBorder: false,
   };
   const btnDisabled = {
     text: '发布',
-    backgroundColor: '#CF79FA',
+    backgroundColor: '#7D73F0',
     textColor: '#FFFEFF',
     isBorder: false,
   };
 
   return (
     <>
-      {load && (
-        <View className="addblog-introduce">
-          <View className="addblog-introduce-container">
-            <View className="addblog-introduce-container-title">{count}/1000</View>
-            <View className="addblog-introduce-container-content">
-              <Input
-                style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;'}
-                className="addblog-introduce-container-content-title"
-                value={title}
-                onInput={(e) => setTitle(e.detail.value)}
-                placeholderClass="addblog-introduce-container-content-title-placeholder"
-                placeholder="清晰名称能更好地让人注意哦~"
-              ></Input>
-              <Textarea
-                className="addblog-introduce-container-content-desc"
-                value={introduce}
-                onInput={(e) => {
-                  setIntroduce(e.detail.value);
-                  setCount(e.detail.value.length);
-                }}
-                placeholderClass="addblog-introduce-container-content-desc-placeholder"
-                placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
-              ></Textarea>
-              <View className="addblog-introduce-container-content-pic">
-                {pageImgUrl &&
-                  pageImgUrl.map((item, index) => (
-                    <Picture
-                      key={index}
-                      src={item}
-                      isShowDelete={true}
-                      imgUrl={pageImgUrl}
-                      setImgUrl={setPageImgUrl}
-                    />
-                  ))}
-                <View
-                  className="addblog-introduce-container-content-pic-addblog"
-                  onClick={() => setIsShowAlbum(true)}
-                >
-                  +
+      <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
+      <View>
+        {load && (
+          <View className="addblog-introduce">
+            <View className="addblog-introduce-container">
+              <View className="addblog-introduce-container-title">{count}/1000</View>
+              <View className="addblog-introduce-container-content">
+                <Input
+                  style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;'}
+                  className="addblog-introduce-container-content-title"
+                  value={title}
+                  onInput={(e) => setTitle(e.detail.value)}
+                  placeholderClass="addblog-introduce-container-content-title-placeholder"
+                  placeholder="清晰名称能更好地让人注意哦~"
+                ></Input>
+                <Textarea
+                  className="addblog-introduce-container-content-desc"
+                  value={introduce}
+                  onInput={(e) => {
+                    setIntroduce(e.detail.value);
+                    setCount(e.detail.value.length);
+                  }}
+                  placeholderClass="addblog-introduce-container-content-desc-placeholder"
+                  placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
+                ></Textarea>
+                <View className="addblog-introduce-container-content-pic">
+                  {pageImgUrl &&
+                    pageImgUrl.map((item, index) => (
+                      <Picture
+                        key={index}
+                        src={item}
+                        isShowDelete={true}
+                        imgUrl={pageImgUrl}
+                        setImgUrl={setPageImgUrl}
+                      />
+                    ))}
+                  <View
+                    className="addblog-introduce-container-content-pic-addblog"
+                    onClick={() => setIsShowAlbum(true)}
+                  >
+                    +
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-          <View className="addblog-introduce-floor">
-            <View className="addblog-introduce-floor-draft" onClick={() => setIsShowDraft(true)}>
-              <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
-              <View className="addblog-introduce-floor-draft-text">存草稿</View>
+            <View className="addblog-introduce-floor">
+              <View className="addblog-introduce-floor-draft" onClick={() => setIsShowDraft(true)}>
+                <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
+                <View className="addblog-introduce-floor-draft-text">存草稿</View>
+              </View>
+              <View className="addblog-introduce-floor-btn" onClick={() => handleConfirm()}>
+                {pageImgUrl.length > 0 ? <Button {...btn} /> : <Button {...btnDisabled} />}
+              </View>
             </View>
-            <View className="addblog-introduce-floor-btn" onClick={() => handleConfirm()}>
-              {pageImgUrl.length > 0 ? <Button {...btn} /> : <Button {...btnDisabled} />}
-            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      {/* 草稿保存modal */}
-      <ConfirmModal
-        title="是否保存草稿？"
-        visible={isShowDraft}
-        onClose={() => setIsShowDraft(false)}
-        onConfirm={() =>
-          saveDraft({
-            title: title,
-            introduce,
-            showImg: pageImgUrl,
-            studentId: studentId,
-            labelform: {} as LabelForm,
-          })
-        }
-        headerClassName="textmid"
-      />
+        {/* 草稿保存modal */}
+        <ConfirmModal
+          title="是否保存草稿？"
+          visible={isShowDraft}
+          onClose={() => setIsShowDraft(false)}
+          onConfirm={() =>
+            saveDraft({
+              title: title,
+              introduce,
+              showImg: pageImgUrl,
+              studentId: studentId,
+              labelform: {} as LabelForm,
+            })
+          }
+          headerClassName="textmid"
+        />
 
-      <ImagePicker
-        isVisiable={isShowAlbum}
-        setIsVisiable={setIsShowAlbum}
-        imgUrl={pageImgUrl}
-        setImgUrl={setPageImgUrl}
-        type={'event'}
-      />
+        <ImagePicker
+          isVisiable={isShowAlbum}
+          setIsVisiable={setIsShowAlbum}
+          imgUrl={pageImgUrl}
+          setImgUrl={setPageImgUrl}
+          type={'event'}
+        />
+      </View>
     </>
   );
 };

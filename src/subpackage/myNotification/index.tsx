@@ -6,43 +6,10 @@ import classnames from 'classnames';
 import { get } from '@/common/api/request';
 import { useDidShow } from '@tarojs/taro';
 import NoticePageNull from '@/modules/EmptyComponent/components/noticepagenull';
+import formatTime from '@/common/utils/FormatTime';
+import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
-  const formatTime = (timeStr: string) => {
-    const time = new Date(timeStr);
-    const now = new Date();
-
-    const hours = time.getHours().toString().padStart(2, '0');
-    const minutes = time.getMinutes().toString().padStart(2, '0');
-    const timeHM = `${hours}:${minutes}`;
-
-    const timeDate = time.getDate();
-    const timeMonth = time.getMonth() + 1;
-    const timeYear = time.getFullYear();
-
-    const nowDate = now.getDate();
-    const nowMonth = now.getMonth() + 1;
-    const nowYear = now.getFullYear();
-
-    if (timeYear === nowYear && timeMonth === nowMonth && timeDate === nowDate) {
-      return timeHM;
-    }
-
-    const yesterday = new Date(now);
-    yesterday.setDate(nowDate - 1);
-    const yesterdayDate = yesterday.getDate();
-    const yesterdayMonth = yesterday.getMonth() + 1;
-
-    if (timeYear === nowYear && timeMonth === yesterdayMonth && timeDate === yesterdayDate) {
-      return `昨天 ${timeHM}`;
-    }
-
-    if (timeYear === nowYear) {
-      return `${timeMonth.toString().padStart(2, '0')}-${timeDate.toString().padStart(2, '0')}`;
-    }
-
-    return `${timeYear}-${timeMonth.toString().padStart(2, '0')}-${timeDate.toString().padStart(2, '0')}`;
-  };
   return (
     <View className="letter-list-item">
       <Image
@@ -147,52 +114,55 @@ const Index = () => {
   };
 
   return (
-    <View className="myNotification-page">
-      <View className="myNotification-page-header">
-        <View
-          onClick={() => handleClick('favor')}
-          className={classnames('myNotification-page-header-item', {
-            activeItem: isActive,
-          })}
-        >
-          赞和收藏
-        </View>
-        <View
-          onClick={() => {
-            handleClick('letter');
-            setNotice(false);
-            readnotice(letter);
-          }}
-          className={classnames('myNotification-page-header-item', {
-            activeItem: !isActive,
-          })}
-        >
-          <View>评论</View>
+    <>
+      <NavigationBarBack backgroundColor="#FFFFFF" title="账号设置" url="/pages/postHome/index" />
+      <View className="myNotification-page">
+        <View className="myNotification-page-header">
           <View
-            style={{
-              display: notice ? 'block' : 'none',
-              position: 'absolute',
-              width: '10rpx',
-              height: '10rpx',
-              borderRadius: '5rpx',
-              backgroundColor: '#FF4D4F',
-              right: 0,
-              top: 0,
-              marginRight: '90rpx',
-              marginTop: '40rpx',
+            onClick={() => handleClick('favor')}
+            className={classnames('myNotification-page-header-item', {
+              activeItem: isActive,
+            })}
+          >
+            赞和收藏
+          </View>
+          <View
+            onClick={() => {
+              handleClick('letter');
+              setNotice(false);
+              readnotice(letter);
             }}
-          />
+            className={classnames('myNotification-page-header-item', {
+              activeItem: !isActive,
+            })}
+          >
+            <View>评论和@</View>
+            <View
+              style={{
+                display: notice ? 'block' : 'none',
+                position: 'absolute',
+                width: '10rpx',
+                height: '10rpx',
+                borderRadius: '5rpx',
+                backgroundColor: '#FF4D4F',
+                right: 0,
+                top: 0,
+                marginRight: '90rpx',
+                marginTop: '40rpx',
+              }}
+            />
+          </View>
+        </View>
+        <View className="myNotification-page-content">
+          {showPage === 'favor' && favor.length === 0 && <NoticePageNull />}
+          {showPage === 'favor' &&
+            favor.map((item, index) => <LetterListItem key={index} {...item} />)}
+          {showPage === 'letter' && letter.length === 0 && <NoticePageNull />}
+          {showPage === 'letter' &&
+            letter.map((item, index) => <LetterListItem key={index} {...item} />)}
         </View>
       </View>
-      <View className="myNotification-page-content">
-        {showPage === 'favor' && favor.length === 0 && <NoticePageNull />}
-        {showPage === 'favor' &&
-          favor.map((item, index) => <LetterListItem key={index} {...item} />)}
-        {showPage === 'letter' && letter.length === 0 && <NoticePageNull />}
-        {showPage === 'letter' &&
-          letter.map((item, index) => <LetterListItem key={index} {...item} />)}
-      </View>
-    </View>
+    </>
   );
 };
 

@@ -104,21 +104,21 @@ const Index = () => {
           </View>
           <View className="userProfile-container">
             <View className="userProfile-container-column">
-              <Image className="userProfile-container-img" mode="widthFix" src={schoolSrc} />
+              <Image className="userProfile-container-icon" mode="widthFix" src={schoolSrc} />
               学校
             </View>
             <View className="userProfile-container-desc">{school}</View>
           </View>
           <View className="userProfile-container">
             <View className="userProfile-container-column">
-              <Image className="userProfile-container-img" mode="widthFix" src={departmentSrc} />
+              <Image className="userProfile-container-icon" mode="widthFix" src={departmentSrc} />
               院系
             </View>
             <View className="userProfile-container-desc">{college ? college : '计算机学院'}</View>
           </View>
           <View className="userProfile-container-bottom">
             <View className="userProfile-container-column">
-              <Image className="userProfile-container-img" mode="widthFix" src={cardSrc} />
+              <Image className="userProfile-container-icon" mode="widthFix" src={cardSrc} />
               一卡通号
             </View>
             <View className="userProfile-container-desc">{studentId}</View>

@@ -29,7 +29,7 @@ const handleUserLogin = async ({ studentId, password }: LoginRequest) => {
   setSchool(responseData.school);
   setPoststudentId(responseData.studentId);
 
-  switchTab({ url: '/pages/indexHome/index' });
+  switchTab({ url: '/pages/main/index' });
 };
 
 const handleCheckLogin = async () => {
@@ -45,7 +45,7 @@ const handleCheckLogin = async () => {
     setUsername(responseData.name);
     setSchool(responseData.school);
     setPoststudentId(sid);
-    switchTab({ url: '/pages/indexHome/index' });
+    switchTab({ url: '/pages/main/index' });
   }
 };
 

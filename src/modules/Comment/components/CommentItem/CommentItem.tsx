@@ -28,17 +28,20 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <View className="CommentItem">
       {/* 一级评论 */}
-      <ReplyItem
-        {...commentForReplyItem}
-        isLike={comment.isLike}
-        likeNum={comment.likeNum}
-        replycomment={replycomment}
-        setReplyId={setReplyId}
-        setCommentItems={setCommentItems}
-        setCommentCreator={setCommentCreator}
-        setCommentid={setCommentid}
-        longClick={longClick}
-      />
+      <View className="CommentItem-first">
+        <ReplyItem
+          {...commentForReplyItem}
+          isLike={comment.isLike}
+          likeNum={comment.likeNum}
+          replycomment={replycomment}
+          setReplyId={setReplyId}
+          setCommentItems={setCommentItems}
+          setCommentCreator={setCommentCreator}
+          setCommentid={setCommentid}
+          longClick={longClick}
+          son={false}
+        />
+      </View>
 
       {/* 子评论列表 */}
       <ReplyList

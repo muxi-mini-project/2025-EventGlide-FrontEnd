@@ -12,6 +12,7 @@ import { useDidShow } from '@tarojs/taro';
 import { getActivityDraft } from '@/common/api';
 import { LabelForm } from '@/common/types';
 import { useSaveDraft } from '@/common/hooks/useSaveDraft';
+import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
   const [isShowDraft, setIsShowDraft] = useState(false);
@@ -55,30 +56,21 @@ const Index = () => {
   const btn = {
     // url: "",
     text: '下一步',
-    backgroundColor: '#CF79FA',
+    backgroundColor: '#7D73F0',
     textColor: '#FFFEFF',
     isBorder: false,
   };
   const handleNextClick = () => {
-    if (!title.trim() && !description.trim()) {
+    if (!title.trim() || !description.trim()) {
       Taro.showToast({
         title: '请填写活动标题和活动内容',
         icon: 'none',
         duration: 2000,
       });
       return;
-    }
-    if (!title.trim()) {
+    } else if (imgUrl.length === 0) {
       Taro.showToast({
-        title: '请填写活动标题',
-        icon: 'none',
-        duration: 2000,
-      });
-      return;
-    }
-    if (!description.trim()) {
-      Taro.showToast({
-        title: '请填写活动内容',
+        title: '请上传至少一张图片',
         icon: 'none',
         duration: 2000,
       });
@@ -92,85 +84,88 @@ const Index = () => {
 
   return (
     <>
-      <View className="add-introduce">
-        <View className="add-introduce-container">
-          <View className="add-introduce-container-title">{count}/1000</View>
-          <View className="add-introduce-container-content">
-            <Input
-              style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;height: 50rpx;'}
-              className="add-introduce-container-content-title"
-              value={title}
-              onInput={(e) => setTitle(e.detail.value)}
-              placeholderClass="add-introduce-container-content-title-placeholder"
-              placeholder="清晰名称能更好地让人注意哦~"
-              maxlength={30}
-            ></Input>
-            <Textarea
-              className="add-introduce-container-content-desc"
-              value={description}
-              onInput={(e) => {
-                const value = e.detail.value;
-                setDescription(value);
-                setCount(value.length);
-              }}
-              placeholderClass="add-introduce-container-content-desc-placeholder"
-              placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
-              maxlength={1000}
-            ></Textarea>
-            <View className="add-introduce-container-content-pic">
-              {imgUrl &&
-                imgUrl.map((item, index) => (
-                  <Picture
-                    key={index}
-                    src={item}
-                    isShowDelete={true}
-                    imgUrl={imgUrl}
-                    setImgUrl={setImgUrl}
-                  />
-                ))}
-              <View
-                className="add-introduce-container-content-pic-add"
-                onClick={() => setIsShowAlbum(true)}
-              >
-                +
+      <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
+      <View>
+        <View className="add-introduce">
+          <View className="add-introduce-container">
+            <View className="add-introduce-container-title">{count}/1000</View>
+            <View className="add-introduce-container-content">
+              <Input
+                style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;height: 50rpx;'}
+                className="add-introduce-container-content-title"
+                value={title}
+                onInput={(e) => setTitle(e.detail.value)}
+                placeholderClass="add-introduce-container-content-title-placeholder"
+                placeholder="清晰名称能更好地让人注意哦~"
+                maxlength={30}
+              ></Input>
+              <Textarea
+                className="add-introduce-container-content-desc"
+                value={description}
+                onInput={(e) => {
+                  const value = e.detail.value;
+                  setDescription(value);
+                  setCount(value.length);
+                }}
+                placeholderClass="add-introduce-container-content-desc-placeholder"
+                placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
+                maxlength={1000}
+              ></Textarea>
+              <View className="add-introduce-container-content-pic">
+                {imgUrl &&
+                  imgUrl.map((item, index) => (
+                    <Picture
+                      key={index}
+                      src={item}
+                      isShowDelete={true}
+                      imgUrl={imgUrl}
+                      setImgUrl={setImgUrl}
+                    />
+                  ))}
+                <View
+                  className="add-introduce-container-content-pic-add"
+                  onClick={() => setIsShowAlbum(true)}
+                >
+                  +
+                </View>
               </View>
             </View>
           </View>
-        </View>
-        <View className="add-introduce-floor">
-          <View className="add-introduce-floor-draft" onClick={() => setIsShowDraft(true)}>
-            <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
-            <View className="add-introduce-floor-draft-text">存草稿</View>
+          <View className="add-introduce-floor">
+            <View className="add-introduce-floor-draft" onClick={() => setIsShowDraft(true)}>
+              <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
+              <View className="add-introduce-floor-draft-text">存草稿</View>
+            </View>
+            <View className="add-introduce-floor-btn" onClick={handleNextClick}>
+              <Button {...btn} />
+            </View>
           </View>
-          <View className="add-introduce-floor-btn" onClick={handleNextClick}>
-            <Button {...btn} />
-          </View>
         </View>
+
+        {/* 草稿保存modal */}
+        <ConfirmModal
+          title="是否保存草稿？"
+          visible={isShowDraft}
+          onClose={() => setIsShowDraft(false)}
+          onConfirm={() =>
+            saveDraft({
+              title: title,
+              introduce: description,
+              showImg: imgUrl,
+              labelform: {} as LabelForm,
+            })
+          }
+          headerClassName="textmid"
+        />
+
+        <ImagePicker
+          isVisiable={isShowAlbum}
+          setIsVisiable={setIsShowAlbum}
+          imgUrl={imgUrl}
+          setImgUrl={setImgUrl}
+          type={'event'}
+        />
       </View>
-
-      {/* 草稿保存modal */}
-      <ConfirmModal
-        title="是否保存草稿？"
-        visible={isShowDraft}
-        onClose={() => setIsShowDraft(false)}
-        onConfirm={() =>
-          saveDraft({
-            title: title,
-            introduce: description,
-            showImg: imgUrl,
-            labelform: {} as LabelForm,
-          })
-        }
-        headerClassName="textmid"
-      />
-
-      <ImagePicker
-        isVisiable={isShowAlbum}
-        setIsVisiable={setIsShowAlbum}
-        imgUrl={imgUrl}
-        setImgUrl={setImgUrl}
-        type={'event'}
-      />
     </>
   );
 };

@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import { View } from '@tarojs/components';
 import './style.scss';
 import MyActivityCard from './MyActivityCard';
+import ActivityCard from '@/modules/ActivityCard/index';
 import { getMyActivityList } from '@/common/api/Activity';
 import useActivityStore from '@/store/ActivityStore';
 import { ActivityDetailInfo } from '@/common/types';
@@ -51,10 +52,10 @@ const MyActivityTab: React.FC<{
               key={index}
               onClick={() => {
                 setSelectedItem(item);
-                setIsShowActivityWindow(true);
+                //setIsShowActivityWindow(true);
               }}
             >
-              <MyActivityCard
+              {/*<MyActivityCard
                 key={index}
                 avatar={item.userInfo.avatar}
                 title={item.title}
@@ -66,7 +67,14 @@ const MyActivityTab: React.FC<{
                 isLike={item.isLike}
                 isCollect={item.isCollect}
                 collectNum={item.collectNum}
+              /> */}
+              <ActivityCard
+                key={index}
+                activeItem={item}
+                setShowPostWindow={setIsShowActivityWindow}
+                isbottomline={false}
               />
+              <View className="mine-activity-page-bottomline"></View>
             </View>
           );
         })

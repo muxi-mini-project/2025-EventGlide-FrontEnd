@@ -1,5 +1,6 @@
-import { View, Text } from '@tarojs/components';
+import { View, Text, Image } from '@tarojs/components';
 import { memo } from 'react';
+import deleteIcon from '@/common/svg/delete.svg';
 import './style.scss';
 
 const PolicyModal: React.FC<{ setShowPolicyWindow: (show: boolean) => void }> = memo(
@@ -9,7 +10,7 @@ const PolicyModal: React.FC<{ setShowPolicyWindow: (show: boolean) => void }> = 
         <View className="policy-window-background"></View>
         <View className="policy-window-container">
           <View className="policy-window-close" onClick={() => props.setShowPolicyWindow(false)}>
-            ×
+            <Image src={deleteIcon} mode="widthFix" className="policy-window-close-img" />
           </View>
           <View className="policy-window-header">校灵通隐私政策</View>
           <View className="policy-window-gapline1"></View>

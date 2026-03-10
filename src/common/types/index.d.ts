@@ -44,7 +44,7 @@ export type {
   AddPeopleProps,
   PictureCutProps,
   ReplyInputProps,
-} from './UIProps';
+} from './UiProps';
 
 export type {
   LoginRequest,

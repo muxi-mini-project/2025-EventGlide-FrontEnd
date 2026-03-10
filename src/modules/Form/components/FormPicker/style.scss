@@ -9,20 +9,21 @@
   color: #170a1e;
   &-title {
     height: 120rpx;
-    width: 100%;
+    width: 92%;
+    margin-left: 4%;
     border-radius: 20rpx 20rpx 0 0;
     border-bottom: 2rpx solid #d8c6ef;
     position: relative;
     &-text {
       position: absolute;
-      left: 62rpx;
+      left: 32rpx;
       top: 32rpx;
     }
     &-close {
       position: absolute;
-      right: 62rpx;
+      right: 32rpx;
       top: 32rpx;
-      color: #b36aeb;
+      color: #956aeb;
     }
   }
   &-item {
@@ -39,14 +40,32 @@
       height: 44rpx;
       border-radius: 50%;
       border: 3rpx solid #d8c6ef;
+      display: flex;
+      justify-content: center;
+
+      &::after {
+        content: '';
+        position: absolute;
+        width: 20rpx;
+        height: 10rpx;
+        margin-top: 12rpx;
+        border-left: 3rpx solid white;
+        border-bottom: 3rpx solid white;
+        transform: rotate(-45deg);
+        opacity: 0;
+      }
+
+      &[style*='background-color: #7D73F0']::after {
+        opacity: 1;
+      }
     }
     &-text {
       position: absolute;
       left: 140rpx;
       height: 90%;
-      width: 650rpx;
+      width: 550rpx;
       line-height: 140rpx;
-      border-bottom: 4rpx solid #dfc0f7;
+      border-bottom: 4rpx solid #d8d6f0;
     }
   }
 }

@@ -53,6 +53,7 @@ export interface ReplyItemProps {
   replyTime?: string;
   commentedTime?: string;
   replyPos?: string;
+  son?: boolean;
 
   // 交互相关属性
   isLike: string;

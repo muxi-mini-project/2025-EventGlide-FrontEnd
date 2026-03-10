@@ -1,4 +1,5 @@
 export default {
-  navigationBarTitleText: '申报人身份认证',
+  navigationBarTitleText: '',
   enableShareAppMessage: true,
+  navigationStyle: 'custom',
 };

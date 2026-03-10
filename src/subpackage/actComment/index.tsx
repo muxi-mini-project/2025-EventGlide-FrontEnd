@@ -51,8 +51,6 @@ const Index = () => {
 
   console.log(selectedItem);
 
-  const scrollViewRef = useRef<any>(null);
-
   const reply_params = {
     parentId: replyId,
     subject: 'comment',
@@ -156,6 +154,21 @@ const Index = () => {
     fetchComments();
     loadImageRatios();
   }, []);
+
+  const getCommentsAgain = async () => {
+    try {
+      const res = await getCommentsBySubject(selectedItem.bid);
+      if (res.data === null) {
+        setResponse([]);
+        return;
+      }
+      console.log(res.data);
+      setResponse(res.data);
+    } catch (error) {
+      console.error('获取评论失败:', error);
+      setResponse([]);
+    }
+  };
 
   const setReponseContext = async (params: any) => {
     if (params.content === '') {
@@ -284,6 +297,8 @@ const Index = () => {
     setCommentInput(true);
     setReplytype('reply');
   };
+
+  // 拖拽功能
   const [sheetTop, setSheetTop] = useState(0);
 
   const startYRef = useRef(0);
@@ -392,14 +407,10 @@ const Index = () => {
             onTouchEnd={onDragEnd}
           >
             <View className="drag-handle-bar" />
-            <View style={{ width: '100%', marginTop: '10rpx' }}>
-              <Span style={{ fontSize: 14, marginLeft: '50rpx', color: '#5E5064' }}>
-                回复 {selectedItem.commentNum}
-              </Span>
-              <Span style={{ margin: '20rpx', color: '#5E5064' }}>点赞 {selectedItem.likeNum}</Span>
-              <Span style={{ margin: '30rpx', color: '#5E5064' }}>
-                收藏 {selectedItem.collectNum}
-              </Span>
+            <View className="drag-handle-content">
+              <Span className="drag-handle-content-text">回复 {selectedItem.commentNum}</Span>
+              <Span className="drag-handle-content-text">点赞 {selectedItem.likeNum}</Span>
+              <Span className="drag-handle-content-text">收藏 {selectedItem.collectNum}</Span>
             </View>
           </View>
 
@@ -491,6 +502,7 @@ const Index = () => {
           commentItems={commentItems}
           commentCreator={commentCreator}
           commentid={commentid}
+          getComments={getCommentsAgain}
         />
       )}
     </>

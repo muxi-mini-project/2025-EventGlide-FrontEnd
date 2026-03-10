@@ -1,6 +1,7 @@
 .addPeopleIndex {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 180rpx);
+  margin-top: 180rpx;
   background-color: #f9f8fc;
   font-family: SimHei;
   &-title {
@@ -52,7 +53,7 @@
     transform: translateX(-50%);
     width: 670rpx;
     height: 112rpx;
-    background-color: #cf79fa;
+    background-color: #7d73f0;
     border-radius: 20rpx;
     line-height: 112rpx;
     text-align: center;
@@ -87,7 +88,7 @@
     margin-left: 30rpx;
     width: 60rpx;
     height: 60rpx;
-    background-color: #cf79fa;
+    background-color: #7d73f0;
     border-radius: 50%;
     color: #fff;
     font-size: 40rpx;

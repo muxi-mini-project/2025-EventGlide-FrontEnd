@@ -2,6 +2,7 @@ import './style.scss';
 import { View } from '@tarojs/components';
 import { memo } from 'react';
 import Picture from '@/common/components/Picture';
+import { holdertype, activeColor } from '@/common/const/Formconst';
 
 interface ActivityData {
   title?: string;
@@ -18,10 +19,6 @@ interface ActivityContentProps {
   isDraftMode?: boolean; // 如果是草稿模式，会显示默认提示文字等
 }
 
-const Label: React.FC<{ text: string }> = memo(({ text }) => {
-  return <View className="activity-content-label-item">{text}</View>;
-});
-
 const ActivityContent: React.FC<ActivityContentProps> = memo(
   ({ activityData, canDeleteImages = false, isDraftMode = false }) => {
     const { introduce: description, showImg, type, holderType, ifRegister } = activityData;
@@ -29,9 +26,6 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
     // 处理报名状态文本
     let registerText = '无需报名';
     if (ifRegister === '是' || ifRegister === true) registerText = '需要报名';
-
-    // 标签列表
-    const labelList = [type || '', holderType || '', registerText].filter((item) => item !== ''); // 过滤空字符串
 
     // 默认内容文本
     const defaultDescription =
@@ -53,10 +47,20 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
         </View>
 
         <View className="activity-content-other">
-          <View className="activity-content-label">
-            {labelList.map((item, index) => (
-              <Label key={index} text={item}></Label>
-            ))}
+          <View className="activity-content-types">
+            <View className="activity-content-types-item">
+              {holdertype.get(holderType || '') || holderType || ''}
+            </View>
+            <View
+              className="activity-content-types-item"
+              style={
+                activeColor.get(type || '')
+                  ? `background-color: ${activeColor.get(type || '')}`
+                  : 'background-color: #bd96ee'
+              }
+            >
+              {type || ''}
+            </View>
           </View>
 
           <View className="activity-content-pic">

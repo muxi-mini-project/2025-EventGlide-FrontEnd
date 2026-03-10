@@ -1,9 +1,17 @@
 .blog-add {
   position: fixed;
   display: flex;
-  bottom: 50rpx;
+  bottom: 170rpx;
   right: 50rpx;
   width: 100rpx;
   height: 100rpx;
+  border-radius: 50%;
+  background-color: #7d73f0;
   z-index: 3;
+  &-icon {
+    width: 46rpx;
+    height: 46rpx;
+    margin-left: 27rpx;
+    margin-top: 27rpx;
+  }
 }

@@ -29,18 +29,29 @@
   // 拖动把手
   .drag-handle {
     position: relative;
-    height: 100rpx;
+    height: 80rpx;
     background: #fff;
     z-index: 20;
     border-top: 2rpx solid #f1eefc;
     &-bar {
-      margin-top: 20px;
+      margin-top: 10px;
       margin-left: 50%;
-      transform: translateX(-60rpx);
-      width: 120rpx;
-      height: 8rpx;
-      background: #e0e0e0;
+      transform: translateX(-40rpx);
+      width: 80rpx;
+      height: 6rpx;
+      background: #bebdbe;
       border-radius: 4rpx;
+    }
+    &-content {
+      width: 100%;
+      margin-top: 10rpx;
+      display: flex;
+      gap: 80rpx;
+      justify-content: center;
+      &-text {
+        font-size: 28rpx;
+        color: #5e5064;
+      }
     }
   }
 
@@ -62,6 +73,7 @@
     flex-direction: column;
     width: 100%;
     min-height: 100%;
+    padding-bottom: 40rpx;
   }
 
   &-footer {
@@ -72,14 +84,13 @@
     padding-bottom: 60rpx;
     border-top: 2rpx solid #f1eefc;
     display: flex;
-    gap: 40rpx;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     background-color: #fff;
     z-index: 30;
 
     &-input {
-      width: 330rpx;
+      width: 300rpx;
       height: 60rpx;
       border-radius: 40rpx;
       background-color: #f9f8fc;
@@ -89,21 +100,24 @@
       margin-left: 20rpx;
       &-icon {
         width: 40rpx;
-        margin-left: 20rpx;
+        margin-left: 40rpx;
+        margin-right: 5rpx;
       }
 
       &-text {
-        font-size: 28rpx;
+        font-size: 26rpx;
         color: #5e5064;
         font-family: SimHei;
+        opacity: 0.5;
       }
     }
 
     &-desc {
       display: flex;
       align-items: center;
-      gap: 30rpx;
-      color: #736f80;
+      gap: 15rpx;
+      color: #695c6f;
+      margin-right: 40rpx;
       &-item {
         display: flex;
         gap: 10rpx;
@@ -112,15 +126,23 @@
       }
 
       &-icon1 {
-        width: 50rpx;
+        width: 45rpx;
+        flex-shrink: 0;
       }
 
       &-icon2 {
-        width: 53rpx;
+        width: 50rpx;
+        flex-shrink: 0;
       }
 
       &-icon3 {
-        width: 50rpx;
+        width: 45rpx;
+        flex-shrink: 0;
+      }
+
+      &-text {
+        white-space: nowrap;
+        font-size: 24rpx;
       }
     }
   }

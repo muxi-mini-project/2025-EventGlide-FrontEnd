@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components';
 import './style.scss';
-import Null from '@/common/assets/activity/null.png';
+import Null from '@/common/svg/activity/null.svg';
 const MinePageNull: React.FC = () => {
   return (
     <View className="mine-page-null">

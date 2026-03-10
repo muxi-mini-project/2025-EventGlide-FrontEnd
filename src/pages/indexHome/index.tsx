@@ -2,7 +2,7 @@ import { View, ScrollView } from '@tarojs/components';
 import ActivityCard from '@/modules/ActivityCard/index';
 import { useDidShow, useLoad } from '@tarojs/taro';
 import './index.scss';
-import ActivityTabs from '@/modules/ActivityTabs/index';
+import ActivityTabs, { ActivityTypeDrawer, ColorExplain } from '@/modules/ActivityTabs/index';
 import ActivityModal from '@/modules/ActivityModal';
 import { useEffect, useState } from 'react';
 import useActivityStore from '@/store/ActivityStore';
@@ -15,6 +15,9 @@ import ScrollTop from '@/modules/ScrollTop/components/ScrollTop';
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
+  const [showTypeDrawer, setShowTypeDrawer] = useState(false);
+  const [showColorExplain, setShowColorExplain] = useState(false);
+  const [activityType, setActivityType] = useState<string>('');
   const { activeList, setActiveList, setSelectedItem, selectedInfo, isSelect } = useActivityStore();
   const [approximateTime, setApproximateTime] = useState<string>('');
   const [type, setType] = useState<string[]>([]);
@@ -54,6 +57,7 @@ const Index = () => {
   });
 
   useEffect(() => {
+    console.log(selectedInfo);
     const fetchFilteredActivities = async () => {
       try {
         const res = await filterActivity(selectedInfo);
@@ -84,7 +88,7 @@ const Index = () => {
   return (
     <>
       <NavigationBarTabBar backgroundColor="#F8F9FC" title="首页"></NavigationBarTabBar>
-      <ScrollTop setScrollTop={setScrollTop} isVisible={showScrollTop} bottom={30}></ScrollTop>
+      <ScrollTop setScrollTop={setScrollTop} isVisible={showScrollTop} bottom={150}></ScrollTop>
       <ScrollView
         className="indexHome"
         scrollY={true}
@@ -95,7 +99,15 @@ const Index = () => {
         onScroll={(e) => handleScroll(e)}
       >
         <View className="sticky-header">
-          <ActivityTabs setApproximateTime={setApproximateTime} setType={setType}></ActivityTabs>
+          <ActivityTabs
+            setApproximateTime={setApproximateTime}
+            setType={setType}
+            showTypeDrawer={showTypeDrawer}
+            setChooseDrawerVisible={setShowTypeDrawer}
+            chooseDrawerType={activityType}
+            setChooseDrawerType={setActivityType}
+            setShowColorExplain={setShowColorExplain}
+          ></ActivityTabs>
         </View>
 
         <View className="sticky-item">
@@ -124,6 +136,16 @@ const Index = () => {
         WindowType="active"
         setShowPostWindow={setShowPostWindow}
       ></ActivityModal>
+      <ActivityTypeDrawer
+        isVisiable={showTypeDrawer}
+        setIsVisiable={setShowTypeDrawer}
+        type={activityType}
+        setType={setType}
+      ></ActivityTypeDrawer>
+      <ColorExplain
+        visible={showColorExplain}
+        onClose={() => setShowColorExplain(false)}
+      ></ColorExplain>
     </>
   );
 };

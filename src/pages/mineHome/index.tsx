@@ -111,7 +111,7 @@ const Index = () => {
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}
-        style={{ height: 'calc(100vh - 180rpx)' }}
+        style={{ height: 'calc(100vh - 300rpx)' }}
         id="scrollView"
       >
         <View className="mine-user">
@@ -148,12 +148,12 @@ const Index = () => {
             >
               活动
             </View>
-            <View
+            {/* <View
               className="mine-order-title-choice-check"
               onClick={() => navigateTo({ url: '/subpackage/review/index' })}
             >
               审核
-            </View>
+            </View> */}
             <Image className="mine-order-title-choice-img" src={check}></Image>
           </View>
           <View className="mine-order-title-line"></View>
@@ -167,20 +167,20 @@ const Index = () => {
               发布
             </View>
             <View
-              className={classnames('mine-order-title-index-mid', {
-                'active-decoration-item': activeIndex === 'like',
-              })}
-              onClick={() => setActiveIndex('like')}
-            >
-              点赞
-            </View>
-            <View
               className={classnames('mine-order-title-index-right', {
                 'active-decoration-item': activeIndex === 'favourite',
               })}
               onClick={() => setActiveIndex('favourite')}
             >
               收藏
+            </View>
+            <View
+              className={classnames('mine-order-title-index-mid', {
+                'active-decoration-item': activeIndex === 'like',
+              })}
+              onClick={() => setActiveIndex('like')}
+            >
+              点赞
             </View>
           </View>
         </View>
@@ -190,21 +190,22 @@ const Index = () => {
             minePostList.length === 0 ? (
               <MinePageNull />
             ) : (
-              <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-                {minePostList.map((item, index) => (
-                  <View
-                    key={index}
-                    style={{ padding: '10rpx' }}
-                    id={`post-item-${index}`}
-                    onClick={() => {
-                      setPostIndex(item.bid);
-                      setBackPage('mineHome');
-                    }}
-                  >
-                    <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
-                  </View>
-                ))}
-              </GridView>
+              <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
+                <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
+                  {minePostList.map((item, index) => (
+                    <View
+                      key={index}
+                      id={`post-item-${index}`}
+                      onClick={() => {
+                        setPostIndex(item.bid);
+                        setBackPage('mineHome');
+                      }}
+                    >
+                      <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
+                    </View>
+                  ))}
+                </GridView>
+              </View>
             )
           ) : (
             <MyActivityTab

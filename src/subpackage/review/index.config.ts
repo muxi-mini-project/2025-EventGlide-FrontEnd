@@ -1,5 +1,5 @@
 export default {
-  navigationBarTitleText: '详情',
+  navigationBarTitleText: '',
   enableShareAppMessage: true,
-  navigationBarBackgroundColor: '#ffffff',
+  navigationStyle: 'custom',
 };

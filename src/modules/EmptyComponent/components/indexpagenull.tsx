@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components';
 import './style.scss';
-import Null from '@/common/assets/activity/null.png';
+import Null from '@/common/svg/activity/null.svg';
 const IndexPageNull: React.FC = () => {
   return (
     <View className="index-page-null">

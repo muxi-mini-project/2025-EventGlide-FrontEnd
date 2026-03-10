@@ -1,6 +1,7 @@
 .add-label {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 340rpx);
+  margin-top: 180rpx;
   overflow-x: scroll;
   background-color: #f9f8fc;
   display: flex;

@@ -5,8 +5,8 @@ import './index.scss';
 import PostCard from '@/modules/PostCard/index';
 import AddPostButton from '@/modules/AddPostButton';
 import ImagePicker from '@/modules/ImagePicker';
-import searchpic from '@/common/assets/Postlist/搜索.png';
-import Info from '@/common/assets/Postlist/info.png';
+import searchpic from '@/common/svg/Postlist/搜索.svg';
+import Info from '@/common/svg/Post/info.svg';
 import usePostStore from '@/store/PostStore';
 import { get } from '@/common/api/request';
 import useActivityStore from '@/store/ActivityStore';
@@ -206,7 +206,7 @@ const Index = () => {
     <>
       <NavigationBarTabBar backgroundColor="#FFFFFF" title="发现" />
       <View className="blog-page">
-        <ScrollTop setScrollTop={setScrollTop} isVisible={showScrollTop} />
+        <ScrollTop setScrollTop={setScrollTop} isVisible={showScrollTop} bottom={150} />
         <AddPostButton setIsVisiable={setIsAlbumVisiable} />
         <ImagePicker
           isVisiable={isAlbumVisiable}
@@ -232,16 +232,18 @@ const Index = () => {
               <Image src={searchpic} className="gap" mode="widthFix" />
               <Input
                 className="search-input"
+                placeholder-class="input-placeholder"
                 placeholder="搜索你想要的"
                 type="text"
+                confirmType="search"
                 value={searchValue}
                 onInput={(e) => setSearchValue(e.detail.value)}
                 onConfirm={() => handleSearch()}
               />
             </View>
-            <View className="search-btn" onClick={() => handleSearch()}>
+            {/* <View className="search-btn" onClick={() => handleSearch()}>
               搜索
-            </View>
+            </View> */}
           </View>
         </View>
         {/* <View > */}

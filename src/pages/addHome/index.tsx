@@ -16,7 +16,7 @@ const Index = () => {
   const addBtn: ButtonProps = {
     url: '/subpackage/addIntroduce/index',
     text: '去填写',
-    backgroundColor: '#CF79FA',
+    backgroundColor: '#7D73F0',
     textColor: '#fff',
     isBorder: false,
   };

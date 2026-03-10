@@ -8,6 +8,9 @@ import './style.scss';
 import ConfirmModal from '@/modules/ConfirmModal';
 import Drawer from '@/common/components/Drawer';
 import Message from '@/common/components/Message';
+import deleteIcon from '@/common/svg/operation/delete.svg';
+import copyIcon from '@/common/svg/operation/copy.svg';
+import reportIcon from '@/common/svg/operation/report.svg';
 
 interface CommentOperationProps {
   visible: boolean;
@@ -16,10 +19,11 @@ interface CommentOperationProps {
   commentItems: string;
   commentCreator: CreatorType | undefined;
   commentid: string;
+  getComments: () => void;
 }
 
 const CommentActionSheet: React.FC<CommentOperationProps> = memo(
-  ({ visible, setVisible, studentId, commentItems, commentCreator, commentid }) => {
+  ({ visible, setVisible, studentId, commentItems, commentCreator, commentid, getComments }) => {
     const [isDelete, setIsDelete] = useState(false);
     const [commentContent, setCommentContent] = useState(commentItems);
     const param: DeleteCommentRequest = {
@@ -39,6 +43,7 @@ const CommentActionSheet: React.FC<CommentOperationProps> = memo(
           const res = await deleteComment(param);
           console.log(res);
           if (res.msg === 'success') {
+            getComments();
             setIsDelete(false);
             setVisible(false);
             Message.success({
@@ -91,17 +96,23 @@ const CommentActionSheet: React.FC<CommentOperationProps> = memo(
           </View>
           <View className="commentOperation-btn">
             <View className="commentOperation-btn-item" onClick={copyComment}>
-              <View className="commentOperation-btn-icon"></View>
+              <View className="commentOperation-btn-icon">
+                <Image className="commentOperation-btn-icon-copy" src={copyIcon} />
+              </View>
               <View className="commentOperation-btn-text">复制</View>
             </View>
             {studentId == commentCreator?.studentId && (
               <View className="commentOperation-btn-item" onClick={() => setIsDelete(true)}>
-                <View className="commentOperation-btn-icon"></View>
+                <View className="commentOperation-btn-icon">
+                  <Image className="commentOperation-btn-icon-delete" src={deleteIcon} />
+                </View>
                 <View className="commentOperation-btn-text">删除</View>
               </View>
             )}
             <View className="commentOperation-btn-item">
-              <View className="commentOperation-btn-icon"></View>
+              <View className="commentOperation-btn-icon">
+                <Image className="commentOperation-btn-icon-report" src={reportIcon} />
+              </View>
               <View className="commentOperation-btn-text">举报</View>
             </View>
             <View className="commentOperation-btn-item">

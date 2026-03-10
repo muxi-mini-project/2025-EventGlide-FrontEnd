@@ -14,6 +14,7 @@ import useActiveInfoStore from '@/store/activeInfoStore';
 import useSignersStore from '@/store/SignersStore';
 import { useSaveDraft } from '@/common/hooks/useSaveDraft';
 import { getActivityDraft } from '@/common/api';
+import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
   const { setLabelForm } = useActiveInfoStore();
@@ -157,87 +158,92 @@ const Index = () => {
 
   const btn = {
     text: '下一步',
-    backgroundColor: '#CF79FA',
+    backgroundColor: '#7D73F0',
     textColor: '#FFFEFF',
     isBorder: false,
   };
 
   return (
-    <View className="add-label">
-      <Form onSubmit={handleFormSubmitEvent}>
-        <View className="add-label-form-container">
-          <View className="add-label-title">{title}</View>
-          {formList.map((item, index) => (
-            <View key={index} className="add-label-form">
-              <FormItem
-                id={index}
-                text={item.text}
-                type={item.type}
-                reminder={item.reminder}
-                required={item.required}
-                disabled={item.disabled}
-                activeForm={activeForm}
-                setActiveForm={updateActiveForm}
-                value={Object.values(formValue).filter((value) => typeof value === 'string')[index]}
-                formValue={formValue}
-                setFormValue={setFormValue}
-                setFormIndex={setSafeFormIndex}
-                setIsVisable={setShowFormWindow}
-              ></FormItem>
+    <>
+      <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
+      <View className="add-label">
+        <Form onSubmit={handleFormSubmitEvent}>
+          <View className="add-label-form-container">
+            <View className="add-label-title">{title}</View>
+            {formList.map((item, index) => (
+              <View key={index} className="add-label-form">
+                <FormItem
+                  id={index}
+                  text={item.text}
+                  type={item.type}
+                  reminder={item.reminder}
+                  required={item.required}
+                  disabled={item.disabled}
+                  activeForm={activeForm}
+                  setActiveForm={updateActiveForm}
+                  value={
+                    Object.values(formValue).filter((value) => typeof value === 'string')[index]
+                  }
+                  formValue={formValue}
+                  setFormValue={setFormValue}
+                  setFormIndex={setSafeFormIndex}
+                  setIsVisable={setShowFormWindow}
+                ></FormItem>
+              </View>
+            ))}
+            <View
+              className="add-label-last"
+              onClick={() => navigateTo({ url: '/subpackage/addPeopleIndex/index' })}
+            >
+              申报人身份认证
             </View>
-          ))}
-          <View
-            className="add-label-last"
-            onClick={() => navigateTo({ url: '/subpackage/addPeopleIndex/index' })}
-          >
-            申报人身份认证
           </View>
-        </View>
-        <View className="add-label-floor">
-          <View className="add-label-floor-draft" onClick={() => setShowDraftWindow(true)}>
-            <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
-            <View className="add-label-floor-draft-text">存草稿</View>
+          <View className="add-label-floor">
+            <View className="add-label-floor-draft" onClick={() => setShowDraftWindow(true)}>
+              <Image src={draft} mode="widthFix" style={{ width: '60rpx' }}></Image>
+              <View className="add-label-floor-draft-text">存草稿</View>
+            </View>
+            <View className="add-label-floor-btn">
+              <Button formType="submit" {...btn} />
+            </View>
           </View>
-          <View className="add-label-floor-btn">
-            <Button formType="submit" {...btn} />
-          </View>
-        </View>
-      </Form>
-      {/* 草稿保存modal */}
-      <ConfirmModal
-        title="是否保存草稿？"
-        visible={showDraftWindow}
-        onClose={() => setShowDraftWindow(false)}
-        onConfirm={() =>
-          saveDraft({
-            title: title,
-            introduce: introduce,
-            showImg: showImg,
-            labelform: formValue,
-          })
-        }
-        headerClassName="textmid"
-      />
-      <ActivityModal
-        isShowActivityWindow={showPostWindow}
-        WindowType="add"
-        setShowPostWindow={setShowPostWindow}
-      ></ActivityModal>
+        </Form>
+        {/* 草稿保存modal */}
+        <ConfirmModal
+          title="是否保存草稿？"
+          visible={showDraftWindow}
+          onClose={() => setShowDraftWindow(false)}
+          onConfirm={() =>
+            saveDraft({
+              title: title,
+              introduce: introduce,
+              showImg: showImg,
+              labelform: formValue,
+            })
+          }
+          headerClassName="textmid"
+        />
+        <ActivityModal
+          isShowActivityWindow={showPostWindow}
+          WindowType="add"
+          setShowPostWindow={setShowPostWindow}
+        ></ActivityModal>
 
-      {showFormWindow && (
-        <FormPicker
-          type={typeChoice(showFormIndex)}
-          options={formList[showFormIndex].options ?? []}
-          isVisiable={showFormWindow}
-          showFormIndex={showFormIndex}
-          setIsVisiable={setShowFormWindow}
-          formValue={formValue}
-          setFormValue={setFormValue}
-          activeForm={activeForm}
-          setActiveForm={updateActiveForm}
-        ></FormPicker>
-      )}
-    </View>
+        {showFormWindow && (
+          <FormPicker
+            type={typeChoice(showFormIndex)}
+            options={formList[showFormIndex].options ?? []}
+            isVisiable={showFormWindow}
+            showFormIndex={showFormIndex}
+            setIsVisiable={setShowFormWindow}
+            formValue={formValue}
+            setFormValue={setFormValue}
+            activeForm={activeForm}
+            setActiveForm={updateActiveForm}
+          ></FormPicker>
+        )}
+      </View>
+    </>
   );
 };
 

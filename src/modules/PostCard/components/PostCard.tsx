@@ -2,7 +2,7 @@ import './style.scss';
 import { View, Image, Text } from '@tarojs/components';
 import Taro, { navigateTo } from '@tarojs/taro';
 import favorite from '@/common/svg/post/heart.svg';
-import favoriteActive from '@/common/svg/post/heartAct.svg';
+import favoriteActive from '@/common/svg/post/likeicon.svg';
 import { memo, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import usePostStore from '@/store/PostStore';

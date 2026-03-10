@@ -28,26 +28,26 @@
 
   &-close {
     position: absolute;
-    top: 15rpx;
-    right: 15rpx;
-    width: 30rpx;
-    height: 30rpx;
-    color: #b36aeb;
+    top: 5rpx;
+    right: 30rpx;
+    &-img {
+      width: 20rpx;
+    }
   }
 
   &-header {
     position: absolute;
-    top: 46rpx;
-    left: 20rpx;
+    top: 30rpx;
+    left: 40rpx;
     color: #170a1e;
-    font-size: 44rpx;
+    font-size: 38rpx;
   }
 
   &-gapline1 {
     position: absolute;
-    top: 110rpx;
+    top: 90rpx;
     left: 50%;
-    width: 568rpx;
+    width: 560rpx;
     height: 2rpx;
     transform: translateX(-50%);
     background-color: #d8c6ef;
@@ -55,7 +55,7 @@
 
   &-content {
     position: absolute;
-    top: 110rpx;
+    top: 92rpx;
     left: 20rpx;
     right: 2rpx;
     bottom: 20rpx;

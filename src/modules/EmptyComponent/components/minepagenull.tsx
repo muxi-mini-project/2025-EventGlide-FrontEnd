@@ -11,7 +11,6 @@ const MinePageNull: React.FC = () => {
         style={{ width: '25%', height: '25%' }}
       />
       <Text className="mine-page-null-text">暂时还没有活动</Text>
-      <Text className="mine-page-null-text">QAQ</Text>
     </View>
   );
 };

@@ -1,6 +1,6 @@
 .add-label {
   width: 100%;
-  height: calc(100vh - 340rpx);
+  height: calc(100vh - 180rpx);
   margin-top: 180rpx;
   overflow-x: scroll;
   background-color: #f9f8fc;
@@ -10,7 +10,7 @@
   align-items: center;
   &-form-container {
     width: 100%;
-    height: 88vh;
+    height: calc(100vh - 340rpx);
     overflow-x: scroll;
     display: flex;
     flex-direction: column;
@@ -28,12 +28,12 @@
     font-size: 40rpx;
     padding-left: 20rpx;
     line-height: 140rpx;
-    border-radius: 10rpx;
+    border-radius: 15rpx;
     margin-bottom: 15rpx;
   }
   &-form {
     width: 690rpx;
-    margin-bottom: 10rpx;
+    margin-bottom: 15rpx;
   }
   &-last {
     @extend.add-label-title;
@@ -52,9 +52,9 @@
       flex-direction: column;
       align-items: center;
       &-text {
-        margin-top: 10rpx;
-        font-size: 30rpx;
-        color: #606266;
+        margin-top: 5rpx;
+        font-size: 24rpx;
+        color: #828283;
       }
     }
     &-btn {

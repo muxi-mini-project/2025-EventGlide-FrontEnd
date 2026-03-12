@@ -2,7 +2,7 @@
   width: 690rpx;
   height: 200rpx;
   background-color: #fff;
-  border-radius: 10rpx;
+  border-radius: 15rpx;
   position: relative;
   font-family: SimHei;
   .form-title-container {
@@ -16,7 +16,12 @@
     }
     .form-title {
       color: #170a1e;
+      font-size: 38rpx;
+      margin-left: 25rpx;
       &-required {
+        position: absolute;
+        top: 10rpx;
+        font-size: 26rpx;
         color: rgb(217, 2, 32);
       }
     }

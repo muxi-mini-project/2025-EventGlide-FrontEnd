@@ -1,13 +1,11 @@
-import { View, Image, ScrollView, GridView } from '@tarojs/components';
+import { View, Image, ScrollView, GridView, Input } from '@tarojs/components';
 import './index.scss';
 import { MyActivityTab } from '@/modules/MyPageContent';
-import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
-import { useState, useEffect } from 'react';
+import Taro, { useDidShow } from '@tarojs/taro';
+import { useState, useEffect, useMemo } from 'react';
 import classnames from 'classnames';
-import arrowheadw from '@/common/svg/arrowhead/引导箭头-白.svg';
-import check from '@/common/svg/mineInfo/search.svg';
-import { getMyPostList, getUserInfo } from '@/common/api';
-import useUserStore from '@/store/userStore';
+import check from '@/common/svg/Postlist/搜索.svg';
+import { getMyPostList } from '@/common/api';
 import useActivityStore from '@/store/ActivityStore';
 import { PostDetailInfo } from '@/common/types';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
@@ -23,23 +21,12 @@ const Index = () => {
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const { setPostIndex, setBackPage } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
-  const { avatar, username, school, setAvatar, setUsername, setSchool } = useUserStore();
-  const sid = Taro.getStorageSync('sid');
   const { setIsSelect } = useActivityStore();
+  const [searchValue, setSearchValue] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   useDidShow(() => {
     setIsSelect(false);
-  });
-
-  useDidShow(async () => {
-    try {
-      const res = await getUserInfo(sid);
-      setAvatar(res.data.avatar);
-      setUsername(res.data.username);
-      setSchool(res.data.school);
-    } catch (err) {
-      console.log(err);
-    }
   });
 
   useEffect(() => {
@@ -57,7 +44,7 @@ const Index = () => {
             newPostList.push(item as PostDetailInfo);
           });
           setMinePostList(newPostList);
-          handleScroll();
+          setIsShowList([0, 1, 2, 3]);
         } catch (err) {
           console.log(err);
         }
@@ -67,17 +54,25 @@ const Index = () => {
     }
   }, [activeIndex, activePage]);
 
+  const filteredPostList = useMemo(() => {
+    if (!searchKeyword.trim()) {
+      return minePostList;
+    }
+    const keywordLower = searchKeyword.toLowerCase().trim();
+    return minePostList.filter((post) => post.title.toLowerCase().includes(keywordLower));
+  }, [minePostList, searchKeyword]);
+
   useEffect(() => {
-    if (minePostList.length > 0 && activePage === 'post') {
+    if (activePage === 'post' && filteredPostList.length > 0) {
       console.log('handleScroll');
       handleScroll();
     }
-  }, [activePage, minePostList]);
+  }, [activePage, filteredPostList]);
 
   const handleScroll = () => {
     const windowHeight = Taro.getWindowInfo().windowHeight;
     const query = Taro.createSelectorQuery();
-    minePostList.forEach((_, index) => {
+    filteredPostList.forEach((_, index) => {
       query.select(`#post-item-${index}`).boundingClientRect();
     });
     query.exec((res) => {
@@ -100,36 +95,42 @@ const Index = () => {
     });
   };
 
+  const handleSearch = () => {
+    setSearchKeyword(searchValue);
+  };
+
   return (
     <>
-      <NavigationBarTabBar backgroundColor="transparent" color="#ffffff" title="我的" />
+      <NavigationBarTabBar backgroundColor="#7D73F0" color="#ffffff" title="我的" />
+      <View className="search">
+        <View className="search-input-box">
+          <Image src={check} className="search-icon" mode="widthFix" />
+          <Input
+            className="search-input"
+            placeholder-class="input-placeholder"
+            placeholder="在这里可以查找你想要的活动哦"
+            type="text"
+            confirmType="search"
+            value={searchValue}
+            onInput={(e) => setSearchValue(e.detail.value)}
+            onConfirm={handleSearch}
+          />
+        </View>
+        <View className="search-cancel" onClick={() => Taro.navigateBack()}>
+          取消
+        </View>
+      </View>
+
       <ScrollView
-        className="mine-page"
+        className="mySearch-page"
         scrollY={true}
         type="custom"
         onScroll={() => handleScroll()}
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}
-        style={{ height: 'calc(100vh - 120rpx)' }}
         id="scrollView"
       >
-        <View className="mine-user">
-          <View className="mine-user-content">
-            <Image className="mine-user-avatar" mode="aspectFill" src={avatar}></Image>
-            <View className="mine-user-info">
-              <View className="mine-user-name">{username}</View>
-              <View className="mine-user-school">{school}</View>
-            </View>
-            <Image
-              className="mine-user-arrowhead"
-              mode="widthFix"
-              src={arrowheadw}
-              onClick={() => navigateTo({ url: '/subpackage/userProfile/index' })}
-            ></Image>
-          </View>
-        </View>
-
         <View className="mine-order-title" id="scrollView">
           <View className="mine-order-title-choice">
             <View
@@ -148,17 +149,6 @@ const Index = () => {
             >
               活动
             </View>
-            {/* <View
-              className="mine-order-title-choice-check"
-              onClick={() => navigateTo({ url: '/subpackage/review/index' })}
-            >
-              审核
-            </View> */}
-            <Image
-              onClick={() => navigateTo({ url: '/subpackage/mySearch/index' })}
-              className="mine-order-title-choice-img"
-              src={check}
-            ></Image>
           </View>
           <View className="mine-order-title-line"></View>
           <View className="mine-order-title-index">
@@ -191,12 +181,12 @@ const Index = () => {
 
         <View className="mine-content">
           {activePage === 'post' ? (
-            minePostList.length === 0 ? (
+            filteredPostList.length === 0 ? (
               <MinePageNull />
             ) : (
               <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
                 <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-                  {minePostList.map((item, index) => (
+                  {filteredPostList.map((item, index) => (
                     <View
                       key={index}
                       id={`post-item-${index}`}
@@ -215,6 +205,7 @@ const Index = () => {
             <MyActivityTab
               activeIndex={activeIndex}
               setIsShowActivityWindow={setIsShowActivityWindow}
+              searchValue={searchKeyword}
             />
           )}
         </View>

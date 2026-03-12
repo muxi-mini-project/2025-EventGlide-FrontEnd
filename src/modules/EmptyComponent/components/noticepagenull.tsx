@@ -11,7 +11,6 @@ const NoticePageNull: React.FC = () => {
         style={{ width: '25%', height: '25%' }}
       />
       <Text className="notice-page-null-text">这里空空如也</Text>
-      <Text className="notice-page-null-text">QAQ</Text>
     </View>
   );
 };

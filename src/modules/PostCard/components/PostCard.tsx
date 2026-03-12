@@ -4,7 +4,6 @@ import Taro, { navigateTo } from '@tarojs/taro';
 import favorite from '@/common/svg/post/heart.svg';
 import favoriteActive from '@/common/svg/post/likeicon.svg';
 import { memo, useState, useEffect } from 'react';
-import classnames from 'classnames';
 import usePostStore from '@/store/PostStore';
 import handleInteraction from '@/common/utils/Interaction';
 
@@ -56,16 +55,20 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
   return (
     <View className="post-container">
       <View style={{ maxHeight: '500rpx', overflow: 'hidden' }}>
-        <Image
-          className={classnames('img', { 'img-active': isVisiable })}
-          mode="widthFix"
-          lazyLoad={true}
-          src={isVisiable ? item.showImg[0] : ''}
-          onClick={() => {
-            navigateTo({ url: '/subpackage/postDetail/index' });
-            setPostIndex(index);
-          }}
-        ></Image>
+        {isVisiable ? (
+          <Image
+            className="img"
+            mode="widthFix"
+            lazyLoad={true}
+            src={item.showImg[0]}
+            onClick={() => {
+              navigateTo({ url: '/subpackage/postDetail/index' });
+              setPostIndex(index);
+            }}
+          ></Image>
+        ) : (
+          <View className="image-loader"></View>
+        )}
       </View>
       <View className="content">
         <View className="title">

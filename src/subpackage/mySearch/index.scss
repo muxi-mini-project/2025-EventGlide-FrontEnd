@@ -1,81 +1,63 @@
-.mine-page {
+.search {
   width: 100%;
-  height: 100vh;
+  height: 100rpx;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  flex-direction: row;
+  z-index: 100;
+  background-color: #ffffff;
+  transform: translateY(-1rpx);
+
+  .search-input-box {
+    display: flex;
+    position: absolute;
+    width: 73%;
+    left: 5%;
+    height: 50rpx;
+    border: 3.5rpx solid #7d73f0;
+    border-radius: 25rpx;
+    justify-content: center;
+    background-color: #fff;
+    font: {
+      size: 24rpx;
+      family: 'SimHei';
+    }
+    .search-input {
+      width: 80%;
+      height: 50rpx;
+      position: absolute;
+      left: 75rpx;
+    }
+    .input-placeholder {
+      color: #7d73f0;
+    }
+  }
+  .search-cancel {
+    position: absolute;
+    right: 8%;
+    font-size: 25rpx;
+    color: #7d73f0;
+  }
+}
+.search-icon {
+  position: absolute;
+  top: 8rpx;
+  left: 15rpx;
+  height: 35rpx;
+  width: 35rpx;
+  margin: 0 10rpx;
+}
+.mySearch-page {
+  width: 100%;
+  height: calc(100vh - 280rpx);
   position: relative;
-  //margin-top: 180rpx;
+  margin-top: 180rpx;
   font-family: 'SimHei';
   display: flex;
   flex-direction: column;
   gap: 20rpx;
-  background-color: #f9f8fc;
-  .mine-user {
-    width: 100%;
-    height: 480rpx;
-    background: linear-gradient(
-      125deg,
-      #8e85f6 0%,
-      #7d73f0 5%,
-      #b396ee 45%,
-      #7d73f0 87%,
-      #8e85f6 100%
-    );
-    padding-bottom: 40rpx;
-
-    &-content {
-      padding-top: 200rpx;
-      width: 100%;
-      //height: 300rpx;
-      display: flex;
-      align-items: center;
-      .mine-user-avatar {
-        width: 160rpx;
-        height: 160rpx;
-        border-radius: 50%;
-        margin: 0 40rpx;
-        background-color: #f9f8fc;
-      }
-
-      .mine-user-info {
-        display: flex;
-        flex-direction: column;
-        color: #fff;
-        .mine-user-name {
-          font-size: 50rpx;
-          margin-bottom: 20rpx;
-        }
-        .mine-user-school {
-          font-size: 28rpx;
-        }
-      }
-
-      .mine-user-arrowhead {
-        position: absolute;
-        width: 40rpx;
-        right: 80rpx;
-      }
-    }
-
-    &-check {
-      margin-left: 40rpx;
-      width: 90%;
-      height: 130rpx;
-      background-color: #fff;
-      border-radius: 20rpx;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      &-info {
-        color: #b36aeb;
-        font-size: 44rpx;
-        margin-left: 46rpx;
-      }
-      &-arrowhead {
-        width: 20rpx;
-        margin-right: 40rpx;
-      }
-    }
-  }
-
+  background-color: #ffffff;
   .mine-order {
     width: 100%;
     background-color: transparent;
@@ -83,9 +65,9 @@
     border-radius: 20rpx 20rpx 0 0;
     &-title {
       position: relative;
-      top: -25rpx;
-      z-index: 666;
-      height: 180rpx;
+      top: 80rpx;
+      z-index: 10;
+      height: 160rpx;
       width: 100%;
       background-color: #fff;
       border-radius: 10rpx 10rpx 0 0;
@@ -94,7 +76,7 @@
         position: absolute;
         top: 0;
         width: 100%;
-        height: 120rpx;
+        height: 90rpx;
         margin-left: 60rpx;
         gap: 60rpx;
         display: flex;
@@ -112,13 +94,13 @@
           position: absolute;
           width: 36rpx;
           height: 36rpx;
-          right: 100rpx;
+          right: 120rpx;
           top: 34rpx;
         }
       }
       &-line {
         position: absolute;
-        top: 100rpx;
+        top: 90rpx;
         width: 100%;
         height: 0;
         border: 2rpx solid #f9f8fc;
@@ -144,9 +126,11 @@
       }
     }
   }
+  .mine-content {
+    margin-top: 110rpx;
+  }
 }
 
-// 变量
 .active-decoration {
   color: #4d4d4e;
   position: relative;

@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 25rpx;
+  justify-content: center;
 }
 .tab-title {
   display: flex;
@@ -31,7 +31,7 @@
   width: 48rpx;
   height: 48rpx;
   position: absolute;
-  margin-top: 18rpx;
+  margin-top: 30rpx;
 }
 
 .tab-default {

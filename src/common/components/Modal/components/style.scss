@@ -109,11 +109,13 @@
   &-cancel {
     color: #828283;
     margin-right: 20rpx;
+    -webkit-tap-highlight-color: transparent;
   }
 
   &-confirm {
     color: #7d73f0;
     margin-left: 20rpx;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 

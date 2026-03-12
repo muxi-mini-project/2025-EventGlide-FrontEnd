@@ -11,7 +11,6 @@ const IndexPageNull: React.FC = () => {
         style={{ width: '25%', height: '25%' }}
       />
       <Text className="index-page-null-text">暂时还没有活动</Text>
-      <Text className="index-page-null-text">QAQ</Text>
     </View>
   );
 };

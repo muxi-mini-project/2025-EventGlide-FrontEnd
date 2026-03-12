@@ -115,10 +115,10 @@ const CommentActionSheet: React.FC<CommentOperationProps> = memo(
               </View>
               <View className="commentOperation-btn-text">举报</View>
             </View>
-            <View className="commentOperation-btn-item">
+            {/* <View className="commentOperation-btn-item">
               <View className="commentOperation-btn-icon"></View>
               <View className="commentOperation-btn-text">分享</View>
-            </View>
+            </View> */}
           </View>
         </Drawer>
 

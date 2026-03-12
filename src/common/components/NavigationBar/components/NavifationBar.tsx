@@ -27,10 +27,13 @@ const NavigationBar: React.FC<{ url: string; userInfo: UserInfo }> = memo(({ use
 const NavigationBarTabBar: React.FC<{
   backgroundColor: string;
   title: string;
-}> = memo(({ backgroundColor, title }) => {
+  color?: string;
+}> = memo(({ backgroundColor, title, color }) => {
   return (
     <View className="navigationBar" style={{ backgroundColor }}>
-      <View className="navigationBar-title">{title}</View>
+      <View className="navigationBar-title" style={{ color }}>
+        {title}
+      </View>
     </View>
   );
 });

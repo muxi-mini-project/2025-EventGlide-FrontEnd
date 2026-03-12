@@ -2,7 +2,7 @@ import './style.scss';
 import { View, Image } from '@tarojs/components';
 import pos from '@/common/svg/activity/pos.svg';
 import date from '@/common/svg/activity/date.svg';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { ActivityDetailInfo } from '@/common/types';
 import { activeColor, holdertype } from '@/common/const/Formconst';
 import TimeTranslation from '@/common/utils/TimeTranslation';
@@ -12,10 +12,20 @@ const ActivityCard: React.FC<{
   setShowPostWindow: (show: boolean) => void;
   isbottomline?: boolean;
 }> = memo(({ activeItem, setShowPostWindow, isbottomline = true }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
   return (
     <View className="active-container" onClick={() => setShowPostWindow(true)}>
       <View className="active-image">
-        <Image className="active-image-img" src={activeItem.showImg[0]}></Image>
+        <Image
+          className={`active-image-img ${imageLoaded ? 'loaded' : ''}`}
+          src={activeItem.showImg[0]}
+          onLoad={handleImageLoad}
+        ></Image>
+        {!imageLoaded && <View className="image-loader"></View>}
       </View>
       <View className="active-header">{activeItem.title}</View>
       <View className="active-content">

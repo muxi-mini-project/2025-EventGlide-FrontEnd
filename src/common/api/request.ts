@@ -67,7 +67,11 @@ class ApiRequest {
       return result;
     } catch (error: any) {
       console.error('API Request Error', error);
-      Message.error(error.errMsg || '网络请求失败');
+      if (config.url == '/user/login') {
+        Message.error(error.errMsg || '学号或密码错误');
+      } else {
+        Message.error(error.errMsg || '网络请求失败');
+      }
       throw error;
     }
   }

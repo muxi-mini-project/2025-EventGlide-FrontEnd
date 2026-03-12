@@ -24,6 +24,7 @@ export default {
         'addPeopleIndex/index',
         'addPeoplePage/index',
         'album/index',
+        'mySearch/index',
       ],
     },
   ],

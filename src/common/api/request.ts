@@ -103,7 +103,7 @@ class ApiRequest {
   }
 }
 
-export const apiClient = new ApiRequest('https://api.inside-me.top');
+export const apiClient = new ApiRequest('https://eventglide.muxixyz.com');
 
 export const request = <T>(config: RequestConfig) => apiClient.request<T>(config);
 

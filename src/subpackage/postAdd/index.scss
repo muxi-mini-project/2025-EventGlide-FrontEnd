@@ -9,59 +9,50 @@
   &-container {
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     &-title {
-      position: absolute;
-      left: 72rpx;
+      margin-left: 72rpx;
       color: #5e5064;
       font-size: 28rpx;
+      margin-bottom: 20rpx;
     }
 
     &-content {
-      position: absolute;
-      top: 45rpx;
-      left: 40rpx;
+      margin-left: 5%;
+      margin-right: 5%;
+      margin-bottom: 180rpx;
+      padding: 40rpx;
       background: #fff;
       border-radius: 16rpx;
-      width: 90%;
-      height: 820rpx;
+      max-height: calc(100% - 50rpx);
+      overflow-y: auto;
 
       &-title {
-        position: absolute;
-        top: 44rpx;
-        left: 40rpx;
-        width: 100%;
-        font-size: 44rpx;
+        font-size: 38rpx;
         color: #170a1e;
 
         &-placeholder {
-          font-size: 44rpx;
-          color: #170a1e;
+          font-size: 38rpx;
+          color: #666;
           font-family: SimHei;
         }
       }
 
       &-desc {
-        position: absolute;
-        top: 124rpx;
-        left: 40rpx;
-        width: 90%;
-        font-size: 28rpx;
+        min-height: 200rpx;
+        max-height: 800rpx;
+        font-size: 26rpx;
         color: #5e5064;
-
         &-placeholder {
-          font-size: 28rpx;
-          color: #5e5064;
+          font-size: 26rpx;
+          color: #828283;
           font-family: SimHei;
         }
       }
 
       &-pic {
-        position: absolute;
-        bottom: 54rpx;
-        left: 54rpx;
-        width: 90%;
-        height: 380rpx;
+        margin-top: 40rpx;
         display: flex;
         flex-wrap: wrap;
         overflow-x: scroll;

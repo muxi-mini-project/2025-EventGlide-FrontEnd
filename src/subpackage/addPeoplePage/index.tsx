@@ -1,5 +1,5 @@
 import { View, Input } from '@tarojs/components';
-import { navigateBack } from '@tarojs/taro';
+import Taro, { navigateBack } from '@tarojs/taro';
 import { useState } from 'react';
 import './index.scss';
 import useSignersStore from '@/store/SignersStore';
@@ -10,6 +10,22 @@ const Index = () => {
   const [name, setName] = useState('');
   const [idCard, setIdCard] = useState('');
   const handleClick = () => {
+    const is10DigitNumber = /^\d{10}$/.test(idCard);
+    if (!is10DigitNumber) {
+      Taro.showToast({
+        title: '该一站式账号格式不正确',
+        icon: 'none',
+      });
+      return;
+    }
+    const isIdExists = signers.some((signer) => signer.studentId === idCard);
+    if (isIdExists) {
+      Taro.showToast({
+        title: '该一站式账号已添加',
+        icon: 'none',
+      });
+      return;
+    }
     setAddSigner({ id: signers.length + 1, name, studentId: idCard });
     navigateBack();
   };

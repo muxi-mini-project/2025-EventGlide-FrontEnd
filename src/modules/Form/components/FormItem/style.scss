@@ -16,7 +16,7 @@
     }
     .form-title {
       color: #170a1e;
-      font-size: 38rpx;
+      font-size: 34rpx;
       margin-left: 25rpx;
       &-required {
         position: absolute;
@@ -41,6 +41,7 @@
     }
     .form-input {
       flex: 1;
+      font-size: 34rpx;
     }
   }
   .form-item-img {

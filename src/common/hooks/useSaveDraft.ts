@@ -25,6 +25,7 @@ export const useSaveDraft = (options: UseDraftOptions = {}) => {
           ...draftData,
           ...options.additionalData,
         };
+        console.log('Saving draft with data:', finalData);
 
         const response = await post(options.endpoint || '/act/draft', finalData);
 

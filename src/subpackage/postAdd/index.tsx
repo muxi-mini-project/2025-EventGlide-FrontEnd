@@ -71,6 +71,11 @@ const Index = () => {
         title: '请输入标题',
         icon: 'none',
       });
+    } else if (introduce.length === 0) {
+      Taro.showToast({
+        title: '请输入活动介绍',
+        icon: 'none',
+      });
     } else {
       const postInfo = { introduce, showImg: pageImgUrl, studentId, title };
       console.log(postInfo);
@@ -83,7 +88,7 @@ const Index = () => {
           studentId: postInfo.studentId,
         });
         console.log(res);
-        switchTab({ url: '/pages/postHome/index' });
+        Taro.navigateBack();
       } catch (err) {
         console.log(err);
       }
@@ -91,7 +96,7 @@ const Index = () => {
   };
 
   const btn = {
-    url: '/pages/postHome/index',
+    //url: '/pages/postHome/index',
     text: '发布',
     backgroundColor: '#7D73F0',
     textColor: '#FFFEFF',
@@ -113,14 +118,17 @@ const Index = () => {
             <View className="addblog-introduce-container">
               <View className="addblog-introduce-container-title">{count}/1000</View>
               <View className="addblog-introduce-container-content">
-                <Input
-                  style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;'}
+                <Textarea
+                  style={
+                    'color: #170A1E;font-family: SimHei;min-height: 50rpx;max-height: 100rpx;resize: none;'
+                  }
                   className="addblog-introduce-container-content-title"
                   value={title}
                   onInput={(e) => setTitle(e.detail.value)}
                   placeholderClass="addblog-introduce-container-content-title-placeholder"
                   placeholder="清晰名称能更好地让人注意哦~"
-                ></Input>
+                  maxlength={30}
+                ></Textarea>
                 <Textarea
                   className="addblog-introduce-container-content-desc"
                   value={introduce}
@@ -130,6 +138,7 @@ const Index = () => {
                   }}
                   placeholderClass="addblog-introduce-container-content-desc-placeholder"
                   placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
+                  maxlength={1000}
                 ></Textarea>
                 <View className="addblog-introduce-container-content-pic">
                   {pageImgUrl &&

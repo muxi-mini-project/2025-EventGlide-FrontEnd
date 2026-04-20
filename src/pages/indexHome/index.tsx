@@ -28,7 +28,7 @@ const Index = () => {
   useLoad(async () => {
     try {
       const res = await getPostList();
-      setPostList(res.data);
+      setPostList(res.data.reverse());
     } catch (error) {
       console.error('获取帖子列表失败:', error);
       setPostList([]);
@@ -41,7 +41,7 @@ const Index = () => {
       try {
         const res = await filterActivity(selectedInfo);
         console.log(res.data);
-        setActiveList(res.data);
+        setActiveList(res.data.reverse());
       } catch (err) {
         console.log(err);
       }
@@ -49,7 +49,7 @@ const Index = () => {
       try {
         const res = await getActivityList();
         console.log(res);
-        setActiveList(res.data);
+        setActiveList(res.data.reverse());
       } catch (err) {
         console.log(err);
       }
@@ -62,7 +62,7 @@ const Index = () => {
       try {
         const res = await filterActivity(selectedInfo);
         console.log(res.data);
-        setActiveList(res.data);
+        setActiveList(res.data.reverse());
       } catch (err) {
         console.log(err);
       }

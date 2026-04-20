@@ -114,7 +114,7 @@ const Index = () => {
               <Image className="userProfile-container-icon" mode="widthFix" src={departmentSrc} />
               院系
             </View>
-            <View className="userProfile-container-desc">{college ? college : '计算机学院'}</View>
+            <View className="userProfile-container-desc">{college ? college : '未获取'}</View>
           </View>
           <View className="userProfile-container-bottom">
             <View className="userProfile-container-column">

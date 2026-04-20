@@ -47,6 +47,7 @@ export interface ActivityDetailInfo {
 }
 
 export interface LetterType {
+  firstPic?: string;
   message: string;
   publishedAt: string;
   status: string;

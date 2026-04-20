@@ -23,7 +23,8 @@ const Index = () => {
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const { setPostIndex, setBackPage } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
-  const { avatar, username, school, setAvatar, setUsername, setSchool } = useUserStore();
+  const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
+    useUserStore();
   const sid = Taro.getStorageSync('sid');
   const { setIsSelect } = useActivityStore();
 
@@ -34,9 +35,11 @@ const Index = () => {
   useDidShow(async () => {
     try {
       const res = await getUserInfo(sid);
+      console.log(res);
       setAvatar(res.data.avatar);
       setUsername(res.data.username);
       setSchool(res.data.school);
+      setCollege(res.data.college);
     } catch (err) {
       console.log(err);
     }

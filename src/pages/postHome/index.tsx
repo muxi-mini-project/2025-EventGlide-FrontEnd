@@ -1,6 +1,6 @@
 import { View, ScrollView, GridView, Image, Input } from '@tarojs/components';
 import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './index.scss';
 import PostCard from '@/modules/PostCard/index';
 import AddPostButton from '@/modules/AddPostButton';
@@ -27,6 +27,10 @@ const Index = () => {
   const [msgCount, setMsgCount] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
+  const unloadTimers = useRef<Record<number, any>>({});
+  const visibleSet = useRef<Set<number>>(new Set());
+  let scrollTimer: any = null;
+  const BUFFER = 300;
   useDidShow(() => {
     setIsSelect(false);
   });
@@ -34,7 +38,7 @@ const Index = () => {
   useDidShow(async () => {
     try {
       const postListRes = await getPostList();
-      setPostList(postListRes.data);
+      setPostList(postListRes.data.reverse());
       console.log(postListRes.data);
     } catch (error) {
       console.error('获取帖子列表失败:', error);
@@ -59,31 +63,59 @@ const Index = () => {
     if (e && e.detail) {
       setShowScrollTop(e.detail.scrollTop > 300);
     }
+
     let tempHeight = windowHeight;
     if (newwindowHeight) {
       tempHeight = newwindowHeight;
     }
+
     const query = Taro.createSelectorQuery();
+
     PostList.forEach((_, index) => {
       query.select(`#post-item-${index}`).boundingClientRect();
     });
+
     query.exec((res) => {
+      const newVisible = new Set(visibleSet.current);
+
       res.forEach((rect, index) => {
         if (!rect) return;
+
         const { top, bottom } = rect;
-        if (top <= tempHeight && bottom >= 0) {
-          setIsShowList((prevList) => {
-            if (!prevList.includes(index)) {
-              return [...prevList, index];
-            }
-            return prevList;
-          });
-        } else {
-          setIsShowList((prevList) => {
-            return prevList.filter((item) => item !== index);
-          });
+
+        const inBuffer = top <= tempHeight + BUFFER && bottom >= -BUFFER;
+        const aboveBuffer = bottom < -BUFFER;
+        const belowBuffer = top > tempHeight + BUFFER;
+
+        if (inBuffer) {
+          newVisible.add(index);
+
+          if (unloadTimers.current[index]) {
+            clearTimeout(unloadTimers.current[index]);
+            delete unloadTimers.current[index];
+          }
+        } else if (aboveBuffer) {
+          newVisible.add(index);
+
+          if (unloadTimers.current[index]) {
+            clearTimeout(unloadTimers.current[index]);
+            delete unloadTimers.current[index];
+          }
+        } else if (belowBuffer) {
+          if (!unloadTimers.current[index]) {
+            unloadTimers.current[index] = setTimeout(() => {
+              visibleSet.current.delete(index);
+
+              setIsShowList(Array.from(visibleSet.current));
+
+              delete unloadTimers.current[index];
+            }, 3000);
+          }
         }
       });
+
+      visibleSet.current = newVisible;
+      setIsShowList(Array.from(newVisible));
     });
   };
 
@@ -92,7 +124,7 @@ const Index = () => {
       try {
         const res = await getPostList();
         if (res.msg === 'success') {
-          setPostList(res.data);
+          setPostList(res.data.reverse());
         } else {
           Taro.showToast({
             title: `${res.msg}`,
@@ -112,7 +144,7 @@ const Index = () => {
       try {
         const res = await searchPostList({ name: searchValue });
         if (res.msg === 'success') {
-          setPostList(res.data);
+          setPostList(res.data.reverse());
         } else {
           Taro.showToast({
             title: `${res.msg}`,
@@ -160,7 +192,7 @@ const Index = () => {
         try {
           const res = await getPostList();
           clearTimeoutSafely();
-          setPostList(res.data);
+          setPostList(res.data.reverse());
 
           const feedRes = await get<GetNotificationCountResponse>('/feed/total');
           setMsgCount(feedRes.data.total);
@@ -175,7 +207,7 @@ const Index = () => {
           const res = await searchPostList({ name: searchValue });
           clearTimeoutSafely();
           if (res.msg === 'success') {
-            setPostList(res.data);
+            setPostList(res.data.reverse());
           } else {
             Taro.showToast({
               title: `${res.msg}`,
@@ -246,14 +278,19 @@ const Index = () => {
             </View> */}
           </View>
         </View>
-        {/* <View > */}
         <ScrollView
           className="blog-container"
           type="custom"
           style={{ height: 'calc(100vh - 270rpx)' }}
           scrollY={true}
           scrollTop={scrollTop}
-          onScroll={(e) => handleScroll(e)}
+          onScroll={(e) => {
+            if (scrollTimer) return;
+            scrollTimer = setTimeout(() => {
+              handleScroll(e);
+              scrollTimer = null;
+            }, 100);
+          }}
           enhanced={true}
           showScrollbar={false}
           refresherEnabled={true}

@@ -37,16 +37,16 @@ const Index = () => {
       const res = await getActivityDraft();
       if (res.msg === 'success') {
         console.log(res.data);
-        setTitle(title || res.data.Title);
-        setDescription(description || res.data.Introduce);
-        if (Array.isArray(res.data.ShowImg)) {
-          setImgUrl(res.data.ShowImg);
-        } else if (typeof res.data.ShowImg === 'string' && res.data.ShowImg !== '') {
-          setImgUrl([res.data.ShowImg]);
+        setTitle(title || res.data.title);
+        setDescription(description || res.data.introduce);
+        if (Array.isArray(res.data.showImg)) {
+          setImgUrl(res.data.showImg);
+        } else if (typeof res.data.showImg === 'string' && res.data.showImg !== '') {
+          setImgUrl([res.data.showImg]);
         } else {
           setImgUrl([]);
         }
-        setCount(res.data.Introduce?.length || 0);
+        setCount(res.data.introduce?.length || 0);
       }
     } catch (error) {
       console.error('获取活动草稿失败:', error);
@@ -90,15 +90,17 @@ const Index = () => {
           <View className="add-introduce-container">
             <View className="add-introduce-container-title">{count}/1000</View>
             <View className="add-introduce-container-content">
-              <Input
-                style={'font-size: 44rpx;color: #170A1E;font-family: SimHei;height: 50rpx;'}
+              <Textarea
+                style={
+                  'color: #170A1E;font-family: SimHei;min-height: 50rpx;max-height: 100rpx;resize: none;'
+                }
                 className="add-introduce-container-content-title"
                 value={title}
                 onInput={(e) => setTitle(e.detail.value)}
                 placeholderClass="add-introduce-container-content-title-placeholder"
                 placeholder="清晰名称能更好地让人注意哦~"
                 maxlength={30}
-              ></Input>
+              ></Textarea>
               <Textarea
                 className="add-introduce-container-content-desc"
                 value={description}
@@ -110,6 +112,7 @@ const Index = () => {
                 placeholderClass="add-introduce-container-content-desc-placeholder"
                 placeholder="为了让大家更好地了解该活动，请介绍一下活动亮点， 活动流程和注意事项等内容......"
                 maxlength={1000}
+                autoHeight={true}
               ></Textarea>
               <View className="add-introduce-container-content-pic">
                 {imgUrl &&

@@ -13,7 +13,7 @@ const Index = () => {
     isBorder: false,
   };
   const btn2 = {
-    url: '/pages/indexHome/index',
+    url: '/pages/main/index',
     text: '回到首页',
     backgroundColor: '#ffffff',
     textColor: '#C890F2',

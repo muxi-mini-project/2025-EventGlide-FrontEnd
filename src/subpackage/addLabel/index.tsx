@@ -74,18 +74,18 @@ const Index = () => {
       console.log('label', res);
       if (res.msg === 'success') {
         const signerArray =
-          typeof res.data.Signer === 'string'
-            ? parseSignersString(res.data.Signer)
-            : res.data.Signer || [];
+          typeof res.data.labelform.signer === 'string'
+            ? parseSignersString(res.data.labelform.signer)
+            : res.data.labelform.signer || [];
         const newLabelForm: LabelForm = {
-          type: formValue.type || res.data.Type,
-          holderType: formValue.holderType || res.data.HolderType,
-          startTime: formValue.startTime || res.data.StartTime,
-          endTime: formValue.endTime || res.data.EndTime,
-          position: formValue.position || res.data.Position,
-          ifRegister: formValue.ifRegister || res.data.IfRegister,
-          activeForm: formValue.activeForm || res.data.ActiveForm || '',
-          registerMethod: formValue.registerMethod || res.data.RegisterMethod || '',
+          type: formValue.type || res.data.labelform.type,
+          holderType: formValue.holderType || res.data.labelform.holderType,
+          startTime: formValue.startTime || res.data.labelform.startTime,
+          endTime: formValue.endTime || res.data.labelform.endTime,
+          position: formValue.position || res.data.labelform.position,
+          ifRegister: formValue.ifRegister || res.data.labelform.ifRegister,
+          activeForm: formValue.activeForm || res.data.labelform.activeForm || '',
+          registerMethod: formValue.registerMethod || res.data.labelform.registerMethod || '',
           signer: signers.length > 0 ? signers : signerArray,
         };
         console.log('newLabelForm', newLabelForm);
@@ -123,6 +123,22 @@ const Index = () => {
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
     const minTimeDiff = 30 * 60 * 1000;
+    if (activeForm.length === 0) {
+      Taro.showToast({
+        title: '请添加活动申请表',
+        icon: 'none',
+        duration: 2000,
+      });
+      return;
+    }
+    if (signers.length < 3) {
+      Taro.showToast({
+        title: '请至少添加3位申报人',
+        icon: 'none',
+        duration: 2000,
+      });
+      return;
+    }
     if (start >= end || end - start < minTimeDiff) {
       Taro.showToast({
         title: '请填写正确的开始时间和结束时间',

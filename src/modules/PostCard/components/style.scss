@@ -32,8 +32,15 @@
     border-radius: 0 0 15rpx 15rpx;
     .title {
       position: relative;
-      left: 12rpx;
+      padding-left: 12rpx;
+      padding-right: 12rpx;
       margin-top: 10rpx;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .title-container {
       position: relative;

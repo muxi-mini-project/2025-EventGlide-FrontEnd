@@ -25,7 +25,7 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
       </View>
       <Image
         mode="aspectFill"
-        src={props.userInfo.avatar}
+        src={props.firstPic || props.userInfo.avatar}
         className="letter-list-item-decPic"
       ></Image>
     </View>
@@ -46,7 +46,7 @@ const Index = () => {
   useDidShow(async () => {
     try {
       const res: any = await get<GetNotificationListReponse>('/feed/list');
-      console.log(res.data);
+      console.log('通知列表', res.data);
       const likes = res.data?.likes || [];
       const collects = res.data.collects || [];
       const mergedFavor = mergeSortedArrays(likes, collects);
@@ -154,11 +154,15 @@ const Index = () => {
           </View>
         </View>
         <View className="myNotification-page-content">
-          {showPage === 'favor' && favor.length === 0 && <NoticePageNull />}
+          {(showPage === 'favor' && favor.length === 0) ||
+          (showPage === 'letter' && letter.length === 0) ? (
+            <NoticePageNull key="notice-null" />
+          ) : null}
           {showPage === 'favor' &&
+            favor.length > 0 &&
             favor.map((item, index) => <LetterListItem key={index} {...item} />)}
-          {showPage === 'letter' && letter.length === 0 && <NoticePageNull />}
           {showPage === 'letter' &&
+            letter.length > 0 &&
             letter.map((item, index) => <LetterListItem key={index} {...item} />)}
         </View>
       </View>

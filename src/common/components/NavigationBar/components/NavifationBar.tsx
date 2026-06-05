@@ -28,9 +28,10 @@ const NavigationBarTabBar: React.FC<{
   backgroundColor: string;
   title: string;
   color?: string;
-}> = memo(({ backgroundColor, title, color }) => {
+  style?: React.CSSProperties;
+}> = memo(({ backgroundColor, title, color, style }) => {
   return (
-    <View className="navigationBar" style={{ backgroundColor }}>
+    <View className="navigationBar" style={{ backgroundColor, ...style }}>
       <View className="navigationBar-title" style={{ color }}>
         {title}
       </View>
@@ -41,11 +42,20 @@ const NavigationBarTabBar: React.FC<{
 const NavigationBarBack: React.FC<{
   backgroundColor: string;
   title: string;
-  url: string;
-}> = memo(({ backgroundColor, title }) => {
+  url?: string;
+  onBack?: () => void;
+}> = memo(({ backgroundColor, title, onBack }) => {
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      Taro.navigateBack();
+    }
+  };
+
   return (
     <View className="navigationBar" style={{ backgroundColor }}>
-      <View onClick={() => Taro.navigateBack()} className="navigationBar-back">
+      <View onClick={handleBack} className="navigationBar-back">
         <Image className="navigationBar-back-icon" mode="widthFix" src={Naviarrow}></Image>
       </View>
       <View className="navigationBar-title">{title}</View>

@@ -11,7 +11,8 @@ const MyActivityTab: React.FC<{
   activeIndex: 'release' | 'like' | 'favourite';
   setIsShowActivityWindow: (isShow: boolean) => void;
   searchValue?: string;
-}> = memo(function ({ activeIndex, setIsShowActivityWindow, searchValue }) {
+  userActivityList?: ActivityDetailInfo[];
+}> = memo(function ({ activeIndex, setIsShowActivityWindow, searchValue, userActivityList }) {
   const [activeList, setActiveList] = useState<ActivityDetailInfo[]>([]);
   const { setSelectedItem } = useActivityStore();
 
@@ -37,8 +38,11 @@ const MyActivityTab: React.FC<{
         console.log(err);
       }
     };
-
-    fetchActivities();
+    if (userActivityList) {
+      setActiveList(userActivityList);
+    } else {
+      fetchActivities();
+    }
   }, [activeIndex]);
 
   const filteredActiveList = useMemo(() => {

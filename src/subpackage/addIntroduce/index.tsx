@@ -1,5 +1,5 @@
 import Button from '@/common/components/Button';
-import { View, Image, Input, Textarea } from '@tarojs/components';
+import { View, Image, Textarea } from '@tarojs/components';
 import { useState } from 'react';
 import './index.scss';
 import Taro from '@tarojs/taro';
@@ -13,6 +13,17 @@ import { getActivityDraft } from '@/common/api';
 import { LabelForm } from '@/common/types';
 import { useSaveDraft } from '@/common/hooks/useSaveDraft';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
+const emptyLabelForm: LabelForm = {
+  type: '',
+  holderType: '',
+  startTime: '',
+  endTime: '',
+  position: '',
+  ifRegister: '',
+  activeForm: '',
+  registerMethod: '',
+  signer: [],
+};
 
 const Index = () => {
   const [isShowDraft, setIsShowDraft] = useState(false);
@@ -20,12 +31,20 @@ const Index = () => {
   const [imgUrl, setImgUrl] = useState<string[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const { setBasicInfo } = useActiveInfoStore();
+  const { setBasicInfo, setLabelForm, labelform, draftData, setDraftData } = useActiveInfoStore();
   const [count, setCount] = useState(0);
+  const [writing, setWriting] = useState(false);
+  const [isShowConfirmModal, setIsShowConfirmModal] = useState(false);
 
   const { saveDraft } = useSaveDraft({
     onSaveSuccess: () => {
       setIsShowDraft(false);
+      setDraftData({
+        title: title,
+        introduce: description,
+        showImg: imgUrl,
+        labelform: labelform,
+      });
     },
     onSaveError: (error) => {
       console.error('草稿保存失败:', error);
@@ -35,19 +54,31 @@ const Index = () => {
   useDidShow(async () => {
     try {
       const res = await getActivityDraft();
-      if (res.msg === 'success') {
+      if (res.msg === 'success' && !writing) {
         console.log(res.data);
-        setTitle(title || res.data.title);
-        setDescription(description || res.data.introduce);
+        const draftTitle = res.data.title || '';
+        const draftIntroduce = res.data.introduce || '';
+        let draftShowImg: string[] = [];
         if (Array.isArray(res.data.showImg)) {
-          setImgUrl(res.data.showImg);
+          draftShowImg = res.data.showImg.filter((item: string) => item !== '');
         } else if (typeof res.data.showImg === 'string' && res.data.showImg !== '') {
-          setImgUrl([res.data.showImg]);
-        } else {
-          setImgUrl([]);
+          draftShowImg = [res.data.showImg];
         }
-        setCount(res.data.introduce?.length || 0);
+        setTitle(draftTitle);
+        setDescription(draftIntroduce);
+        setImgUrl(draftShowImg);
+        setCount(draftIntroduce.length || 0);
+        setLabelForm(res.data.labelform || emptyLabelForm);
+
+        // 存储草稿数据用于比较
+        setDraftData({
+          title: draftTitle,
+          introduce: draftIntroduce,
+          showImg: draftShowImg,
+          labelform: res.data.labelform || emptyLabelForm,
+        });
       }
+      setWriting(true);
     } catch (error) {
       console.error('获取活动草稿失败:', error);
     }
@@ -82,9 +113,56 @@ const Index = () => {
     setBasicInfo(title, description, imgUrl);
   };
 
+  const stringifySorted = (obj: any) => {
+    // 将 null、undefined、空数组视为相等
+    if (obj === null || obj === undefined || (Array.isArray(obj) && obj.length === 0)) {
+      return JSON.stringify([]);
+    }
+    if (typeof obj !== 'object') {
+      return JSON.stringify(obj);
+    }
+    if (Array.isArray(obj)) {
+      return JSON.stringify(obj.map((item) => stringifySorted(item)));
+    }
+    const sortedKeys = Object.keys(obj).sort();
+    const sortedObj: Record<string, any> = {};
+    for (const key of sortedKeys) {
+      sortedObj[key] = stringifySorted(obj[key]);
+    }
+    return JSON.stringify(sortedObj);
+  };
+
+  const hasContentChanged = () => {
+    if (title !== draftData.title) return true;
+    if (description !== draftData.introduce) return true;
+    if (imgUrl.length !== draftData.showImg.length) return true;
+
+    for (let i = 0; i < imgUrl.length; i++) {
+      if (imgUrl[i] !== draftData.showImg[i]) return true;
+    }
+
+    // 使用排序后的 stringify 比较，忽略属性顺序
+    if (stringifySorted(labelform) !== stringifySorted(draftData.labelform)) return true;
+
+    return false;
+  };
+
+  const handleBack = () => {
+    if (hasContentChanged()) {
+      setIsShowConfirmModal(true);
+    } else {
+      Taro.navigateBack();
+    }
+  };
+
   return (
     <>
-      <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
+      <NavigationBarBack
+        backgroundColor="#F9F8FC"
+        title="添加"
+        url="/pages/mineHome/index"
+        onBack={handleBack}
+      />
       <View>
         <View className="add-introduce">
           <View className="add-introduce-container">
@@ -155,10 +233,27 @@ const Index = () => {
               title: title,
               introduce: description,
               showImg: imgUrl,
-              labelform: {} as LabelForm,
+              labelform: labelform,
             })
           }
           headerClassName="textmid"
+        />
+
+        <ConfirmModal
+          title="您有未保存的内容，是否保存草稿？"
+          visible={isShowConfirmModal}
+          onClose={() => {
+            Taro.navigateBack();
+          }}
+          onConfirm={() => {
+            saveDraft({
+              title: title,
+              introduce: description,
+              showImg: imgUrl,
+              labelform: labelform,
+            });
+            Taro.navigateBack();
+          }}
         />
 
         <ImagePicker

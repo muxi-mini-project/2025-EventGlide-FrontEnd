@@ -3,7 +3,7 @@ import { View } from '@tarojs/components';
 import CommentItem from '../CommentItem/CommentItem';
 import { CommentListProps } from '@/common/types';
 
-const CommentList: React.FC<CommentListProps> = ({
+const CommentList: React.FC<CommentListProps & { targetCommentBid?: string }> = ({
   comments,
   replycomment,
   setReplyId,
@@ -12,6 +12,7 @@ const CommentList: React.FC<CommentListProps> = ({
   setCommentid,
   longClick,
   expandLimit = 5,
+  targetCommentBid,
 }) => {
   // 如果没有评论数据，显示空状态
   if (!comments || comments.length === 0) {
@@ -21,6 +22,18 @@ const CommentList: React.FC<CommentListProps> = ({
       </View>
     );
   }
+  const isTargetChildComment = (parentComment: any): boolean => {
+    if (!targetCommentBid) return false;
+    if (parentComment.bid === targetCommentBid) return false;
+    if (parentComment.reply && parentComment.reply.length > 0) {
+      const childIndex = parentComment.reply.findIndex(
+        (child: any) => child.bid === targetCommentBid
+      );
+      if (childIndex === 0) return false;
+      return childIndex > 0;
+    }
+    return false;
+  };
 
   return (
     <View className="CommentList">
@@ -36,6 +49,7 @@ const CommentList: React.FC<CommentListProps> = ({
           setCommentid={setCommentid}
           longClick={longClick}
           expandLimit={expandLimit}
+          defaultExpand={isTargetChildComment(comment)}
         />
       ))}
     </View>

@@ -6,21 +6,44 @@ import favoriteActive from '@/common/svg/post/likeicon.svg';
 import { memo, useState, useEffect } from 'react';
 import usePostStore from '@/store/PostStore';
 import handleInteraction from '@/common/utils/Interaction';
+import { imageCache } from '@/common/utils/imageCache';
 
 const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
-  const [isVisiable, setIsVisiable] = useState(isShowImg);
   const { setPostIndex } = usePostStore();
   const [islike, setIsLike] = useState(item.isLike === 'true');
   const [likeNum, setLikeNum] = useState(item.likeNum);
+  const [localImageUrl, setLocalImageUrl] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
   const studentId = Taro.getStorageSync('sid');
-
-  useEffect(() => {
-    setIsVisiable(isShowImg);
-  }, [isShowImg]);
   useEffect(() => {
     setIsLike(item.isLike === 'true');
     setLikeNum(item.likeNum);
   }, [item]);
+
+  // 加载图片缓存
+  /*   useEffect(() => {
+    if (!isShowImg || !item.showImg || item.showImg.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+
+    const loadImage = async () => {
+      setIsLoading(true);
+      const imageUrl = item.showImg[0];
+
+      try {
+        const cachedUrl = await imageCache.getImage(imageUrl);
+
+        setLocalImageUrl(cachedUrl);
+      } catch (error) {
+        setLocalImageUrl(imageUrl);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadImage();
+  }, [isShowImg, item.showImg]); */
 
   const handleFavorite = async () => {
     const params = {
@@ -53,18 +76,24 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
   };
 
   return (
-    <View className="post-container">
+    <View
+      className="post-container"
+      onClick={() => {
+        navigateTo({ url: '/subpackage/postDetail/index' });
+        setPostIndex(index);
+      }}
+    >
+      {/* <View
+        style={{ height: '10rpx', backgroundColor: isShowImg ? 'green' : 'red', width: '100%' }}
+      ></View> */}
       <View style={{ maxHeight: '500rpx', overflow: 'hidden' }}>
-        {isVisiable ? (
+        {isShowImg ? (
           <Image
             className="img"
             mode="widthFix"
             lazyLoad={true}
-            src={item.showImg[0]}
-            onClick={() => {
-              navigateTo({ url: '/subpackage/postDetail/index' });
-              setPostIndex(index);
-            }}
+            src={localImageUrl || item.showImg[0]}
+            onLoad={() => setIsLoading(false)}
           ></Image>
         ) : (
           <View className="image-loader"></View>

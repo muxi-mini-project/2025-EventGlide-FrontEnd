@@ -98,7 +98,12 @@ const ActivityModal: React.FC<{
           />
         }
       >
-        <ActivityContent activityData={activeItem} canDeleteImages={false} isDraftMode={false} />
+        <ActivityContent
+          activityData={activeItem}
+          canDeleteImages={false}
+          isDraftMode={false}
+          setShowPostWindow={props.setShowPostWindow}
+        />
       </Modal>
     );
   }

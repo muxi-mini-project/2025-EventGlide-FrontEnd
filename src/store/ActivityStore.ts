@@ -6,6 +6,8 @@ interface ActivityStoreState {
   activeList: ActivityDetailInfo[];
   selectedItem: ActivityDetailInfo;
   isSelect: boolean;
+  selectComment: string;
+  setSelectComment: (comment: string) => void;
   setIsSelect: (type: boolean) => void;
   setSelectInfo: (info: SelectedInfo) => void; //筛选条件
   setActiveList: (list: ActivityDetailInfo[]) => void;
@@ -20,14 +22,13 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
     type: [],
     position: [],
     ifRegister: '',
-    detailTime: {
-      startTime: '',
-      endTime: '',
-    },
+    detailTime: '',
   },
   activeList: [],
   selectedItem: {} as ActivityDetailInfo,
   isSelect: false,
+  selectComment: '',
+  setSelectComment: (comment) => set(() => ({ selectComment: comment })),
   setIsSelect: (type) => set(() => ({ isSelect: type })),
   setSelectInfo: (info) => set(() => ({ selectedInfo: info })),
   setActiveList: (list) => set(() => ({ activeList: list })),

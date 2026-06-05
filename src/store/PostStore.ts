@@ -9,6 +9,8 @@ interface PostStoreType {
   PostList: PostDetailInfo[];
   PostIndex: number;
   backPage: string;
+  selectCommentPost: string;
+  setSelectCommentPost: (bid: string) => void;
   setBackPage: (page: string) => void;
   setPostList: (PostList: PostDetailInfo[]) => void;
   setPostIndex: (bid: string) => void;
@@ -28,6 +30,8 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   PostList: [],
   PostIndex: -1,
   backPage: '',
+  selectCommentPost: '',
+  setSelectCommentPost: (bid) => set(() => ({ selectCommentPost: bid })),
   setBackPage: (page) => set(() => ({ backPage: page })),
   setPostList: (PostList) => set(() => ({ PostList })),
   setPostIndex: (bid) => {

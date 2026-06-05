@@ -1,6 +1,6 @@
 import Button from '@/common/components/Button';
-import { View, Image, Input, Textarea } from '@tarojs/components';
-import { switchTab, useDidShow } from '@tarojs/taro';
+import { View, Image, Textarea } from '@tarojs/components';
+import { useDidShow } from '@tarojs/taro';
 import { useState } from 'react';
 import './index.scss';
 import Picture from '@/common/components/Picture';
@@ -24,11 +24,23 @@ const Index = () => {
   const studentId = Taro.getStorageSync('sid');
   const [count, setCount] = useState(0);
   const [load, setLoad] = useState(false);
+  const [isShowConfirmModal, setIsShowConfirmModal] = useState(false);
+  const [draftData, setDraftData] = useState({
+    title: '',
+    introduce: '',
+    showImg: [] as string[],
+  });
+  const [writing, setWriting] = useState(false);
 
   const { saveDraft } = useSaveDraft({
     endpoint: '/post/draft',
     onSaveSuccess: () => {
       setIsShowDraft(false);
+      setDraftData({
+        title,
+        introduce,
+        showImg: pageImgUrl,
+      });
     },
     onSaveError: (error) => {
       console.error('草稿保存失败:', error);
@@ -39,19 +51,30 @@ const Index = () => {
     try {
       const res = await loadPostDraft();
       console.log(res);
-      if (res.data === null) return;
+      if (res.data === null || writing) return;
       if (res.msg === 'success') {
-        setTitle(res.data.title || title);
-        setIntroduce(res.data.introduce || introduce);
-        setCount(res.data.introduce ? res.data.introduce.length : 0);
+        const draftTitle = res.data.title || '';
+        const draftIntroduce = res.data.introduce || '';
+        let draftShowImg: string[] = [];
+
         if (Array.isArray(res.data.showImg)) {
-          const imgUrls = res.data.showImg.filter((item) => item !== '');
-          setPageImgUrl(imgUrls);
+          draftShowImg = res.data.showImg.filter((item) => item !== '');
         } else if (res.data.showImg !== '' && res.data.showImg !== null) {
-          setPageImgUrl([res.data.showImg]);
-        } else {
-          setPageImgUrl([]);
+          draftShowImg = [res.data.showImg];
         }
+
+        setTitle(draftTitle);
+        setIntroduce(draftIntroduce);
+        setCount(draftIntroduce.length);
+        setPageImgUrl(draftShowImg);
+        setWriting(true);
+
+        // 存储草稿数据
+        setDraftData({
+          title: draftTitle,
+          introduce: draftIntroduce,
+          showImg: draftShowImg,
+        });
       }
     } catch (err) {
       console.log('Error loading post:', err);
@@ -109,9 +132,34 @@ const Index = () => {
     isBorder: false,
   };
 
+  const hasContentChanged = () => {
+    if (title !== draftData.title) return true;
+    if (introduce !== draftData.introduce) return true;
+    if (pageImgUrl.length !== draftData.showImg.length) return true;
+
+    for (let i = 0; i < pageImgUrl.length; i++) {
+      if (pageImgUrl[i] !== draftData.showImg[i]) return true;
+    }
+
+    return false;
+  };
+
+  const handleBack = () => {
+    if (hasContentChanged()) {
+      setIsShowConfirmModal(true);
+    } else {
+      Taro.navigateBack();
+    }
+  };
+
   return (
     <>
-      <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
+      <NavigationBarBack
+        backgroundColor="#F9F8FC"
+        title="添加"
+        url="/pages/mineHome/index"
+        onBack={handleBack}
+      />
       <View>
         {load && (
           <View className="addblog-introduce">
@@ -187,6 +235,24 @@ const Index = () => {
             })
           }
           headerClassName="textmid"
+        />
+
+        <ConfirmModal
+          title="您有未保存的内容，是否保存草稿？"
+          visible={isShowConfirmModal}
+          onClose={() => {
+            Taro.navigateBack();
+          }}
+          onConfirm={() => {
+            saveDraft({
+              title: title,
+              introduce,
+              showImg: pageImgUrl,
+              studentId: studentId,
+              labelform: {} as LabelForm,
+            });
+            Taro.navigateBack();
+          }}
         />
 
         <ImagePicker

@@ -1,4 +1,4 @@
-import { View, Image, Swiper, SwiperItem } from '@tarojs/components';
+import { View, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/components';
 import { useState, useEffect, createContext } from 'react';
 import Taro, { useDidShow } from '@tarojs/taro';
 import './index.scss';
@@ -29,7 +29,14 @@ const Index = () => {
   const [inputValue, setInputValue] = useState('');
   const { avatar } = useUserStore((state) => state);
   const studentId = Taro.getStorageSync('sid');
-  const { PostList, PostIndex, setCommentNumChange, backPage } = usePostStore((state) => state);
+  const {
+    PostList,
+    PostIndex,
+    setCommentNumChange,
+    backPage,
+    selectCommentPost,
+    setSelectCommentPost,
+  } = usePostStore((state) => state);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [replyId, setReplyId] = useState('');
   const [commentInput, setCommentInput] = useState(false);
@@ -44,6 +51,9 @@ const Index = () => {
   const [commentItems, setCommentItems] = useState('');
   const [commentCreator, setCommentCreator] = useState<CreatorType>();
   const [commentid, setCommentid] = useState('');
+  const [scrollToCommentId, setScrollToCommentId] = useState<string>('');
+  const [loadSelectComment, setLoadSelectComment] = useState(false);
+  const [loadComment, setLoadComment] = useState(false);
   const { setLikeNumChange, setCollectNumChange } = usePostStore((state) => state);
   const windowWidth = Taro.getWindowInfo().windowWidth;
   const windowHeight = Taro.getWindowInfo().windowHeight;
@@ -87,6 +97,7 @@ const Index = () => {
     setMaxheight(max);
     setImageRatios(res);
     setRatios(res2);
+    setLoadSelectComment(true);
   };
 
   const loadImageRatios = async () => {
@@ -152,6 +163,7 @@ const Index = () => {
         return;
       }
       setResponse(res.data);
+      setLoadComment(true);
     } catch (err) {
       console.log(err);
       setResponse([]);
@@ -167,6 +179,19 @@ const Index = () => {
     });
     loadImageRatios();
   }, [PostIndex]);
+
+  useEffect(() => {
+    if (selectCommentPost.length > 0 && loadSelectComment && loadComment) {
+      console.log('selectCommentPost', selectCommentPost);
+      setTimeout(() => {
+        setScrollToCommentId(`comment-${selectCommentPost}`);
+      }, 300);
+      setTimeout(() => {
+        setSelectCommentPost('');
+        setScrollToCommentId('');
+      }, 2000);
+    }
+  }, [loadSelectComment, loadComment]);
 
   const getCommentsAgain = async () => {
     try {
@@ -291,54 +316,61 @@ const Index = () => {
     <>
       <View className="postDetail">
         <NavigationBar url={`/pages/${backPage}/index`} userInfo={Item.userInfo} />
-        <View className="postDetail-content">
-          {maxheight > 0 && (
-            <View className="postDetail-content-avatar" onClick={handleImageClick}>
-              <View style={`width: ${windowWidth}px; height: ${windowWidth * maxheight}px`} />
-              <Swiper
-                className="postDetail-content-avatar-swiper"
-                indicatorDots={true}
-                circular={false}
-                current={currentIndex}
-                onChange={(e) => setCurrentIndex(e.detail.current)}
+        <ScrollView
+          className="postDetail-comment-list"
+          scrollY
+          scrollIntoView={scrollToCommentId}
+          scrollWithAnimation={true}
+          style={{ height: `${windowHeight - 100}px` }}
+        >
+          <View className="postDetail-content">
+            {maxheight > 0 && (
+              <View className="postDetail-content-avatar" onClick={handleImageClick}>
+                <View style={`width: ${windowWidth}px; height: ${windowWidth * maxheight}px`} />
+                <Swiper
+                  className="postDetail-content-avatar-swiper"
+                  indicatorDots={true}
+                  circular={false}
+                  current={currentIndex}
+                  onChange={(e) => setCurrentIndex(e.detail.current)}
+                >
+                  {Item.showImg.map((item, index) => (
+                    <SwiperItem key={index} className="postDetail-content-avatar-swiper-item">
+                      <Image
+                        src={item}
+                        className={`postDetail-content-avatar-swiper-item-${imageRatios[index]}`}
+                        mode={imageRatios[index] === 'widthimg' ? 'widthFix' : 'heightFix'}
+                      />
+                    </SwiperItem>
+                  ))}
+                </Swiper>
+              </View>
+            )}
+            <View className="postDetail-content-info">
+              <View className="postDetail-content-title">{Item.title}</View>
+              <View className="postDetail-content-desc">{Item.introduce || ''}</View>
+              <View className="postDetail-content-timesite">{formatTime(Item.publishTime)}</View>
+            </View>
+          </View>
+          <View className="postDetail-comment">
+            <View className="postDetail-comment-number">共{Item.commentNum}条评论</View>
+            <View className="postDetail-comment-input">
+              <Image
+                className="postDetail-comment-input-avatar"
+                mode="scaleToFill"
+                src={avatar}
+              ></Image>
+              <View
+                className="postDetail-comment-input-text"
+                onClick={() => {
+                  setCommentInput(true);
+                  setReplytype('create');
+                }}
               >
-                {Item.showImg.map((item, index) => (
-                  <SwiperItem key={index} className="postDetail-content-avatar-swiper-item">
-                    <Image
-                      src={item}
-                      className={`postDetail-content-avatar-swiper-item-${imageRatios[index]}`}
-                      mode={imageRatios[index] === 'widthimg' ? 'widthFix' : 'heightFix'}
-                    />
-                  </SwiperItem>
-                ))}
-              </Swiper>
+                {inputValue ? inputValue : '让大家听到你的声音'}
+              </View>
             </View>
-          )}
-          <View className="postDetail-content-info">
-            <View className="postDetail-content-title">{Item.title}</View>
-            <View className="postDetail-content-desc">{Item.introduce || ''}</View>
-            <View className="postDetail-content-timesite">{formatTime(Item.publishTime)}</View>
-          </View>
-        </View>
-        <View className="postDetail-comment" style={{ top: `${marginTop}px` }}>
-          <View className="postDetail-comment-number">共{Item.commentNum}条评论</View>
-          <View className="postDetail-comment-input">
-            <Image
-              className="postDetail-comment-input-avatar"
-              mode="scaleToFill"
-              src={avatar}
-            ></Image>
-            <View
-              className="postDetail-comment-input-text"
-              onClick={() => {
-                setCommentInput(true);
-                setReplytype('create');
-              }}
-            >
-              {inputValue ? inputValue : '让大家听到你的声音'}
-            </View>
-          </View>
-          <View className="postDetail-comment-list">
+
             {response && (
               <CommentList
                 comments={response}
@@ -348,10 +380,11 @@ const Index = () => {
                 setCommentItems={setCommentItems}
                 setCommentCreator={setCommentCreator}
                 setCommentid={setCommentid}
+                targetCommentBid={selectCommentPost}
               ></CommentList>
             )}
           </View>
-        </View>
+        </ScrollView>
         <View className="postDetail-footer">
           <View
             className="postDetail-footer-input"

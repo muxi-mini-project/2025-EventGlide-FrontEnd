@@ -32,6 +32,16 @@ export const getMyPostList = (type: 'release' | 'like' | 'favourite') => {
   throw new Error('Invalid type for post list');
 };
 
+// 通过id获取帖子
+export const getPostById = (postId: string) => {
+  return apiClient.get<GetPostReponse>(`/post/${postId}`);
+};
+
+// 获取其他用户帖子列表
+export const getOtherUserPostList = (targetUser: string) => {
+  return apiClient.get<GetPostReponse[]>(`/post/user/${targetUser}`);
+};
+
 // 加载帖子草稿
 export const loadPostDraft = () => {
   return apiClient.get<GetPostDraftResonse>('/post/load'); // 返回类型待定，根据实际API响应确定

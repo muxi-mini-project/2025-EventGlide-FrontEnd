@@ -20,7 +20,7 @@ const ActivityFooter: React.FC<{
   const params = {
     studentId: studentId,
     subject: 'activity',
-    targetid: selectedItem.bid,
+    targetId: selectedItem.bid,
     receiver: selectedItem.userInfo.studentId,
   };
   const handleCollect = async () => {

@@ -21,6 +21,7 @@ const Index = () => {
   const [activeIndex, setActiveIndex] = useState<'release' | 'like' | 'favourite'>('release');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
+  const [showNavBar, setShowNavBar] = useState(true); // 控制导航栏显示/隐藏
   const { setPostIndex, setBackPage } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
   const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
@@ -49,6 +50,7 @@ const Index = () => {
     if (activePage === 'post') {
       const fetchPosts = async () => {
         try {
+          setIsShowList([]);
           const res = await getMyPostList(activeIndex);
           console.log(`${activeIndex}:`, res.data);
           if (res.data === null) {
@@ -77,8 +79,20 @@ const Index = () => {
     }
   }, [activePage, minePostList]);
 
-  const handleScroll = () => {
+  const handleScroll = (e?: any) => {
+    let scrollTop = 0;
+    // 处理导航栏显示/隐藏逻辑
+    if (e && e.detail) {
+      scrollTop = e.detail.scrollTop;
+      setShowNavBar(scrollTop < 50);
+    }
+
+    // 处理图片懒加载逻辑
     const windowHeight = Taro.getWindowInfo().windowHeight;
+    const buffer = windowHeight * 0.3;
+    const visibleTop = scrollTop - buffer;
+    const visibleBottom = scrollTop + windowHeight + buffer;
+
     const query = Taro.createSelectorQuery();
     minePostList.forEach((_, index) => {
       query.select(`#post-item-${index}`).boundingClientRect();
@@ -87,16 +101,13 @@ const Index = () => {
       res.forEach((rect, index) => {
         if (!rect) return;
         const { top, bottom } = rect;
-        if (top <= windowHeight && bottom >= 0) {
+        // 判断元素是否在带缓冲区的可见区域内
+        if (top <= visibleBottom && bottom >= visibleTop) {
           setIsShowList((prevList) => {
             if (!prevList.includes(index)) {
               return [...prevList, index];
             }
             return prevList;
-          });
-        } else {
-          setIsShowList((prevList) => {
-            return prevList.filter((item) => item !== index);
           });
         }
       });
@@ -105,12 +116,20 @@ const Index = () => {
 
   return (
     <>
-      <NavigationBarTabBar backgroundColor="transparent" color="#ffffff" title="我的" />
+      <NavigationBarTabBar
+        backgroundColor="transparent"
+        color="#ffffff"
+        title="我的"
+        style={{
+          transition: 'opacity 0.1s ease, transform 0.1s ease',
+          opacity: showNavBar ? 1 : 0,
+        }}
+      />
       <ScrollView
         className="mine-page"
         scrollY={true}
         type="custom"
-        onScroll={() => handleScroll()}
+        onScroll={(e) => handleScroll(e)}
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}

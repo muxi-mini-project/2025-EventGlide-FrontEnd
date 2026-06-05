@@ -4,7 +4,7 @@ import ReplyItem from '../ReplyItem/ReplyItem';
 import { useState } from 'react';
 import { ReplyListProps } from '@/common/types';
 
-const ReplyList: React.FC<ReplyListProps> = ({
+const ReplyList: React.FC<ReplyListProps & { defaultExpand?: boolean }> = ({
   replies,
   replycomment,
   setReplyId,
@@ -13,9 +13,10 @@ const ReplyList: React.FC<ReplyListProps> = ({
   setCommentid,
   longClick,
   expandLimit = 5,
+  defaultExpand = false,
 }) => {
-  // 控制显示的回复数量，默认为1
-  const [displayCount, setDisplayCount] = useState(1);
+  // 控制显示的回复数量，默认展开时显示全部，否则显示1条
+  const [displayCount, setDisplayCount] = useState(defaultExpand ? replies?.length || 0 : 1);
 
   // 处理回复为null的情况
   const validReplies = replies || [];

@@ -65,6 +65,7 @@ const ReplyInput: React.FC<ReplyInputProps> = memo(({ ...props }) => {
             autoHeight={true}
             maxLength={140}
             maxHeight={60}
+            showConfirmBar={false}
           />
         </View>
         <View className="reply-window-btnbox">

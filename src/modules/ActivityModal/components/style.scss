@@ -19,14 +19,12 @@
     line-height: 1.6;
     word-break: break-word;
     white-space: pre-wrap;
-    max-height: 400rpx;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 10rpx;
-    /* 隐藏滚动条 */
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &-types {
@@ -55,6 +53,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10rpx;
+    max-height: 400rpx;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &-footer {

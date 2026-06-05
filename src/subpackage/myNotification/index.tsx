@@ -4,12 +4,56 @@ import './index.scss';
 import { GetNotificationListReponse, LetterType } from '@/common/types';
 import classnames from 'classnames';
 import { get } from '@/common/api/request';
-import { useDidShow } from '@tarojs/taro';
+import Taro, { useDidShow, navigateTo } from '@tarojs/taro';
 import NoticePageNull from '@/modules/EmptyComponent/components/noticepagenull';
 import formatTime from '@/common/utils/FormatTime';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
+import useActivityStore from '@/store/ActivityStore';
+import usePostStore from '@/store/PostStore';
+import { getPostById } from '@/common/api/PostRequest';
+import { getActivityById } from '@/common/api/Activity';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
+  const { setSelectedItem, setSelectComment } = useActivityStore();
+  const { setPostList, setPostIndex, setSelectCommentPost } = usePostStore();
+  const handleClick = async (props: LetterType) => {
+    console.log(props);
+    try {
+      if (props.subject === 'activity') {
+        const res = await getActivityById(props.targetBid);
+        console.log(res);
+        setSelectedItem(res.data);
+        navigateTo({ url: '/subpackage/actComment/index' });
+      } else if (props.subject === 'post') {
+        const res = await getPostById(props.targetBid);
+        console.log(res);
+        const post = [] as any[];
+        post.push(res.data);
+        setPostList(post);
+        setPostIndex(res.data.bid);
+        navigateTo({ url: '/subpackage/postDetail/index' });
+      } else if (props.subject === 'comment' && props.rootId) {
+        if (props.rootType === 'activity') {
+          const res = await getActivityById(props.rootId);
+          console.log(res);
+          setSelectComment(props.targetBid);
+          setSelectedItem(res.data);
+          navigateTo({ url: '/subpackage/actComment/index' });
+        } else if (props.rootType === 'post') {
+          const res = await getPostById(props.rootId);
+          console.log(res);
+          setSelectCommentPost(props.targetBid);
+          const post = [] as any[];
+          post.push(res.data);
+          setPostList(post);
+          setPostIndex(res.data.bid);
+          navigateTo({ url: '/subpackage/postDetail/index' });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <View className="letter-list-item">
       <Image
@@ -17,6 +61,10 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
         mode="aspectFill"
         className="letter-list-item-avatar"
         lazyLoad={true}
+        onClick={() => {
+          Taro.setStorageSync('targetUser', props.userInfo.studentId);
+          navigateTo({ url: '/subpackage/otherUser/index' });
+        }}
       ></Image>
       <View className="letter-list-item-content">
         <View className="letter-list-item-content-username">{props.userInfo.username}</View>
@@ -27,6 +75,7 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
         mode="aspectFill"
         src={props.firstPic || props.userInfo.avatar}
         className="letter-list-item-decPic"
+        onClick={() => handleClick(props)}
       ></Image>
     </View>
   );

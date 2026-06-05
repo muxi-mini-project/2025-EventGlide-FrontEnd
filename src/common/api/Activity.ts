@@ -39,6 +39,16 @@ export const getMyActivityList = (type: 'release' | 'like' | 'favourite') => {
   throw new Error('Invalid type for activity list');
 };
 
+// 通过id获取活动
+export const getActivityById = (activityId: string) => {
+  return apiClient.get<GetActivityResponse>(`/act/${activityId}`);
+};
+
+// 获取其他用户活动列表
+export const getOtherUserActivityList = (targetUser: string) => {
+  return apiClient.get<GetActivityResponse[]>(`/act/user/${targetUser}`);
+};
+
 // 获取活动详情
 export const getActivityDetail = (activityId: string) => {
   return apiClient.get<GetActivityResponse>(`/act/detail/${activityId}`);

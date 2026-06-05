@@ -1,5 +1,6 @@
 import './style.scss';
 import { View } from '@tarojs/components';
+import { navigateTo } from '@tarojs/taro';
 import { memo } from 'react';
 import Picture from '@/common/components/Picture';
 import { holdertype, activeColor } from '@/common/const/Formconst';
@@ -17,10 +18,16 @@ interface ActivityContentProps {
   activityData: ActivityData;
   canDeleteImages?: boolean;
   isDraftMode?: boolean; // 如果是草稿模式，会显示默认提示文字等
+  setShowPostWindow?: (visible: boolean) => void;
 }
 
 const ActivityContent: React.FC<ActivityContentProps> = memo(
-  ({ activityData, canDeleteImages = false, isDraftMode = false }) => {
+  ({
+    activityData,
+    canDeleteImages = false,
+    isDraftMode = false,
+    setShowPostWindow = () => {},
+  }) => {
     const { introduce: description, showImg, type, holderType, ifRegister } = activityData;
 
     // 处理报名状态文本
@@ -35,7 +42,13 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
     const imgList = showImg && Array.isArray(showImg) ? showImg : [];
 
     return (
-      <View className="activity-content">
+      <View
+        className="activity-content"
+        onClick={() => {
+          navigateTo({ url: '/subpackage/actComment/index' });
+          setShowPostWindow(false);
+        }}
+      >
         <View className="activity-content-text">
           {isDraftMode
             ? description !== ''

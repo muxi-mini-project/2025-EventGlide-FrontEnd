@@ -29,8 +29,15 @@ const Index = () => {
   const [scrollTop, setScrollTop] = useState(0);
   const unloadTimers = useRef<Record<number, any>>({});
   const visibleSet = useRef<Set<number>>(new Set());
-  let scrollTimer: any = null;
+  //let scrollTimer: any = null;
   const BUFFER = 300;
+  const positions = useRef<
+    {
+      top: number;
+      bottom: number;
+    }[]
+  >([]);
+  const scrollRaf = useRef(false);
   useDidShow(() => {
     setIsSelect(false);
   });
@@ -49,8 +56,11 @@ const Index = () => {
 
   useEffect(() => {
     if (PostList === null) return;
+
     if (PostList.length > 0) {
-      handleScroll(windowHeight);
+      setTimeout(() => {
+        measurePostPositions();
+      }, 100);
     }
   }, [PostList]);
 
@@ -59,16 +69,7 @@ const Index = () => {
     setWindowHeight(newwindowHeight);
   });
 
-  const handleScroll = (e: any, newwindowHeight?: number) => {
-    if (e && e.detail) {
-      setShowScrollTop(e.detail.scrollTop > 300);
-    }
-
-    let tempHeight = windowHeight;
-    if (newwindowHeight) {
-      tempHeight = newwindowHeight;
-    }
-
+  const measurePostPositions = () => {
     const query = Taro.createSelectorQuery();
 
     PostList.forEach((_, index) => {
@@ -76,47 +77,74 @@ const Index = () => {
     });
 
     query.exec((res) => {
-      const newVisible = new Set(visibleSet.current);
+      positions.current = res.map((rect: any) => ({
+        top: rect?.top ?? 0,
+        bottom: rect?.bottom ?? 0,
+      }));
 
-      res.forEach((rect, index) => {
-        if (!rect) return;
-
-        const { top, bottom } = rect;
-
-        const inBuffer = top <= tempHeight + BUFFER && bottom >= -BUFFER;
-        const aboveBuffer = bottom < -BUFFER;
-        const belowBuffer = top > tempHeight + BUFFER;
-
-        if (inBuffer) {
-          newVisible.add(index);
-
-          if (unloadTimers.current[index]) {
-            clearTimeout(unloadTimers.current[index]);
-            delete unloadTimers.current[index];
-          }
-        } else if (aboveBuffer) {
-          newVisible.add(index);
-
-          if (unloadTimers.current[index]) {
-            clearTimeout(unloadTimers.current[index]);
-            delete unloadTimers.current[index];
-          }
-        } else if (belowBuffer) {
-          if (!unloadTimers.current[index]) {
-            unloadTimers.current[index] = setTimeout(() => {
-              visibleSet.current.delete(index);
-
-              setIsShowList(Array.from(visibleSet.current));
-
-              delete unloadTimers.current[index];
-            }, 3000);
-          }
-        }
+      handleScroll({
+        detail: {
+          scrollTop: 0,
+        },
       });
-
-      visibleSet.current = newVisible;
-      setIsShowList(Array.from(newVisible));
     });
+  };
+
+  const handleScroll = (e: any) => {
+    const scrollTop = e?.detail?.scrollTop || 0;
+
+    setShowScrollTop(scrollTop > 300);
+
+    const viewportTop = scrollTop - BUFFER;
+    const viewportBottom = scrollTop + windowHeight + BUFFER;
+
+    const newVisible = new Set<number>();
+
+    positions.current.forEach((position, index) => {
+      const { top, bottom } = position;
+
+      const inView = bottom >= viewportTop && top <= viewportBottom;
+
+      const aboveView = bottom < viewportTop;
+      const belowView = top > viewportBottom;
+
+      // 当前区域
+      if (inView) {
+        newVisible.add(index);
+
+        if (unloadTimers.current[index]) {
+          clearTimeout(unloadTimers.current[index]);
+          delete unloadTimers.current[index];
+        }
+      }
+
+      // 上方区域永久保留
+      else if (aboveView) {
+        newVisible.add(index);
+
+        if (unloadTimers.current[index]) {
+          clearTimeout(unloadTimers.current[index]);
+          delete unloadTimers.current[index];
+        }
+      }
+
+      // 下方区域延迟卸载
+      else if (belowView) {
+        if (!unloadTimers.current[index]) {
+          unloadTimers.current[index] = setTimeout(() => {
+            visibleSet.current.delete(index);
+
+            setIsShowList(Array.from(visibleSet.current));
+
+            delete unloadTimers.current[index];
+          }, 3000);
+        }
+      }
+    });
+
+    visibleSet.current = newVisible;
+
+    setIsShowList(Array.from(newVisible));
   };
 
   const handleSearch = async () => {
@@ -175,37 +203,50 @@ const Index = () => {
   const onRefresh = async () => {
     console.log('refresh');
     setRefreshing(true);
+    const startTime = Date.now();
+    const MIN_REFRESH_DURATION = 1500;
 
     const timeoutId = setTimeout(() => {
       if (refreshing) {
         setRefreshing(false);
         console.log('刷新失败');
       }
-    }, 3000);
+    }, 4000);
 
     const clearTimeoutSafely = () => {
       clearTimeout(timeoutId);
+    };
+
+    const finishRefresh = () => {
+      const elapsed = Date.now() - startTime;
+      const remaining = MIN_REFRESH_DURATION - elapsed;
+      if (remaining > 0) {
+        setTimeout(() => {
+          clearTimeoutSafely();
+          setRefreshing(false);
+        }, remaining);
+      } else {
+        clearTimeoutSafely();
+        setRefreshing(false);
+      }
     };
 
     try {
       if (searchValue === '') {
         try {
           const res = await getPostList();
-          clearTimeoutSafely();
           setPostList(res.data.reverse());
 
           const feedRes = await get<GetNotificationCountResponse>('/feed/total');
           setMsgCount(feedRes.data.total);
-          setRefreshing(false);
+          finishRefresh();
         } catch (err) {
-          clearTimeoutSafely();
-          setRefreshing(false);
+          finishRefresh();
           console.error(err);
         }
       } else {
         try {
           const res = await searchPostList({ name: searchValue });
-          clearTimeoutSafely();
           if (res.msg === 'success') {
             setPostList(res.data.reverse());
           } else {
@@ -215,16 +256,14 @@ const Index = () => {
               duration: 1000,
             });
           }
-          setRefreshing(false);
+          finishRefresh();
         } catch (err) {
-          clearTimeoutSafely();
-          setRefreshing(false);
+          finishRefresh();
           console.error(err);
         }
       }
     } catch (error) {
-      clearTimeoutSafely();
-      setRefreshing(false);
+      finishRefresh();
       console.error('刷新过程发生错误:', error);
       Taro.showToast({
         title: '刷新失败，请稍后重试',
@@ -285,11 +324,14 @@ const Index = () => {
           scrollY={true}
           scrollTop={scrollTop}
           onScroll={(e) => {
-            if (scrollTimer) return;
-            scrollTimer = setTimeout(() => {
+            if (scrollRaf.current) return;
+
+            scrollRaf.current = true;
+
+            requestAnimationFrame(() => {
               handleScroll(e);
-              scrollTimer = null;
-            }, 100);
+              scrollRaf.current = false;
+            });
           }}
           enhanced={true}
           showScrollbar={false}

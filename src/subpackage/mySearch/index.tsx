@@ -87,9 +87,9 @@ const Index = () => {
             return prevList;
           });
         } else {
-          setIsShowList((prevList) => {
+          /* setIsShowList((prevList) => {
             return prevList.filter((item) => item !== index);
-          });
+          }); */
         }
       });
     });

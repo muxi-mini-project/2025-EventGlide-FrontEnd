@@ -22,7 +22,7 @@ export interface MyActivityList {
 export interface SelectedInfo {
   holderType: string[];
   type: string[];
-  detailTime: { startTime: string; endTime: string };
+  detailTime: string;
   position: string[];
   ifRegister: string;
 }
@@ -52,6 +52,9 @@ export interface LetterType {
   publishedAt: string;
   status: string;
   targetBid: string;
+  rootType?: string;
+  rootId?: string;
+  subject: string;
   userInfo: {
     avatar: string;
     studentId: string;

@@ -1,5 +1,5 @@
 import { View, Image, Form } from '@tarojs/components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './index.scss';
 import Taro from '@tarojs/taro';
 import { FormItem, FormPicker } from '@/modules/Form';
@@ -17,8 +17,7 @@ import { getActivityDraft } from '@/common/api';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
-  const { setLabelForm } = useActiveInfoStore();
-  const { labelform } = useActiveInfoStore();
+  const { setLabelForm, labelform, setDraftData } = useActiveInfoStore();
   const { setAddSigner, setRemoveSigner } = useSignersStore();
 
   const { title, introduce, showImg } = useActiveInfoStore();
@@ -47,21 +46,20 @@ const Index = () => {
     }));
   };
 
-  const [formValue, setFormValue] = useState<LabelForm>({
-    type: '',
-    holderType: '',
-    startTime: '',
-    endTime: '',
-    position: '',
-    ifRegister: '',
-    activeForm: '',
-    registerMethod: '',
-    signer: [],
-  });
+  const [formValue, setFormValue] = useState<LabelForm>(labelform);
+  useEffect(() => {
+    setLabelForm(formValue);
+  }, [formValue]);
 
   const { saveDraft } = useSaveDraft({
     onSaveSuccess: () => {
       setShowDraftWindow(false);
+      setDraftData({
+        title: title,
+        introduce: introduce,
+        showImg: showImg,
+        labelform: formValue,
+      });
     },
     onSaveError: (error) => {
       console.error('草稿保存失败:', error);
@@ -69,9 +67,10 @@ const Index = () => {
   });
 
   useDidShow(async () => {
+    setDraftData;
     try {
       const res = await getActivityDraft();
-      console.log('label', res);
+      console.log('label', res, labelform);
       if (res.msg === 'success') {
         const signerArray =
           typeof res.data.labelform.signer === 'string'
@@ -123,7 +122,7 @@ const Index = () => {
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
     const minTimeDiff = 30 * 60 * 1000;
-    if (activeForm.length === 0) {
+    if (activeForm.length === 0 && holderType !== '个人') {
       Taro.showToast({
         title: '请添加活动申请表',
         icon: 'none',

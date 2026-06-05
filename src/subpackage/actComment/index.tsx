@@ -23,11 +23,21 @@ export const SetReponseContext = createContext<(params: any) => void>(() => {});
 export const SetActivityComment = createContext<(params: any) => void>(() => {});
 
 const Index = () => {
-  const { selectedItem, setSelectedItem, setLikeNumChange, setCollectNumChange, setIsSelect } =
-    useActivityStore();
+  const {
+    selectedItem,
+    selectComment,
+    setSelectComment,
+    setSelectedItem,
+    setLikeNumChange,
+    setCollectNumChange,
+    setIsSelect,
+  } = useActivityStore();
   const [inputValue, setInputValue] = useState('');
   const [response, setResponse] = useState<CommentResponse[]>([]);
   const [replyId, setReplyId] = useState('');
+  const [scrollToCommentId, setScrollToCommentId] = useState<string>('');
+  const [loadSelectComment, setLoadSelectComment] = useState(false);
+  const [loadComment, setLoadComment] = useState(false);
   const [commentInput, setCommentInput] = useState(false);
   const [replytype, setReplytype] = useState('create');
   const [showpicture, setShowpicture] = useState(false);
@@ -150,9 +160,9 @@ const Index = () => {
         setResponse([]);
       }
     };
-
-    fetchComments();
     loadImageRatios();
+    fetchComments();
+    setLoadComment(true);
   }, []);
 
   const getCommentsAgain = async () => {
@@ -326,8 +336,26 @@ const Index = () => {
         maxTopRef.current = contentRect.bottom;
 
         setSheetTop(maxTopRef.current);
+
+        if (selectComment.length > 0) {
+          setSheetTop(minTopRef.current);
+        }
+        setLoadSelectComment(true);
       });
   }, []);
+
+  useEffect(() => {
+    if (selectComment.length > 0 && loadSelectComment && loadComment) {
+      console.log('selectComment', selectComment);
+      setTimeout(() => {
+        setScrollToCommentId(`comment-${selectComment}`);
+      }, 300);
+      setTimeout(() => {
+        setSelectComment('');
+        setScrollToCommentId('');
+      }, 2000);
+    }
+  }, [loadSelectComment, loadComment]);
 
   const onDragStart = (e) => {
     startYRef.current = e.touches[0].clientY;
@@ -355,7 +383,10 @@ const Index = () => {
       <View className="actComment">
         <NavigationBar url="/pages/indexHome/index" userInfo={selectedItem.userInfo} />
         <View className="post-top" style={{ height: '160rpx' }} />
-        <View className="post-content">
+        <View
+          className="post-content"
+          style={{ maxHeight: 'calc(100vh - 520rpx)', overflowY: 'auto' }}
+        >
           <View style={{ padding: 5, marginLeft: '40rpx', marginRight: '40rpx' }}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 }}>
               <View style={{ fontSize: 20, fontWeight: 400, color: '#170A1E' }}>
@@ -415,7 +446,13 @@ const Index = () => {
           </View>
 
           <View className="comment-panel">
-            <ScrollView scrollY style={{ height: '100%' }} showScrollbar={false}>
+            <ScrollView
+              scrollY
+              style={{ height: '100%' }}
+              showScrollbar={false}
+              scrollIntoView={scrollToCommentId}
+              scrollWithAnimation={true}
+            >
               <View className="actComment-container">
                 <CommentList
                   comments={response}
@@ -425,6 +462,7 @@ const Index = () => {
                   setCommentItems={setCommentItems}
                   setCommentCreator={setCommentCreator}
                   setCommentid={setCommentid}
+                  targetCommentBid={selectComment}
                 />
               </View>
             </ScrollView>

@@ -59,28 +59,14 @@ const ActivityTypeDrawer: React.FC<any> = memo(function ActivityTypeDrawer({ ...
 
   const handleConfirm = (item) => {
     if (props.type === 'dateChoice') {
-      const date = `${item.date} ${item.time}`;
-      const getDate = new Date().toISOString().split('T')[0];
-      const today = `${getDate} 00:00`;
-      console.log(date, today);
-      if (date === today) {
-        setSelectInfo({
-          ...selectedInfo,
-          detailTime: { startTime: '', endTime: '' },
-        });
-      } else if (date > today) {
-        setSelectInfo({
-          ...selectedInfo,
-          detailTime: { startTime: today, endTime: date },
-        });
-      } else if (date < today) {
-        setSelectInfo({
-          ...selectedInfo,
-          detailTime: { startTime: '', endTime: '' },
-        });
-      } else {
-        console.log('error');
+      let date = `${item.date} ${item.time}`;
+      if (item.date === '' || item.time === '') {
+        date = '';
       }
+      setSelectInfo({
+        ...selectedInfo,
+        detailTime: date,
+      });
     } else {
       setSelectInfo({
         ...selectedInfo,
@@ -116,6 +102,7 @@ const ActivityTypeDrawer: React.FC<any> = memo(function ActivityTypeDrawer({ ...
         isVisiable={props.isVisiable}
         setIsVisiable={props.setIsVisiable}
         handleConfirm={handleConfirm}
+        allowTimeClear={true}
         activeYearIndex={activeYearIndex}
         setActiveYearIndex={setActiveYearIndex}
         activeMonthIndex={activeMonthIndex}

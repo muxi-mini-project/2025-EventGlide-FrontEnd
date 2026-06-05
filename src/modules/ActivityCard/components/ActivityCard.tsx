@@ -24,6 +24,7 @@ const ActivityCard: React.FC<{
           className={`active-image-img ${imageLoaded ? 'loaded' : ''}`}
           src={activeItem.showImg[0]}
           onLoad={handleImageLoad}
+          mode="aspectFill"
         ></Image>
         {!imageLoaded && <View className="image-loader"></View>}
       </View>

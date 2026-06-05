@@ -44,7 +44,7 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
   };
 
   return (
-    <View className="ReplyComment">
+    <View className="ReplyComment" id={`comment-${props.bid}`}>
       <View className="ReplyComment-content">
         <Image
           className="ReplyComment-avatar"

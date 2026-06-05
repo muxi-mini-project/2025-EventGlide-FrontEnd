@@ -129,52 +129,7 @@ const ActivityTabs: React.FC<{
             confirmType="search"
           />
         </View>
-        {/* <View className="search-btn" onClick={handleSearch}>
-          搜索
-        </View> */}
       </View>
-      {/* <View className="sticky-date">
-        <View className="sticky-date-line"></View>
-        <RadioGroup className="sticky-date-group">
-          {datelist.map((item, index) => (
-            <Label
-              className={classnames('date-list-view', {
-                'date-checked': checkDateIndex === index,
-              })}
-              for={'index'}
-              onClick={() => handleDateClick(index)}
-            >
-              <Radio className="none" key={index} value={item}></Radio>
-              {item}
-            </Label>
-          ))}
-        </RadioGroup>
-        <View
-          className="sticky-date-check"
-          onClick={() => {
-            navigateTo({ url: '/subpackage/actScreen/index' });
-          }}
-        >
-          筛选
-        </View>
-      </View>
-      <View className="sticky-type">
-        <RadioGroup className="sticky-type-group">
-          {typelist.map((item, index) => (
-            <View className="type-list-view-box" key={index} onClick={() => handleTypeClick(index)}>
-              <Label
-                className={classnames('type-list-view', {
-                  'type-checked': checkTypeIndex.includes(index),
-                })}
-                for={'index'}
-              >
-                <Radio className="none" key={index} value={item}></Radio>
-                {item}
-              </Label>
-            </View>
-          ))}
-        </RadioGroup>
-      </View> */}
       <View className="sticky-sift">
         <View
           className="sticky-sift-box"

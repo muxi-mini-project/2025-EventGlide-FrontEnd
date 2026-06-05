@@ -23,7 +23,7 @@ const Picture: React.FC<{
       >
         <Image
           src={props.src}
-          mode="scaleToFill"
+          mode="aspectFill"
           className="picture-img"
           style={
             props.size !== undefined ? `width: ${props.size}rpx; height: ${props.size}rpx;` : ''

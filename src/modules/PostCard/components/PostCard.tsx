@@ -49,7 +49,7 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
     const params = {
       subject: 'post',
       studentId: studentId,
-      targetId: item.bid,
+      targetId: item.id,
       receiver: item.userInfo.studentId,
     };
     if (islike) {
@@ -76,17 +76,17 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
   };
 
   return (
-    <View
-      className="post-container"
-      onClick={() => {
-        navigateTo({ url: '/subpackage/postDetail/index' });
-        setPostIndex(index);
-      }}
-    >
+    <View className="post-container">
       {/* <View
         style={{ height: '10rpx', backgroundColor: isShowImg ? 'green' : 'red', width: '100%' }}
       ></View> */}
-      <View style={{ maxHeight: '500rpx', overflow: 'hidden' }}>
+      <View
+        style={{ maxHeight: '500rpx', overflow: 'hidden' }}
+        onClick={() => {
+          navigateTo({ url: '/subpackage/postDetail/index' });
+          setPostIndex(index);
+        }}
+      >
         {isShowImg ? (
           <Image
             className="img"

@@ -19,12 +19,14 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
   const param = {
     studentId: studentId,
     subject: 'comment',
-    targetId: props.bid,
+    targetId: props.id,
     receiver: studentId,
   };
 
   const clickLove = async () => {
     const action = islike === 'true' ? 'dislike' : 'like';
+    console.log(props);
+
     const tag = handleInteraction(action, param);
     try {
       const res = await tag;
@@ -44,7 +46,7 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
   };
 
   return (
-    <View className="ReplyComment" id={`comment-${props.bid}`}>
+    <View className="ReplyComment" id={`comment-${props.id}`}>
       <View className="ReplyComment-content">
         <Image
           className="ReplyComment-avatar"
@@ -60,7 +62,7 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
           onClick={() => {
             if (props.replycomment) {
               props.replycomment(true);
-              props.setReplyId(props.bid);
+              props.setReplyId(props.id);
             }
           }}
           onLongPress={() => {
@@ -72,7 +74,7 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
             ) {
               props.setCommentItems(props.content || props.replyContent || '');
               props.setCommentCreator(creator || { username: '', avatar: '', studentId: '' });
-              props.setCommentid(props.bid);
+              props.setCommentid(props.id);
               props.longClick();
             }
           }}

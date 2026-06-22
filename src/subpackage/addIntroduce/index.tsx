@@ -2,6 +2,7 @@ import Button from '@/common/components/Button';
 import { View, Image, Textarea } from '@tarojs/components';
 import { useState } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import Taro from '@tarojs/taro';
 import Picture from '@/common/components/Picture';
 import draft from '@/common/svg/add/draft.svg';
@@ -268,4 +269,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

@@ -1,13 +1,15 @@
 import { View, Image, ScrollView, GridView, Input } from '@tarojs/components';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { MyActivityTab } from '@/modules/MyPageContent';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { useState, useEffect, useMemo } from 'react';
 import classnames from 'classnames';
 import check from '@/common/svg/Postlist/搜索.svg';
 import { getMyPostList } from '@/common/api';
+import { getMyActivityList } from '@/common/api/Activity';
 import useActivityStore from '@/store/ActivityStore';
-import { PostDetailInfo } from '@/common/types';
+import { PostDetailInfo, ActivityDetailInfo } from '@/common/types';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import PostCard from '@/modules/PostCard';
 import usePostStore from '@/store/PostStore';
@@ -25,32 +27,50 @@ const Index = () => {
   const [searchValue, setSearchValue] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
 
+  const [page, setPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const LIMIT = 10;
+  const BUFFER = 300;
+
+  // 活动相关状态
+  const [activityPage, setActivityPage] = useState(1);
+  const [totalActivities, setTotalActivities] = useState(0);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityHasMore, setActivityHasMore] = useState(true);
+  const [mineActivityList, setMineActivityList] = useState<ActivityDetailInfo[]>([]);
+
   useDidShow(() => {
     setIsSelect(false);
   });
 
+  const loadPosts = async (pageNum = 1, refresh = false) => {
+    try {
+      const res = await getMyPostList(activeIndex, LIMIT, pageNum);
+      console.log(`${activeIndex}:`, res.data);
+      const list: PostDetailInfo[] =
+        res.data?.details?.map((item: unknown) => item as PostDetailInfo) || [];
+      if (refresh) {
+        setMinePostList(list);
+      } else {
+        setMinePostList([...minePostList, ...list]);
+      }
+      setPage(pageNum);
+      setTotalPosts(res.data.total || 0);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     if (activePage === 'post') {
-      const fetchPosts = async () => {
-        try {
-          const res = await getMyPostList(activeIndex);
-          console.log(`${activeIndex}:`, res.data);
-          if (res.data === null) {
-            setMinePostList([]);
-            return;
-          }
-          const newPostList: PostDetailInfo[] = [];
-          res.data.forEach((item: unknown) => {
-            newPostList.push(item as PostDetailInfo);
-          });
-          setMinePostList(newPostList);
-          setIsShowList([0, 1, 2, 3]);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-
-      fetchPosts();
+      setHasMore(true);
+      loadPosts(1, true);
+    } else {
+      // 切换到活动页面时，初始化活动列表
+      setActivityHasMore(true);
+      loadActivities(1, true);
     }
   }, [activeIndex, activePage]);
 
@@ -69,8 +89,17 @@ const Index = () => {
     }
   }, [activePage, filteredPostList]);
 
-  const handleScroll = () => {
+  const handleScroll = (e?: any) => {
     const windowHeight = Taro.getWindowInfo().windowHeight;
+
+    if (e && e.detail) {
+      const scrollTop = e.detail.scrollTop || 0;
+      const distanceToBottom = e.detail.scrollHeight - (scrollTop + windowHeight);
+      if (distanceToBottom <= BUFFER) {
+        loadMore();
+      }
+    }
+
     const query = Taro.createSelectorQuery();
     filteredPostList.forEach((_, index) => {
       query.select(`#post-item-${index}`).boundingClientRect();
@@ -93,6 +122,63 @@ const Index = () => {
         }
       });
     });
+  };
+
+  const loadMore = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    try {
+      await loadPosts(page + 1, false);
+      if (minePostList.length >= totalPosts) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('加载更多失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 加载活动列表
+  const loadActivities = async (pageNum = 1, refresh = false) => {
+    try {
+      const res = await getMyActivityList(activeIndex, LIMIT, pageNum);
+      console.log(`activity ${activeIndex}:`, res.data);
+      if (res.data.details === null) {
+        if (refresh) {
+          setMineActivityList([]);
+        }
+        return;
+      }
+      const newActivityList: ActivityDetailInfo[] = res.data.details.map(
+        (item: unknown) => item as ActivityDetailInfo
+      );
+      if (refresh) {
+        setMineActivityList(newActivityList);
+      } else {
+        setMineActivityList([...mineActivityList, ...newActivityList]);
+      }
+      setActivityPage(pageNum);
+      setTotalActivities(res.data.total || 0);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 加载更多活动
+  const loadMoreActivities = async () => {
+    if (activityLoading || !activityHasMore) return;
+    setActivityLoading(true);
+    try {
+      await loadActivities(activityPage + 1, false);
+      if (mineActivityList.length >= totalActivities) {
+        setActivityHasMore(false);
+      }
+    } catch (error) {
+      console.error('加载更多活动失败:', error);
+    } finally {
+      setActivityLoading(false);
+    }
   };
 
   const handleSearch = () => {
@@ -125,7 +211,7 @@ const Index = () => {
         className="mySearch-page"
         scrollY={true}
         type="custom"
-        onScroll={() => handleScroll()}
+        onScroll={handleScroll}
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}
@@ -191,7 +277,7 @@ const Index = () => {
                       key={index}
                       id={`post-item-${index}`}
                       onClick={() => {
-                        setPostIndex(item.bid);
+                        setPostIndex(item.id);
                         setBackPage('mineHome');
                       }}
                     >
@@ -206,6 +292,10 @@ const Index = () => {
               activeIndex={activeIndex}
               setIsShowActivityWindow={setIsShowActivityWindow}
               searchValue={searchKeyword}
+              userActivityList={mineActivityList}
+              onLoadMore={loadMoreActivities}
+              hasMore={activityHasMore}
+              loading={activityLoading}
             />
           )}
         </View>
@@ -219,4 +309,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

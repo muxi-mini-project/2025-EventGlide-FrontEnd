@@ -33,7 +33,11 @@ class ApiRequest {
         ...config.header,
       };
 
-      if (!config.skipAuth && !config.url.includes('/user/login')) {
+      if (
+        !config.skipAuth &&
+        !config.url.includes('/user/login') &&
+        !config.url.includes('/checkStatus')
+      ) {
         const token = await this.getToken();
         if (token) {
           headers.Authorization = `Bearer ${token}`;
@@ -59,6 +63,10 @@ class ApiRequest {
 
       const result = response.data as ApiResponse<T>;
 
+      if (config.url == '/checkStatus') {
+        return result;
+      }
+
       if (result.code !== 200) {
         Message.error(result.msg || '请求失败');
         throw new Error(result.msg || '请求失败');
@@ -66,9 +74,11 @@ class ApiRequest {
 
       return result;
     } catch (error: any) {
-      console.error('API Request Error', error);
+      console.error('API Request Error', config.url, error);
       if (config.url == '/user/login') {
         Message.error(error.errMsg || '学号或密码错误');
+      } else if (config.url == '/user/verify') {
+        console.log(error);
       } else {
         Message.error(error.errMsg || '网络请求失败');
       }
@@ -113,4 +123,8 @@ export const get = <T>(url: string, params?: any, config?: Partial<RequestConfig
 
 export const post = <T>(url: string, data?: any, config?: Partial<RequestConfig>) => {
   return apiClient.post<T>(url, data, config);
+};
+const newClient = new ApiRequest('https://miniprograms.muxixyz.com');
+export const checkStatus = () => {
+  return newClient.post<{ status: boolean }>('/checkStatus', { name: 'eventglide' });
 };

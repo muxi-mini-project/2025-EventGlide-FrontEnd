@@ -1,4 +1,5 @@
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { View } from '@tarojs/components';
 import { useState, useEffect } from 'react';
 import Picture from '@/common/components/Picture';
@@ -113,4 +114,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

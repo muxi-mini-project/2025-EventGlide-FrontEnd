@@ -1,5 +1,6 @@
 import { View, Image, ScrollView, GridView } from '@tarojs/components';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { MyActivityTab } from '@/modules/MyPageContent';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { useState, useEffect } from 'react';
@@ -13,7 +14,7 @@ import ActivityModal from '@/modules/ActivityModal';
 import MinePageNull from '@/modules/EmptyComponent/components/minepagenull';
 import { ActivityDetailInfo } from '@/common/types';
 
-const OtherUser = () => {
+const Index = () => {
   const [activePage, setActivePage] = useState<'activity' | 'post'>('post');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
@@ -25,6 +26,22 @@ const OtherUser = () => {
   const [school, setSchool] = useState('');
   const sid = Taro.getStorageSync('targetUser');
 
+  // 分页相关状态
+  const LIMIT = 10;
+  const BUFFER = 300;
+
+  // 帖子分页
+  const [postPage, setPostPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [postLoading, setPostLoading] = useState(false);
+  const [postHasMore, setPostHasMore] = useState(true);
+
+  // 活动分页
+  const [activityPage, setActivityPage] = useState(1);
+  const [totalActivities, setTotalActivities] = useState(0);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityHasMore, setActivityHasMore] = useState(true);
+
   useDidShow(async () => {
     try {
       const res = await getUserInfo(sid);
@@ -35,44 +52,14 @@ const OtherUser = () => {
     } catch (err) {
       console.log(err);
     }
-    const fetchActivity = async () => {
-      try {
-        const res = await getOtherUserActivityList(sid);
-        console.log('activityList:', res.data);
-        if (res.data === null) {
-          setActivityList([]);
-          return;
-        }
-        setActivityList(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchActivity();
+    // 初始化活动列表
+    await loadActivities(1, true);
   });
 
   useEffect(() => {
     if (activePage === 'post') {
-      const fetchPosts = async () => {
-        try {
-          const res = await getOtherUserPostList(sid);
-          console.log('postList:', res.data);
-          if (res.data === null) {
-            setMinePostList([]);
-            return;
-          }
-          const newPostList: PostDetailInfo[] = [];
-          res.data.forEach((item: unknown) => {
-            newPostList.push(item as PostDetailInfo);
-          });
-          setMinePostList(newPostList);
-          handleScroll();
-        } catch (err) {
-          console.log(err);
-        }
-      };
-
-      fetchPosts();
+      setPostHasMore(true);
+      loadPosts(1, true);
     }
   }, [activePage]);
 
@@ -83,8 +70,111 @@ const OtherUser = () => {
     }
   }, [activePage, minePostList]);
 
-  const handleScroll = () => {
+  // 加载帖子列表
+  const loadPosts = async (pageNum = 1, refresh = false) => {
+    try {
+      const res = await getOtherUserPostList(LIMIT, pageNum, sid);
+      console.log('postList:', res.data);
+      if (res.data === null) {
+        if (refresh) {
+          setMinePostList([]);
+        }
+        return;
+      }
+      const newPostList: PostDetailInfo[] = res.data.details.map(
+        (item: unknown) => item as PostDetailInfo
+      );
+      if (refresh) {
+        setMinePostList(newPostList);
+      } else {
+        setMinePostList([...minePostList, ...newPostList]);
+      }
+      setPostPage(pageNum);
+      setTotalPosts(res.data.total || 0);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 加载活动列表
+  const loadActivities = async (pageNum = 1, refresh = false) => {
+    try {
+      const res = await getOtherUserActivityList(LIMIT, pageNum, sid);
+      console.log('activityList:', res.data);
+      if (res.data.details === null) {
+        if (refresh) {
+          setActivityList([]);
+        }
+        return;
+      }
+      const newActivityList: ActivityDetailInfo[] = res.data.details.map(
+        (item: unknown) => item as ActivityDetailInfo
+      );
+      if (refresh) {
+        setActivityList(newActivityList);
+      } else {
+        setActivityList([...activityList, ...newActivityList]);
+      }
+      setActivityPage(pageNum);
+      setTotalActivities(res.data.total || 0);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 加载更多帖子
+  const loadMorePosts = async () => {
+    if (postLoading || !postHasMore) return;
+    setPostLoading(true);
+    try {
+      await loadPosts(postPage + 1, false);
+      if (minePostList.length >= totalPosts) {
+        setPostHasMore(false);
+      }
+      setTimeout(() => {
+        handleScroll();
+      }, 200);
+    } catch (error) {
+      console.error('加载更多帖子失败:', error);
+    } finally {
+      setPostLoading(false);
+    }
+  };
+
+  // 加载更多活动
+  const loadMoreActivities = async () => {
+    if (activityLoading || !activityHasMore) return;
+    setActivityLoading(true);
+    try {
+      await loadActivities(activityPage + 1, false);
+      if (activityList.length >= totalActivities) {
+        setActivityHasMore(false);
+      }
+    } catch (error) {
+      console.error('加载更多活动失败:', error);
+    } finally {
+      setActivityLoading(false);
+    }
+  };
+
+  const handleScroll = (e?: any) => {
+    let scrollTop = 0;
     const windowHeight = Taro.getWindowInfo().windowHeight;
+
+    // 处理滚动加载更多
+    if (e && e.detail) {
+      scrollTop = e.detail.scrollTop || 0;
+      const distanceToBottom = e.detail.scrollHeight - (scrollTop + windowHeight);
+      if (distanceToBottom <= BUFFER) {
+        if (activePage === 'post') {
+          loadMorePosts();
+        } else {
+          loadMoreActivities();
+        }
+      }
+    }
+
+    // 处理图片懒加载
     const query = Taro.createSelectorQuery();
     minePostList.forEach((_, index) => {
       query.select(`#post-item-${index}`).boundingClientRect();
@@ -112,7 +202,7 @@ const OtherUser = () => {
         className="otheruser-page"
         scrollY={true}
         type="custom"
-        onScroll={() => handleScroll()}
+        onScroll={(e) => handleScroll(e)}
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}
@@ -162,7 +252,7 @@ const OtherUser = () => {
                       key={index}
                       id={`post-item-${index}`}
                       onClick={() => {
-                        setPostIndex(item.bid);
+                        setPostIndex(item.id);
                         setBackPage('mineHome');
                       }}
                     >
@@ -177,6 +267,9 @@ const OtherUser = () => {
               activeIndex="release"
               setIsShowActivityWindow={setIsShowActivityWindow}
               userActivityList={activityList}
+              onLoadMore={loadMoreActivities}
+              hasMore={activityHasMore}
+              loading={activityLoading}
             />
           )}
         </View>
@@ -190,4 +283,4 @@ const OtherUser = () => {
   );
 };
 
-export default OtherUser;
+export default withDoorGuard(Index);

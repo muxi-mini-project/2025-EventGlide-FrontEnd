@@ -54,11 +54,13 @@ export type {
   FilteAcitivityRequest,
   CreateActivityRequest,
   GetActivityResponse,
+  GetActivityResponsePage,
   CreatePostRequest,
   GetNotificationCountResponse,
   GetNotificationListReponse,
   GetPostDraftResonse,
   GetPostReponse,
+  GetPostReponsePage,
   SaveDraftRequest,
   CommentRequest,
   DeleteCommentRequest,
@@ -74,4 +76,4 @@ export type {
 } from './CommentTypes';
 
 // 导入资源模块声明
-import './global/';
+//import './global/';

@@ -3,6 +3,7 @@ import { View, Image, Textarea } from '@tarojs/components';
 import { useDidShow } from '@tarojs/taro';
 import { useState } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import Picture from '@/common/components/Picture';
 import draft from '@/common/svg/add/draft.svg';
 import ConfirmModal from '@/modules/ConfirmModal';
@@ -267,4 +268,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

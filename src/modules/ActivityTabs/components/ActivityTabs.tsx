@@ -1,8 +1,7 @@
 import './style.scss';
-import { View, Radio, RadioGroup, Input, Label, Image } from '@tarojs/components';
+import { View, Input, Image } from '@tarojs/components';
 import { useState, memo, useEffect } from 'react';
-import Taro, { navigateTo } from '@tarojs/taro';
-import classnames from 'classnames';
+import Taro from '@tarojs/taro';
 import searchpic from '@/common/svg/Postlist/搜索.svg';
 import choosestyle from '@/common/svg/Postlist/路径.svg';
 import choosestyle_active from '@/common/svg/Postlist/路径-active.svg';
@@ -10,7 +9,6 @@ import gantanhaozhong from '@/common/svg/Postlist/gantanhaozhong.svg';
 import useActivityStore from '@/store/ActivityStore';
 import { getActivityList, searchActivityList } from '@/common/api';
 
-const datelist = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 const typelist = ['文艺', '体育', '竞赛', '游戏', '学术'];
 
 const ActivityTabs: React.FC<{
@@ -21,7 +19,8 @@ const ActivityTabs: React.FC<{
   chooseDrawerType: string;
   setChooseDrawerType: (value: string) => void;
   setShowColorExplain: (value: boolean) => void;
-}> = memo(function ({ ...props }) {
+  onSearch: (keyword: string) => void;
+}> = memo(function ({ onSearch, ...props }) {
   const [checkDateIndex, setCheckDateIndex] = useState<number>(-1);
   const [checkTypeIndex, setCheckTypeIndex] = useState<number[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -34,31 +33,6 @@ const ActivityTabs: React.FC<{
       .filter((index) => index !== -1);
     setCheckTypeIndex(typeIndexes);
   }, [selectedInfo]);
-
-  /*   const handleDateClick = (index: number) => {
-    if (checkDateIndex === index) {
-      setCheckDateIndex(-1);
-      props.setApproximateTime('');
-    } else {
-      setCheckDateIndex(index);
-      props.setApproximateTime(datelist[index]);
-    }
-  };
-  const handleTypeClick = (index: number) => {
-    let newCheckTypeIndex: number[];
-    if (checkTypeIndex.includes(index)) {
-      newCheckTypeIndex = checkTypeIndex.filter((item) => item !== index);
-    } else {
-      newCheckTypeIndex = [...checkTypeIndex, index];
-    }
-    setCheckTypeIndex(newCheckTypeIndex);
-    const selectedTypes = typelist.filter((_, idx) => newCheckTypeIndex.includes(idx));
-    props.setType(selectedTypes);
-    setSelectInfo({
-      ...selectedInfo,
-      type: selectedTypes,
-    });
-  }; */
   const handleFocusChange = () => {
     setPlaceholder('');
   };
@@ -69,47 +43,7 @@ const ActivityTabs: React.FC<{
     setSearchValue(e.detail.value);
   };
   const handleSearch = async () => {
-    if (searchValue === '') {
-      try {
-        const res = await getActivityList();
-        if (res.msg === 'success') {
-          setActiveList(res.data);
-        } else {
-          Taro.showToast({
-            title: `${res.msg}`,
-            icon: 'none',
-            duration: 1000,
-          });
-        }
-      } catch (error) {
-        console.error('获取活动列表失败:', error);
-        Taro.showToast({
-          title: '获取活动列表失败',
-          icon: 'none',
-          duration: 1000,
-        });
-      }
-    } else {
-      try {
-        const res = await searchActivityList({ name: searchValue });
-        if (res.msg === 'success') {
-          setActiveList(res.data);
-        } else {
-          Taro.showToast({
-            title: `${res.msg}`,
-            icon: 'none',
-            duration: 1000,
-          });
-        }
-      } catch (error) {
-        console.error('搜索活动失败:', error);
-        Taro.showToast({
-          title: '搜索活动失败',
-          icon: 'none',
-          duration: 1000,
-        });
-      }
-    }
+    onSearch(searchValue);
   };
   return (
     <View className="sticky-container">

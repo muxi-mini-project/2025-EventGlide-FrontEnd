@@ -2,13 +2,29 @@ import { View, Input } from '@tarojs/components';
 import Taro, { navigateBack } from '@tarojs/taro';
 import { useState } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import useSignersStore from '@/store/SignersStore';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
+import { verifyUserInfo } from '@/common/api/User';
 
 const Index = () => {
   const { signers, setAddSigner } = useSignersStore();
   const [name, setName] = useState('');
   const [idCard, setIdCard] = useState('');
+  const verifyInfo = async () => {
+    try {
+      const res = await verifyUserInfo(name, idCard);
+      console.log(res);
+      setAddSigner({ id: signers.length + 1, name, studentId: idCard });
+      navigateBack();
+    } catch (err) {
+      Taro.showToast({
+        title: '账号错误,请检查姓名和一站式账号是否匹配',
+        icon: 'none',
+      });
+      console.log(err);
+    }
+  };
   const handleClick = () => {
     const is10DigitNumber = /^\d{10}$/.test(idCard);
     if (!is10DigitNumber) {
@@ -26,8 +42,7 @@ const Index = () => {
       });
       return;
     }
-    setAddSigner({ id: signers.length + 1, name, studentId: idCard });
-    navigateBack();
+    verifyInfo();
   };
   return (
     <>
@@ -62,4 +77,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

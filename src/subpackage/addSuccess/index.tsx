@@ -1,6 +1,7 @@
 import { View, Image } from '@tarojs/components';
 import Button from '@/common/components/Button';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import img from '@/common/assets/add/提交成功.png';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 
@@ -41,4 +42,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

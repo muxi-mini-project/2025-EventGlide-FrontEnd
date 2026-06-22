@@ -1,6 +1,7 @@
 import { View, Image, Form } from '@tarojs/components';
 import { useEffect, useState } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import Taro from '@tarojs/taro';
 import { FormItem, FormPicker } from '@/modules/Form';
 import formList from '@/common/const/Formconst';
@@ -130,9 +131,17 @@ const Index = () => {
       });
       return;
     }
-    if (signers.length < 3) {
+    if (signers.length < 3 && holderType == '个人') {
       Taro.showToast({
         title: '请至少添加3位申报人',
+        icon: 'none',
+        duration: 2000,
+      });
+      return;
+    }
+    if (signers.length < 1 && holderType !== '个人') {
+      Taro.showToast({
+        title: '请至少添加1位申报人',
         icon: 'none',
         duration: 2000,
       });
@@ -262,4 +271,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

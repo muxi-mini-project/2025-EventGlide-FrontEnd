@@ -2,6 +2,7 @@ import { View, Image, Span, Swiper, SwiperItem } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { useState, useEffect, createContext, useRef } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { NavigationBar } from '@/common/components/NavigationBar';
 import favor from '@/common/svg/post/heart.svg';
 import collect from '@/common/svg/post/star.svg';
@@ -55,8 +56,7 @@ const Index = () => {
   const params = {
     studentId: studentId,
     subject: 'activity',
-    targetId: selectedItem.bid,
-    receiver: selectedItem.userInfo.studentId,
+    targetId: selectedItem.id,
   };
 
   console.log(selectedItem);
@@ -66,9 +66,9 @@ const Index = () => {
     subject: 'comment',
   };
   const comment_params = {
-    parentId: selectedItem.bid,
+    parentId: selectedItem.id,
     subject: 'activity',
-    receiver: selectedItem.userInfo.studentId,
+    //receiver: selectedItem.userInfo.studentId,
   };
 
   const handlepic = (pictures) => {
@@ -112,7 +112,7 @@ const Index = () => {
         try {
           const res = await handleInteraction('like', params);
           if (res.msg === 'success') {
-            setLikeNumChange(selectedItem.bid, 'add');
+            setLikeNumChange(selectedItem.id, 'add');
             setSelectedItem({
               ...selectedItem,
               isLike: 'true',
@@ -148,7 +148,7 @@ const Index = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await getCommentsBySubject(selectedItem.bid);
+        const res = await getCommentsBySubject(selectedItem.id);
         if (res.data === null) {
           setResponse([]);
           return;
@@ -167,7 +167,7 @@ const Index = () => {
 
   const getCommentsAgain = async () => {
     try {
-      const res = await getCommentsBySubject(selectedItem.bid);
+      const res = await getCommentsBySubject(selectedItem.id);
       if (res.data === null) {
         setResponse([]);
         return;
@@ -191,7 +191,7 @@ const Index = () => {
       try {
         const res = await replyComment(params);
         if (res.msg === 'success') {
-          const commentRes = await getCommentsBySubject(selectedItem.bid);
+          const commentRes = await getCommentsBySubject(selectedItem.id);
           if (commentRes.data === null) {
             setResponse([]);
             return;
@@ -215,7 +215,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('dislike', params);
         if (res.msg === 'success') {
-          setLikeNumChange(selectedItem.bid, 'reduce');
+          setLikeNumChange(selectedItem.id, 'reduce');
           setSelectedItem({
             ...selectedItem,
             isLike: 'false',
@@ -229,7 +229,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('like', params);
         if (res.msg === 'success') {
-          setLikeNumChange(selectedItem.bid, 'add');
+          setLikeNumChange(selectedItem.id, 'add');
           setSelectedItem({
             ...selectedItem,
             isLike: 'true',
@@ -247,7 +247,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('discollect', params);
         if (res.msg === 'success') {
-          setCollectNumChange(selectedItem.bid, 'reduce');
+          setCollectNumChange(selectedItem.id, 'reduce');
           setSelectedItem({
             ...selectedItem,
             isCollect: 'false',
@@ -261,7 +261,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('collect', params);
         if (res.msg === 'success') {
-          setCollectNumChange(selectedItem.bid, 'add');
+          setCollectNumChange(selectedItem.id, 'add');
           setSelectedItem({
             ...selectedItem,
             isCollect: 'true',
@@ -547,4 +547,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

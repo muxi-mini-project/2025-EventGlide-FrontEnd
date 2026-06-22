@@ -14,13 +14,17 @@ import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import { getPostList, searchPostList } from '@/common/api';
 import { GetNotificationCountResponse } from '@/common/types';
 import ScrollTop from '@/modules/ScrollTop';
+import withDoorGuard from '@/common/hoc';
 
 const Index = () => {
   const [isAlbumVisiable, setIsAlbumVisiable] = useState(false);
   const [windowHeight, setWindowHeight] = useState(0);
   const [isShowList, setIsShowList] = useState<number[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [currentSearchKeyword, setCurrentSearchKeyword] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { showImg: imgUrl, setImgUrl } = usePostStore();
   const { PostList, setPostList, setBackPage, setPostIndex } = usePostStore();
   const { setIsSelect } = useActivityStore();
@@ -29,8 +33,10 @@ const Index = () => {
   const [scrollTop, setScrollTop] = useState(0);
   const unloadTimers = useRef<Record<number, any>>({});
   const visibleSet = useRef<Set<number>>(new Set());
-  //let scrollTimer: any = null;
   const BUFFER = 300;
+  const [page, setPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const LIMIT = 10;
   const positions = useRef<
     {
       top: number;
@@ -42,15 +48,35 @@ const Index = () => {
     setIsSelect(false);
   });
 
-  useDidShow(async () => {
-    try {
-      const postListRes = await getPostList();
-      setPostList(postListRes.data.reverse());
-      console.log(postListRes.data);
-    } catch (error) {
-      console.error('获取帖子列表失败:', error);
+  const loadPosts = async (page = 1, refresh = false, searchKeyword = '') => {
+    const shouldSearch = searchKeyword !== '';
+    const res = shouldSearch
+      ? await searchPostList({
+          page: page,
+          limit: LIMIT,
+          name: searchKeyword,
+        })
+      : await getPostList({
+          page: page,
+          limit: LIMIT,
+        });
+    console.log(res);
+    const list = res.data.details || [];
+    if (refresh) {
+      setPostList(list);
+    } else {
+      setPostList([...PostList, ...list]);
     }
+    setPage(page);
+    if (res.data.total !== undefined) {
+      setTotalPosts(res.data.total);
+    }
+  };
 
+  useDidShow(async () => {
+    setIsSelect(false);
+    setHasMore(true);
+    await loadPosts(1, true, '');
     setImgUrl([]);
   });
 
@@ -94,6 +120,11 @@ const Index = () => {
     const scrollTop = e?.detail?.scrollTop || 0;
 
     setShowScrollTop(scrollTop > 300);
+
+    const distanceToBottom = e.detail.scrollHeight - (scrollTop + windowHeight);
+    if (distanceToBottom <= BUFFER) {
+      loadMore();
+    }
 
     const viewportTop = scrollTop - BUFFER;
     const viewportBottom = scrollTop + windowHeight + BUFFER;
@@ -148,47 +179,9 @@ const Index = () => {
   };
 
   const handleSearch = async () => {
-    if (searchValue === '') {
-      try {
-        const res = await getPostList();
-        if (res.msg === 'success') {
-          setPostList(res.data.reverse());
-        } else {
-          Taro.showToast({
-            title: `${res.msg}`,
-            icon: 'none',
-            duration: 1000,
-          });
-        }
-      } catch (error) {
-        console.error('获取帖子列表失败:', error);
-        Taro.showToast({
-          title: '获取帖子列表失败',
-          icon: 'none',
-          duration: 1000,
-        });
-      }
-    } else {
-      try {
-        const res = await searchPostList({ name: searchValue });
-        if (res.msg === 'success') {
-          setPostList(res.data.reverse());
-        } else {
-          Taro.showToast({
-            title: `${res.msg}`,
-            icon: 'none',
-            duration: 1000,
-          });
-        }
-      } catch (error) {
-        console.error('搜索帖子失败:', error);
-        Taro.showToast({
-          title: '搜索帖子失败',
-          icon: 'none',
-          duration: 1000,
-        });
-      }
-    }
+    setHasMore(true);
+    setCurrentSearchKeyword(searchValue);
+    await loadPosts(1, true, searchValue);
   };
 
   useDidShow(async () => {
@@ -232,36 +225,12 @@ const Index = () => {
     };
 
     try {
-      if (searchValue === '') {
-        try {
-          const res = await getPostList();
-          setPostList(res.data.reverse());
+      setHasMore(true);
+      await loadPosts(1, true, currentSearchKeyword);
 
-          const feedRes = await get<GetNotificationCountResponse>('/feed/total');
-          setMsgCount(feedRes.data.total);
-          finishRefresh();
-        } catch (err) {
-          finishRefresh();
-          console.error(err);
-        }
-      } else {
-        try {
-          const res = await searchPostList({ name: searchValue });
-          if (res.msg === 'success') {
-            setPostList(res.data.reverse());
-          } else {
-            Taro.showToast({
-              title: `${res.msg}`,
-              icon: 'none',
-              duration: 1000,
-            });
-          }
-          finishRefresh();
-        } catch (err) {
-          finishRefresh();
-          console.error(err);
-        }
-      }
+      const feedRes = await get<GetNotificationCountResponse>('/feed/total');
+      setMsgCount(feedRes.data.total);
+      finishRefresh();
     } catch (error) {
       finishRefresh();
       console.error('刷新过程发生错误:', error);
@@ -270,6 +239,21 @@ const Index = () => {
         icon: 'none',
         duration: 1000,
       });
+    }
+  };
+
+  const loadMore = async () => {
+    if (loading || !hasMore || refreshing) return;
+    setLoading(true);
+    try {
+      if (PostList.length >= totalPosts) {
+        setHasMore(false);
+      }
+      await loadPosts(page + 1, false, currentSearchKeyword);
+    } catch (error) {
+      console.error('加载更多失败:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -348,7 +332,7 @@ const Index = () => {
                     key={index}
                     id={`post-item-${index}`}
                     onClick={() => {
-                      setPostIndex(item.bid);
+                      setPostIndex(item.id);
                       setBackPage('postHome');
                     }}
                   >

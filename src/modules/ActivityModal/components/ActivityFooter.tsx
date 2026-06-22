@@ -20,7 +20,7 @@ const ActivityFooter: React.FC<{
   const params = {
     studentId: studentId,
     subject: 'activity',
-    targetId: selectedItem.bid,
+    targetId: selectedItem.id,
     receiver: selectedItem.userInfo.studentId,
   };
   const handleCollect = async () => {
@@ -28,7 +28,7 @@ const ActivityFooter: React.FC<{
       try {
         const res = await handleInteraction('discollect', params);
         if (res.msg === 'success') {
-          setCollectNumChange(selectedItem.bid, 'reduce');
+          setCollectNumChange(selectedItem.id, 'reduce');
           setSelectedItem({
             ...selectedItem,
             isCollect: 'false',
@@ -42,7 +42,7 @@ const ActivityFooter: React.FC<{
       try {
         const res = await handleInteraction('collect', params);
         if (res.msg === 'success') {
-          setCollectNumChange(selectedItem.bid, 'add');
+          setCollectNumChange(selectedItem.id, 'add');
           setSelectedItem({
             ...selectedItem,
             isCollect: 'true',

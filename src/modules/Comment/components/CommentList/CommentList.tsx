@@ -40,7 +40,7 @@ const CommentList: React.FC<CommentListProps & { targetCommentBid?: string }> = 
       {/* 渲染评论列表 */}
       {comments.map((comment) => (
         <CommentItem
-          key={comment.bid}
+          key={comment.id}
           comment={comment}
           replycomment={replycomment}
           setReplyId={setReplyId}

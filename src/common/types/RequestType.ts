@@ -29,6 +29,12 @@ export interface CheckLoginResponse {
 
 /** 活动相关请求/响应接口类型 */
 export interface GetActivityResponse extends ActivityDetailInfo {}
+export interface GetActivityResponsePage {
+  limit: number;
+  page: number;
+  total: number;
+  details: ActivityDetailInfo[];
+}
 
 export interface FilteAcitivityRequest extends SelectedInfo {}
 
@@ -66,6 +72,12 @@ export interface CreatePostRequest {
 }
 
 export interface GetPostReponse extends PostDetailInfo {}
+export interface GetPostReponsePage {
+  limit: number;
+  page: number;
+  total: number;
+  details: PostDetailInfo[];
+}
 
 export interface GetPostDraftResonse {
   bid: string;

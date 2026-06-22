@@ -23,7 +23,7 @@ export interface ReplyType {
 
 // 响应类型（一级评论）
 export interface ResponseType {
-  bid: string;
+  id: string;
   commentedPos: string;
   commentedTime: string;
   content: string;
@@ -40,7 +40,7 @@ export interface ResponseType {
 // ReplyItem组件属性
 export interface ReplyItemProps {
   // 基础属性
-  bid: string;
+  id: string;
   content?: string;
   replyContent?: string;
   creator?: CreatorType;

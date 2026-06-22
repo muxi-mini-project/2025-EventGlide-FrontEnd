@@ -8,6 +8,7 @@ import { handleUserLogin, handleCheckLogin } from '@/common/api';
 import PolicyModal from '@/modules/PolicyModal';
 import Message from '@/common/components/Message';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
+import withDoorGuard from '@/common/hoc';
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);

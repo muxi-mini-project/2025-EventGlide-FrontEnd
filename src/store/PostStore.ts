@@ -36,13 +36,13 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setPostList: (PostList) => set(() => ({ PostList })),
   setPostIndex: (bid) => {
     const currentPostList = get().PostList;
-    const index = currentPostList.findIndex((b) => b.bid === bid); // 找到 bid 对应的索引
+    const index = currentPostList.findIndex((b) => b.id === bid); // 找到 bid 对应的索引
     set(() => ({ PostIndex: index }));
   },
   setLikeNumChange: (blog, type) => {
     const currentPostList = get().PostList;
     const updatedPostList = currentPostList.map((b) => {
-      if (b.bid === blog.bid) {
+      if (b.id === blog.id) {
         return {
           ...b,
           likeNum: type === 1 ? b.likeNum + 1 : b.likeNum - 1,
@@ -56,7 +56,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setCollectNumChange: (blog, type) => {
     const currentPostList = get().PostList;
     const updatedPostList = currentPostList.map((b) => {
-      if (b.bid === blog.bid) {
+      if (b.id === blog.id) {
         return {
           ...b,
           collectNum: type === 1 ? b.collectNum + 1 : b.collectNum - 1,
@@ -74,7 +74,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setCommentNumChange: (blog) => {
     const currentPostList = get().PostList;
     const updatedPostList = currentPostList.map((b) => {
-      if (b.bid === blog.bid) {
+      if (b.id === blog.id) {
         return {
           ...b,
           commentNum: b.commentNum + 1,

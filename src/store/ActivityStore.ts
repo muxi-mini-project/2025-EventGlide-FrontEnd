@@ -18,6 +18,8 @@ interface ActivityStoreState {
 
 const useActivityStore = create<ActivityStoreState>((set) => ({
   selectedInfo: {
+    limit: 10,
+    page: 1,
     holderType: [],
     type: [],
     position: [],
@@ -36,7 +38,7 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
   setLikeNumChange: (id, type) => {
     const currentActiveList = useActivityStore.getState().activeList;
     const updatedActiveList = currentActiveList.map((item) => {
-      if (item.bid === id) {
+      if (item.id === id) {
         return {
           ...item,
           likeNum: type === 'add' ? item.likeNum + 1 : item.likeNum - 1,
@@ -50,7 +52,7 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
   setCollectNumChange: (id, type) => {
     const currentActiveList = useActivityStore.getState().activeList;
     const updatedActiveList = currentActiveList.map((item) => {
-      if (item.bid === id) {
+      if (item.id === id) {
         return {
           ...item,
           collectNum: type === 'add' ? item.collectNum + 1 : item.collectNum - 1,

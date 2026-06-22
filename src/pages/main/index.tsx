@@ -6,8 +6,9 @@ import AddHome from '@/pages/addHome';
 import PostHome from '@/pages/postHome';
 import MineHome from '@/pages/mineHome';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 
-export default function MainPage() {
+function MainPage() {
   const [activeTab, setActiveTab] = useState(0);
 
   const pages = [
@@ -31,3 +32,4 @@ export default function MainPage() {
     </View>
   );
 }
+export default MainPage;

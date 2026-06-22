@@ -2,6 +2,7 @@ import { View, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/components'
 import { useState, useEffect, createContext } from 'react';
 import Taro, { useDidShow } from '@tarojs/taro';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { NavigationBar } from '@/common/components/NavigationBar';
 import favor from '@/common/svg/post/heart.svg';
 import collect from '@/common/svg/post/star.svg';
@@ -58,12 +59,11 @@ const Index = () => {
   const windowWidth = Taro.getWindowInfo().windowWidth;
   const windowHeight = Taro.getWindowInfo().windowHeight;
   const Item = PostList[PostIndex];
-  console.log(Item);
+  console.log(PostList, PostIndex, Item);
   const params = {
     subject: 'post',
     studentId: studentId,
-    targetId: Item.bid,
-    receiver: Item.userInfo.studentId,
+    targetId: Item.id,
   };
 
   const reply_params = {
@@ -71,9 +71,9 @@ const Index = () => {
     subject: 'comment',
   };
   const comment_reply_params = {
-    parentId: Item.bid,
+    parentId: Item.id,
     subject: 'post',
-    receiver: Item.userInfo.studentId,
+    //receiver: Item.userInfo.studentId,
   };
 
   const handlepic = (pictures) => {
@@ -156,7 +156,7 @@ const Index = () => {
 
   useDidShow(async () => {
     try {
-      const res = await getCommentsBySubject(Item.bid);
+      const res = await getCommentsBySubject(Item.id);
       console.log(res);
       if (res.data === null) {
         setResponse([]);
@@ -195,7 +195,7 @@ const Index = () => {
 
   const getCommentsAgain = async () => {
     try {
-      const res = await getCommentsBySubject(Item.bid);
+      const res = await getCommentsBySubject(Item.id);
       setResponse(res.data);
     } catch (err) {
       console.log(err);
@@ -257,6 +257,7 @@ const Index = () => {
       });
     } else {
       try {
+        console.log(params);
         const res = await createComment(params);
         console.log(res);
         if (res.msg === 'success') {
@@ -288,7 +289,7 @@ const Index = () => {
         const res = await replyComment(params);
         console.log(res);
         if (res.msg === 'success') {
-          const commentRes = await getCommentsBySubject(Item.bid);
+          const commentRes = await getCommentsBySubject(Item.id);
           console.log(commentRes);
           if (commentRes.data === null) {
             setResponse([]);
@@ -321,7 +322,7 @@ const Index = () => {
           scrollY
           scrollIntoView={scrollToCommentId}
           scrollWithAnimation={true}
-          style={{ height: `${windowHeight - 100}px` }}
+          style={{ height: `${windowHeight - 60}px` }}
         >
           <View className="postDetail-content">
             {maxheight > 0 && (
@@ -469,4 +470,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

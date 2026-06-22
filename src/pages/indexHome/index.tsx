@@ -9,8 +9,9 @@ import useActivityStore from '@/store/ActivityStore';
 import { judgeDate } from '@/common/utils/DateList';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import IndexPageNull from '@/modules/EmptyComponent/components/indexpagenull';
-import { filterActivity, getActivityList } from '@/common/api';
+import { filterActivity, getActivityList, searchActivityList } from '@/common/api';
 import ScrollTop from '@/modules/ScrollTop/components/ScrollTop';
+import withDoorGuard from '@/common/hoc';
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
@@ -27,34 +28,52 @@ const Index = () => {
   const [scrollTop, setScrollTop] = useState(0);
   const [firstLoad, setFirstLoad] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentSearchKeyword, setCurrentSearchKeyword] = useState<string>('');
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const LIMIT = 10;
+  const BUFFER = 300;
+
+  const loadActivities = async (pageNum = 1, refresh = false, searchKeyword = '') => {
+    let res;
+    const shouldSearch = searchKeyword !== '';
+    if (shouldSearch) {
+      // 搜索模式
+      res = await searchActivityList({ name: searchKeyword, page: pageNum, limit: LIMIT });
+    } else if (isSelect) {
+      // 筛选模式
+      res = await filterActivity({ ...selectedInfo, page: pageNum, limit: LIMIT });
+    } else {
+      // 默认模式
+      res = await getActivityList({ limit: LIMIT, page: pageNum });
+    }
+    console.log(res);
+    const list = res.data?.details || [];
+    if (refresh) {
+      setActiveList(list.reverse());
+    } else {
+      setActiveList([...activeList, ...list.reverse()]);
+    }
+    setPage(pageNum);
+    if (res.data?.total !== undefined) {
+      setTotalPosts(res.data.total);
+    }
+  };
+
+  const handleSearch = async (keyword: string) => {
+    setCurrentSearchKeyword(keyword);
+    setIsSearchMode(keyword !== '');
+    setHasMore(true);
+    await loadActivities(1, true, keyword);
+  };
 
   useDidShow(async () => {
     console.log(selectedInfo);
-    if (isSelect) {
-      try {
-        const res = await filterActivity(selectedInfo);
-        console.log(res.data);
-        if (res.data === null) {
-          setActiveList([]);
-          return;
-        }
-        setActiveList(res.data.reverse());
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const res = await getActivityList();
-        console.log(res);
-        if (res.data === null) {
-          setActiveList([]);
-          return;
-        }
-        setActiveList(res.data.reverse());
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    setHasMore(true);
+    await loadActivities(1, true);
     const now = new Date();
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} 00:00`;
     setSelectInfo({
@@ -73,7 +92,7 @@ const Index = () => {
           setActiveList([]);
           return;
         }
-        setActiveList(res.data.reverse());
+        setActiveList(res.data.details.reverse());
       } catch (err) {
         console.log(err);
       }
@@ -103,6 +122,26 @@ const Index = () => {
       setShowScrollTop(true);
     } else {
       setShowScrollTop(false);
+    }
+    const distanceToBottom =
+      e.detail.scrollHeight - (newScrollTop + (Taro.getSystemInfoSync().windowHeight || 0));
+    if (distanceToBottom <= BUFFER) {
+      loadMore();
+    }
+  };
+
+  const loadMore = async () => {
+    if (loading || !hasMore || refreshing) return;
+    setLoading(true);
+    try {
+      await loadActivities(page + 1, false, currentSearchKeyword);
+      if (activeList.length >= totalPosts) {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('加载更多失败:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,18 +177,9 @@ const Index = () => {
     };
 
     try {
-      try {
-        const res = await filterActivity(selectedInfo);
-        if (res.data === null) {
-          setActiveList([]);
-        } else {
-          setActiveList(res.data.reverse());
-        }
-        finishRefresh();
-      } catch (err) {
-        finishRefresh();
-        console.error(err);
-      }
+      setHasMore(true);
+      await loadActivities(1, true, currentSearchKeyword);
+      finishRefresh();
     } catch (error) {
       finishRefresh();
       console.error('刷新过程发生错误:', error);
@@ -181,6 +211,7 @@ const Index = () => {
           chooseDrawerType={activityType}
           setChooseDrawerType={setActivityType}
           setShowColorExplain={setShowColorExplain}
+          onSearch={handleSearch}
         ></ActivityTabs>
       </View>
       <ScrollView

@@ -29,7 +29,7 @@ const CommentItem: React.FC<CommentItemProps & { defaultExpand?: boolean }> = ({
   return (
     <View className="CommentItem">
       {/* 一级评论 */}
-      <View className="CommentItem-first" id={`comment-${comment.bid}`}>
+      <View className="CommentItem-first" id={`comment-${comment.id}`}>
         <ReplyItem
           {...commentForReplyItem}
           isLike={comment.isLike}

@@ -7,7 +7,7 @@ export type PostList = {
 };
 
 export interface PostDetailInfo {
-  bid: string;
+  id: string;
   collectNum: number;
   commentNum: number;
   introduce: string;

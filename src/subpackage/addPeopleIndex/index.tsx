@@ -2,6 +2,7 @@ import { View, Image } from '@tarojs/components';
 import { useState, memo } from 'react';
 import { navigateTo, navigateBack } from '@tarojs/taro';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { AddPeopleProps } from '@/common/types';
 import classnames from 'classnames';
 import useSignersStore from '@/store/SignersStore';
@@ -99,4 +100,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

@@ -3,6 +3,7 @@ import { reLaunch } from '@tarojs/taro';
 import { useState, useEffect } from 'react';
 import Taro from '@tarojs/taro';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import schoolSrc from '@/common/svg/mineInfo/学校.svg';
 import departmentSrc from '@/common/svg/mineInfo/院系.svg';
 import cardSrc from '@/common/svg/mineInfo/一卡通号.svg';
@@ -167,4 +168,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

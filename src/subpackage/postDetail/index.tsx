@@ -1,14 +1,15 @@
-import { View, Image, Swiper, SwiperItem } from '@tarojs/components';
+import { View, Image, Swiper, SwiperItem, ScrollView } from '@tarojs/components';
 import { useState, useEffect, createContext } from 'react';
 import Taro, { useDidShow } from '@tarojs/taro';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { NavigationBar } from '@/common/components/NavigationBar';
 import favor from '@/common/svg/post/heart.svg';
 import collect from '@/common/svg/post/star.svg';
 import collectActive from '@/common/svg/post/starAct.svg';
 import favorActive from '@/common/svg/post/heartAct.svg';
-import comment from '@/common/assets/Postlist/comment.png';
-import icon from '@/common/assets/Postlist/inputIcon.png';
+import comment from '@/common/svg/post/comment.svg';
+import icon from '@/common/svg/post/inputIcon.svg';
 import { CreatorType } from '@/common/types';
 import useUserStore from '@/store/userStore';
 import usePostStore from '@/store/PostStore';
@@ -18,6 +19,7 @@ import { getCommentsBySubject, createComment, replyComment } from '@/common/api/
 import ReplyInput from '@/modules/ReplyInput';
 import CommentActionSheet from '@/modules/CommentActionSheet';
 import CommentList from '@/modules/Comment';
+import formatTime from '@/common/utils/FormatTime';
 
 export const SetBlogReponseContext = createContext<(params: any) => void>(() => {});
 export const SetBlogComment = createContext<(params: any) => void>(() => {});
@@ -28,9 +30,15 @@ const Index = () => {
   const [inputValue, setInputValue] = useState('');
   const { avatar } = useUserStore((state) => state);
   const studentId = Taro.getStorageSync('sid');
-  const { PostList, PostIndex, setCommentNumChange, backPage } = usePostStore((state) => state);
+  const {
+    PostList,
+    PostIndex,
+    setCommentNumChange,
+    backPage,
+    selectCommentPost,
+    setSelectCommentPost,
+  } = usePostStore((state) => state);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isRequest, setIsRequest] = useState(true);
   const [replyId, setReplyId] = useState('');
   const [commentInput, setCommentInput] = useState(false);
   const [replytype, setReplytype] = useState('create');
@@ -44,16 +52,18 @@ const Index = () => {
   const [commentItems, setCommentItems] = useState('');
   const [commentCreator, setCommentCreator] = useState<CreatorType>();
   const [commentid, setCommentid] = useState('');
+  const [scrollToCommentId, setScrollToCommentId] = useState<string>('');
+  const [loadSelectComment, setLoadSelectComment] = useState(false);
+  const [loadComment, setLoadComment] = useState(false);
   const { setLikeNumChange, setCollectNumChange } = usePostStore((state) => state);
   const windowWidth = Taro.getWindowInfo().windowWidth;
   const windowHeight = Taro.getWindowInfo().windowHeight;
   const Item = PostList[PostIndex];
-  console.log(Item);
+  console.log(PostList, PostIndex, Item);
   const params = {
     subject: 'post',
     studentId: studentId,
-    targetId: Item.bid,
-    receiver: Item.userInfo.studentId,
+    targetId: Item.id,
   };
 
   const reply_params = {
@@ -61,9 +71,9 @@ const Index = () => {
     subject: 'comment',
   };
   const comment_reply_params = {
-    parentId: Item.bid,
+    parentId: Item.id,
     subject: 'post',
-    receiver: Item.userInfo.studentId,
+    //receiver: Item.userInfo.studentId,
   };
 
   const handlepic = (pictures) => {
@@ -87,6 +97,7 @@ const Index = () => {
     setMaxheight(max);
     setImageRatios(res);
     setRatios(res2);
+    setLoadSelectComment(true);
   };
 
   const loadImageRatios = async () => {
@@ -145,13 +156,14 @@ const Index = () => {
 
   useDidShow(async () => {
     try {
-      const res = await getCommentsBySubject(Item.bid);
+      const res = await getCommentsBySubject(Item.id);
       console.log(res);
       if (res.data === null) {
         setResponse([]);
         return;
       }
       setResponse(res.data);
+      setLoadComment(true);
     } catch (err) {
       console.log(err);
       setResponse([]);
@@ -169,21 +181,27 @@ const Index = () => {
   }, [PostIndex]);
 
   useEffect(() => {
-    if (isRequest) {
-      const fetchComments = async () => {
-        try {
-          const res = await getCommentsBySubject(Item.bid);
-          setResponse(res.data);
-          setIsRequest(false);
-        } catch (err) {
-          console.log(err);
-          setIsRequest(false);
-        }
-      };
-
-      fetchComments();
+    if (selectCommentPost.length > 0 && loadSelectComment && loadComment) {
+      console.log('selectCommentPost', selectCommentPost);
+      setTimeout(() => {
+        setScrollToCommentId(`comment-${selectCommentPost}`);
+      }, 300);
+      setTimeout(() => {
+        setSelectCommentPost('');
+        setScrollToCommentId('');
+      }, 2000);
     }
-  }, [isRequest]);
+  }, [loadSelectComment, loadComment]);
+
+  const getCommentsAgain = async () => {
+    try {
+      const res = await getCommentsBySubject(Item.id);
+      setResponse(res.data);
+    } catch (err) {
+      console.log(err);
+      setResponse([]);
+    }
+  };
 
   const handleLike = async () => {
     if (Item.isLike === 'true') {
@@ -239,6 +257,7 @@ const Index = () => {
       });
     } else {
       try {
+        console.log(params);
         const res = await createComment(params);
         console.log(res);
         if (res.msg === 'success') {
@@ -270,7 +289,7 @@ const Index = () => {
         const res = await replyComment(params);
         console.log(res);
         if (res.msg === 'success') {
-          const commentRes = await getCommentsBySubject(Item.bid);
+          const commentRes = await getCommentsBySubject(Item.id);
           console.log(commentRes);
           if (commentRes.data === null) {
             setResponse([]);
@@ -298,52 +317,61 @@ const Index = () => {
     <>
       <View className="postDetail">
         <NavigationBar url={`/pages/${backPage}/index`} userInfo={Item.userInfo} />
-        <View className="postDetail-content">
-          {maxheight > 0 && (
-            <View className="postDetail-content-avatar" onClick={handleImageClick}>
-              <View style={`width: ${windowWidth}px; height: ${windowWidth * maxheight}px`} />
-              <Swiper
-                className="postDetail-content-avatar-swiper"
-                indicatorDots={true}
-                circular={false}
-                current={currentIndex}
-                onChange={(e) => setCurrentIndex(e.detail.current)}
-              >
-                {Item.showImg.map((item, index) => (
-                  <SwiperItem key={index} className="postDetail-content-avatar-swiper-item">
-                    <Image
-                      src={item}
-                      className={`postDetail-content-avatar-swiper-item-${imageRatios[index]}`}
-                      mode={imageRatios[index] === 'widthimg' ? 'widthFix' : 'heightFix'}
-                    />
-                  </SwiperItem>
-                ))}
-              </Swiper>
-            </View>
-          )}
-          <View className="postDetail-content-title">{Item.title}</View>
-          <View className="postDetail-content-desc">{Item.introduce || ''}</View>
-          <View className="postDetail-content-timesite">{Item.publishTime}</View>
-        </View>
-        <View className="postDetail-comment" style={{ top: `${marginTop}px` }}>
-          <View className="postDetail-comment-number">共{Item.commentNum}条评论</View>
-          <View className="postDetail-comment-input">
-            <Image
-              className="postDetail-comment-input-avatar"
-              mode="scaleToFill"
-              src={avatar}
-            ></Image>
-            <View
-              className="postDetail-comment-input-text"
-              onClick={() => {
-                setCommentInput(true);
-                setReplytype('create');
-              }}
-            >
-              {inputValue ? inputValue : '让大家听到你的声音'}
+        <ScrollView
+          className="postDetail-comment-list"
+          scrollY
+          scrollIntoView={scrollToCommentId}
+          scrollWithAnimation={true}
+          style={{ height: `${windowHeight - 60}px` }}
+        >
+          <View className="postDetail-content">
+            {maxheight > 0 && (
+              <View className="postDetail-content-avatar" onClick={handleImageClick}>
+                <View style={`width: ${windowWidth}px; height: ${windowWidth * maxheight}px`} />
+                <Swiper
+                  className="postDetail-content-avatar-swiper"
+                  indicatorDots={true}
+                  circular={false}
+                  current={currentIndex}
+                  onChange={(e) => setCurrentIndex(e.detail.current)}
+                >
+                  {Item.showImg.map((item, index) => (
+                    <SwiperItem key={index} className="postDetail-content-avatar-swiper-item">
+                      <Image
+                        src={item}
+                        className={`postDetail-content-avatar-swiper-item-${imageRatios[index]}`}
+                        mode={imageRatios[index] === 'widthimg' ? 'widthFix' : 'heightFix'}
+                      />
+                    </SwiperItem>
+                  ))}
+                </Swiper>
+              </View>
+            )}
+            <View className="postDetail-content-info">
+              <View className="postDetail-content-title">{Item.title}</View>
+              <View className="postDetail-content-desc">{Item.introduce || ''}</View>
+              <View className="postDetail-content-timesite">{formatTime(Item.publishTime)}</View>
             </View>
           </View>
-          <View className="postDetail-comment-list">
+          <View className="postDetail-comment">
+            <View className="postDetail-comment-number">共{Item.commentNum}条评论</View>
+            <View className="postDetail-comment-input">
+              <Image
+                className="postDetail-comment-input-avatar"
+                mode="scaleToFill"
+                src={avatar}
+              ></Image>
+              <View
+                className="postDetail-comment-input-text"
+                onClick={() => {
+                  setCommentInput(true);
+                  setReplytype('create');
+                }}
+              >
+                {inputValue ? inputValue : '让大家听到你的声音'}
+              </View>
+            </View>
+
             {response && (
               <CommentList
                 comments={response}
@@ -353,10 +381,11 @@ const Index = () => {
                 setCommentItems={setCommentItems}
                 setCommentCreator={setCommentCreator}
                 setCommentid={setCommentid}
+                targetCommentBid={selectCommentPost}
               ></CommentList>
             )}
           </View>
-        </View>
+        </ScrollView>
         <View className="postDetail-footer">
           <View
             className="postDetail-footer-input"
@@ -371,22 +400,28 @@ const Index = () => {
             </View>
           </View>
           <View className="postDetail-footer-desc">
-            <Image
-              className="postDetail-footer-desc-icon1"
-              mode="widthFix"
-              src={Item.isLike === 'true' ? favorActive : favor}
-              onClick={handleLike}
-            ></Image>
-            <View className="postDetail-footer-desc-text">{Item.likeNum}</View>
-            <Image
-              className="postDetail-footer-desc-icon2"
-              mode="widthFix"
-              src={Item.isCollect === 'true' ? collectActive : collect}
-              onClick={handleCollect}
-            ></Image>
-            <View className="postDetail-footer-desc-text">{Item.collectNum}</View>
-            <Image className="postDetail-footer-desc-icon3" mode="widthFix" src={comment}></Image>
-            <View className="postDetail-footer-desc-text">{Item.commentNum}</View>
+            <View className="actComment-footer-desc-item">
+              <Image
+                className="postDetail-footer-desc-icon1"
+                mode="widthFix"
+                src={Item.isLike === 'true' ? favorActive : favor}
+                onClick={handleLike}
+              ></Image>
+              <View className="postDetail-footer-desc-text">{Item.likeNum}</View>
+            </View>
+            <View className="actComment-footer-desc-item">
+              <Image
+                className="postDetail-footer-desc-icon2"
+                mode="widthFix"
+                src={Item.isCollect === 'true' ? collectActive : collect}
+                onClick={handleCollect}
+              ></Image>
+              <View className="postDetail-footer-desc-text">{Item.collectNum}</View>
+            </View>
+            <View className="actComment-footer-desc-item">
+              <Image className="postDetail-footer-desc-icon3" mode="widthFix" src={comment}></Image>
+              <View className="postDetail-footer-desc-text">{Item.commentNum}</View>
+            </View>
           </View>
         </View>
         {commentInput && (
@@ -427,6 +462,7 @@ const Index = () => {
             commentItems={commentItems}
             commentCreator={commentCreator}
             commentid={commentid}
+            getComments={getCommentsAgain}
           />
         )}
       </View>
@@ -434,4 +470,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

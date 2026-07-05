@@ -3,9 +3,10 @@ import { reLaunch } from '@tarojs/taro';
 import { useState, useEffect } from 'react';
 import Taro from '@tarojs/taro';
 import './index.scss';
-import schoolSrc from '@/common/assets/mineInfo/学校.png';
-import departmentSrc from '@/common/assets/mineInfo/院系.png';
-import cardSrc from '@/common/assets/mineInfo/一卡通号.png';
+import withDoorGuard from '@/common/hoc';
+import schoolSrc from '@/common/svg/mineInfo/学校.svg';
+import departmentSrc from '@/common/svg/mineInfo/院系.svg';
+import cardSrc from '@/common/svg/mineInfo/一卡通号.svg';
 import useUserStore from '@/store/userStore';
 import ImagePicker from '@/modules/ImagePicker';
 import { post } from '@/common/api/request';
@@ -104,21 +105,21 @@ const Index = () => {
           </View>
           <View className="userProfile-container">
             <View className="userProfile-container-column">
-              <Image className="userProfile-container-img" mode="widthFix" src={schoolSrc} />
+              <Image className="userProfile-container-icon" mode="widthFix" src={schoolSrc} />
               学校
             </View>
             <View className="userProfile-container-desc">{school}</View>
           </View>
           <View className="userProfile-container">
             <View className="userProfile-container-column">
-              <Image className="userProfile-container-img" mode="widthFix" src={departmentSrc} />
+              <Image className="userProfile-container-icon" mode="widthFix" src={departmentSrc} />
               院系
             </View>
-            <View className="userProfile-container-desc">{college ? college : '计算机学院'}</View>
+            <View className="userProfile-container-desc">{college ? college : '未获取'}</View>
           </View>
           <View className="userProfile-container-bottom">
             <View className="userProfile-container-column">
-              <Image className="userProfile-container-img" mode="widthFix" src={cardSrc} />
+              <Image className="userProfile-container-icon" mode="widthFix" src={cardSrc} />
               一卡通号
             </View>
             <View className="userProfile-container-desc">{studentId}</View>
@@ -167,4 +168,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

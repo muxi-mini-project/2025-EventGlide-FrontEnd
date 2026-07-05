@@ -19,30 +19,27 @@
     line-height: 1.6;
     word-break: break-word;
     white-space: pre-wrap;
-    max-height: 400rpx;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-right: 10rpx;
-    /* 隐藏滚动条 */
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  &-label {
+  &-types {
     display: flex;
     flex-wrap: wrap;
     gap: 10rpx;
+    font-size: 18rpx;
     &-item {
-      font-size: 24rpx;
-      color: #5e5064;
-      height: 40rpx;
-      min-width: 120rpx;
-      background-color: #f3f3fb;
-      border-radius: 20rpx;
-      line-height: 40rpx;
+      color: #fff;
+      padding: 0 20rpx;
+      height: 30rpx;
+      line-height: 30rpx;
       text-align: center;
-      padding: 0 15rpx;
+      border-radius: 10rpx;
+      background-color: #bd96ee;
     }
   }
 
@@ -56,6 +53,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10rpx;
+    max-height: 400rpx;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &-footer {

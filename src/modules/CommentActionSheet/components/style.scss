@@ -64,6 +64,25 @@
     border-radius: 50%;
     background-color: #f9f8fc;
     margin-top: 10rpx;
+    overflow: hidden;
+    &-copy {
+      width: 50rpx;
+      height: 50rpx;
+      margin-top: 25rpx;
+      margin-left: 25rpx;
+    }
+    &-delete {
+      width: 40rpx;
+      height: 40rpx;
+      margin-top: 33rpx;
+      margin-left: 31rpx;
+    }
+    &-report {
+      width: 50rpx;
+      height: 50rpx;
+      margin-top: 25rpx;
+      margin-left: 25rpx;
+    }
   }
   &-text {
     width: 100rpx;

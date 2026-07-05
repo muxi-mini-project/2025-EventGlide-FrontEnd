@@ -18,10 +18,18 @@ const activeSiteOption = [
 ];
 
 const activeColor = new Map([
-  ['学校', '#AF8BF5'],
-  ['学院', '#B9F58C'],
-  ['社团', '#F6DD8C'],
-  ['个人', '#F68C8C'],
+  ['文艺', '#F3D880'],
+  ['体育', '#9DDB85'],
+  ['竞赛', '#FA961D'],
+  ['游戏', '#C1CBFB'],
+  ['学术', '#E5ACD4'],
+]);
+
+const holdertype = new Map([
+  ['学校', '校级活动'],
+  ['学院', '院级活动'],
+  ['社团', '社团活动'],
+  ['个人', '学生承办'],
 ]);
 
 const formList: formType[] = [
@@ -101,4 +109,11 @@ const formList: formType[] = [
 
 export default formList;
 
-export { activeOrganizerOption, activeTypeOption, activeTwoOption, activeSiteOption, activeColor };
+export {
+  activeOrganizerOption,
+  activeTypeOption,
+  activeTwoOption,
+  activeSiteOption,
+  activeColor,
+  holdertype,
+};

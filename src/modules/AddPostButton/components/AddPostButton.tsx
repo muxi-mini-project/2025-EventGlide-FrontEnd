@@ -2,7 +2,7 @@ import { View } from '@tarojs/components';
 import './style.scss';
 import usePostStore from '@/store/PostStore';
 import { navigateTo } from '@tarojs/taro';
-import add from '@/common/assets/Postlist/add.png';
+import add from '@/common/svg/Postlist/add.svg';
 import { Image } from '@tarojs/components';
 import { loadPostDraft } from '@/common/api';
 const AddPostButton: React.FC<{ setIsVisiable: (value: boolean) => void }> = (props) => {
@@ -29,8 +29,8 @@ const AddPostButton: React.FC<{ setIsVisiable: (value: boolean) => void }> = (pr
     }
   };
   return (
-    <View onClick={() => handleClick()}>
-      <Image src={add} className="blog-add" />
+    <View className="blog-add" onClick={() => handleClick()}>
+      <Image src={add} className="blog-add-icon" />
     </View>
   );
 };

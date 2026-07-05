@@ -9,6 +9,7 @@ import { useDidShow } from '@tarojs/taro';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import { useState } from 'react';
 import ActivityAddRules from '@/modules/ActivityAddRules';
+import withDoorGuard from '@/common/hoc';
 
 const Index = () => {
   const [showAddRules, setShowAddRules] = useState(false);
@@ -16,7 +17,7 @@ const Index = () => {
   const addBtn: ButtonProps = {
     url: '/subpackage/addIntroduce/index',
     text: '去填写',
-    backgroundColor: '#CF79FA',
+    backgroundColor: '#7D73F0',
     textColor: '#fff',
     isBorder: false,
   };
@@ -60,4 +61,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

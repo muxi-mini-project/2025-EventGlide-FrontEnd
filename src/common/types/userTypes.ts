@@ -9,7 +9,7 @@ export interface UserInfo {
   /** 学校 */
   school: string;
   /** 学院 */
-  college?: string;
+  college: string;
   /** 学号 */
   studentId: string;
 }

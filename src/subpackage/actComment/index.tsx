@@ -2,11 +2,12 @@ import { View, Image, Span, Swiper, SwiperItem } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
 import { useState, useEffect, createContext, useRef } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { NavigationBar } from '@/common/components/NavigationBar';
 import favor from '@/common/svg/post/heart.svg';
 import collect from '@/common/svg/post/star.svg';
-import comment from '@/common/assets/Postlist/comment.png';
-import icon from '@/common/assets/Postlist/inputIcon.png';
+import comment from '@/common/svg/post/comment.svg';
+import icon from '@/common/svg/post/inputIcon.svg';
 import collectActive from '@/common/svg/post/starAct.svg';
 import favorActive from '@/common/svg/post/heartAct.svg';
 import { CommentResponse } from '@/common/types';
@@ -23,11 +24,21 @@ export const SetReponseContext = createContext<(params: any) => void>(() => {});
 export const SetActivityComment = createContext<(params: any) => void>(() => {});
 
 const Index = () => {
-  const { selectedItem, setSelectedItem, setLikeNumChange, setCollectNumChange, setIsSelect } =
-    useActivityStore();
+  const {
+    selectedItem,
+    selectComment,
+    setSelectComment,
+    setSelectedItem,
+    setLikeNumChange,
+    setCollectNumChange,
+    setIsSelect,
+  } = useActivityStore();
   const [inputValue, setInputValue] = useState('');
   const [response, setResponse] = useState<CommentResponse[]>([]);
   const [replyId, setReplyId] = useState('');
+  const [scrollToCommentId, setScrollToCommentId] = useState<string>('');
+  const [loadSelectComment, setLoadSelectComment] = useState(false);
+  const [loadComment, setLoadComment] = useState(false);
   const [commentInput, setCommentInput] = useState(false);
   const [replytype, setReplytype] = useState('create');
   const [showpicture, setShowpicture] = useState(false);
@@ -45,27 +56,19 @@ const Index = () => {
   const params = {
     studentId: studentId,
     subject: 'activity',
-    targetId: selectedItem.bid,
-    receiver: selectedItem.userInfo.studentId,
+    targetId: selectedItem.id,
   };
 
   console.log(selectedItem);
-
-  const [isTouchingHandle, setIsTouchingHandle] = useState(false);
-  const [commentPanelPosition, setCommentPanelPosition] = useState(0);
-  const [commentPanelHeight, setCommentPanelHeight] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [currentPosition, setCurrentPosition] = useState(0);
-  const scrollViewRef = useRef<any>(null);
 
   const reply_params = {
     parentId: replyId,
     subject: 'comment',
   };
   const comment_params = {
-    parentId: selectedItem.bid,
+    parentId: selectedItem.id,
     subject: 'activity',
-    receiver: selectedItem.userInfo.studentId,
+    //receiver: selectedItem.userInfo.studentId,
   };
 
   const handlepic = (pictures) => {
@@ -109,7 +112,7 @@ const Index = () => {
         try {
           const res = await handleInteraction('like', params);
           if (res.msg === 'success') {
-            setLikeNumChange(selectedItem.bid, 'add');
+            setLikeNumChange(selectedItem.id, 'add');
             setSelectedItem({
               ...selectedItem,
               isLike: 'true',
@@ -145,7 +148,7 @@ const Index = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await getCommentsBySubject(selectedItem.bid);
+        const res = await getCommentsBySubject(selectedItem.id);
         if (res.data === null) {
           setResponse([]);
           return;
@@ -157,10 +160,25 @@ const Index = () => {
         setResponse([]);
       }
     };
-
-    fetchComments();
     loadImageRatios();
+    fetchComments();
+    setLoadComment(true);
   }, []);
+
+  const getCommentsAgain = async () => {
+    try {
+      const res = await getCommentsBySubject(selectedItem.id);
+      if (res.data === null) {
+        setResponse([]);
+        return;
+      }
+      console.log(res.data);
+      setResponse(res.data);
+    } catch (error) {
+      console.error('获取评论失败:', error);
+      setResponse([]);
+    }
+  };
 
   const setReponseContext = async (params: any) => {
     if (params.content === '') {
@@ -173,7 +191,7 @@ const Index = () => {
       try {
         const res = await replyComment(params);
         if (res.msg === 'success') {
-          const commentRes = await getCommentsBySubject(selectedItem.bid);
+          const commentRes = await getCommentsBySubject(selectedItem.id);
           if (commentRes.data === null) {
             setResponse([]);
             return;
@@ -197,7 +215,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('dislike', params);
         if (res.msg === 'success') {
-          setLikeNumChange(selectedItem.bid, 'reduce');
+          setLikeNumChange(selectedItem.id, 'reduce');
           setSelectedItem({
             ...selectedItem,
             isLike: 'false',
@@ -211,7 +229,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('like', params);
         if (res.msg === 'success') {
-          setLikeNumChange(selectedItem.bid, 'add');
+          setLikeNumChange(selectedItem.id, 'add');
           setSelectedItem({
             ...selectedItem,
             isLike: 'true',
@@ -229,7 +247,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('discollect', params);
         if (res.msg === 'success') {
-          setCollectNumChange(selectedItem.bid, 'reduce');
+          setCollectNumChange(selectedItem.id, 'reduce');
           setSelectedItem({
             ...selectedItem,
             isCollect: 'false',
@@ -243,7 +261,7 @@ const Index = () => {
       try {
         const res = await handleInteraction('collect', params);
         if (res.msg === 'success') {
-          setCollectNumChange(selectedItem.bid, 'add');
+          setCollectNumChange(selectedItem.id, 'add');
           setSelectedItem({
             ...selectedItem,
             isCollect: 'true',
@@ -285,43 +303,90 @@ const Index = () => {
       }
     }
   };
-
-  const handleTouchStart = (e: any) => {
-    setStartY(e.touches[0].clientY);
-    setIsTouchingHandle(true);
-  };
-
-  const handleTouchMove = (e: any) => {
-    if (!isTouchingHandle) return;
-
-    const currentY = e.touches[0].clientY;
-    const deltaY = currentY - startY;
-
-    let newPosition = currentPosition - deltaY;
-    const maxPosition = 140 + 220 * ((selectedItem.showImg?.length ?? 0) % 3);
-
-    if (newPosition < 0) newPosition = 0;
-    if (newPosition > maxPosition) newPosition = maxPosition;
-    setCommentPanelPosition(newPosition);
-    setCommentPanelHeight(newPosition);
-    setStartY(currentY);
-    setCurrentPosition(newPosition);
-  };
-
-  const handleTouchEnd = () => {
-    setIsTouchingHandle(false);
-  };
   const replyCom = () => {
     setCommentInput(true);
     setReplytype('reply');
+  };
+
+  // 拖拽功能
+  const [sheetTop, setSheetTop] = useState(0);
+
+  const startYRef = useRef(0);
+  const startTopRef = useRef(0);
+
+  const minTopRef = useRef(0);
+  const maxTopRef = useRef(0);
+
+  useEffect(() => {
+    const query = Taro.createSelectorQuery();
+
+    query
+      .select('.post-top')
+      .boundingClientRect()
+      .select('.post-content')
+      .boundingClientRect()
+      .exec((res) => {
+        const topRect = res[0];
+        const contentRect = res[1];
+        if (!topRect || !contentRect) return;
+
+        const snapTop = topRect.bottom;
+
+        minTopRef.current = snapTop;
+        maxTopRef.current = contentRect.bottom;
+
+        setSheetTop(maxTopRef.current);
+
+        if (selectComment.length > 0) {
+          setSheetTop(minTopRef.current);
+        }
+        setLoadSelectComment(true);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (selectComment.length > 0 && loadSelectComment && loadComment) {
+      console.log('selectComment', selectComment);
+      setTimeout(() => {
+        setScrollToCommentId(`comment-${selectComment}`);
+      }, 300);
+      setTimeout(() => {
+        setSelectComment('');
+        setScrollToCommentId('');
+      }, 2000);
+    }
+  }, [loadSelectComment, loadComment]);
+
+  const onDragStart = (e) => {
+    startYRef.current = e.touches[0].clientY;
+    startTopRef.current = sheetTop;
+  };
+
+  const onDragMove = (e) => {
+    const deltaY = e.touches[0].clientY - startYRef.current;
+    let nextTop = startTopRef.current + deltaY;
+
+    if (nextTop < minTopRef.current) nextTop = minTopRef.current;
+    if (nextTop > maxTopRef.current) nextTop = maxTopRef.current;
+
+    setSheetTop(nextTop);
+  };
+
+  const onDragEnd = () => {
+    const middle = (minTopRef.current + maxTopRef.current) / 2;
+
+    setSheetTop(sheetTop < middle ? minTopRef.current : maxTopRef.current);
   };
 
   return (
     <>
       <View className="actComment">
         <NavigationBar url="/pages/indexHome/index" userInfo={selectedItem.userInfo} />
-        <View style={{ height: '150rpx' }} />
-        <View className="post-content">
+        <View className="post-top" style={{ height: '160rpx' }} />
+        <View
+          className="post-content"
+          style={{ maxHeight: 'calc(100vh - 520rpx)', overflowY: 'auto' }}
+        >
           <View style={{ padding: 5, marginLeft: '40rpx', marginRight: '40rpx' }}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 }}>
               <View style={{ fontSize: 20, fontWeight: 400, color: '#170A1E' }}>
@@ -334,7 +399,6 @@ const Index = () => {
             <View
               style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 }}
               onClick={() => {
-                setCurrentPosition(0);
                 handleImageClick();
               }}
             >
@@ -361,73 +425,48 @@ const Index = () => {
         </View>
 
         <View
-          className="drag-handle"
+          className="sheet-wrapper"
           style={{
-            transform: `translateY(-${commentPanelPosition}rpx)`,
-            transition: isTouchingHandle ? 'none' : 'transform 0.3s ease',
+            transform: `translateY(${sheetTop}px)`,
+            height: `calc(100vh - ${sheetTop}px)`,
           }}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onTouchCancel={handleTouchEnd}
         >
-          <View className="drag-handle-bar"></View>
           <View
-            style={{
-              width: '100%',
-              marginTop: '10rpx',
-            }}
+            className="drag-handle"
+            onTouchStart={onDragStart}
+            onTouchMove={onDragMove}
+            onTouchEnd={onDragEnd}
           >
-            <Span
-              style={{
-                fontSize: 14,
-                fontWeight: 400,
-                marginLeft: '50rpx',
-                marginRight: '30rpx',
-                color: '#5E5064',
-              }}
-            >
-              回复 {selectedItem.commentNum}
-            </Span>
-            <Span style={{ fontSize: 14, fontWeight: 400, margin: '20rpx', color: '#5E5064' }}>
-              点赞 {selectedItem.likeNum}
-            </Span>
-            <Span style={{ fontSize: 14, fontWeight: 400, margin: '30rpx', color: '#5E5064' }}>
-              收藏 {selectedItem.collectNum}
-            </Span>
-          </View>
-        </View>
-
-        <View
-          className="comment-panel"
-          style={{
-            transform: `translateY(-${commentPanelPosition}rpx)`,
-            transition: isTouchingHandle ? 'none' : 'transform 0.3s ease',
-          }}
-        >
-          <ScrollView
-            scrollY={true}
-            showScrollbar={false}
-            style={{
-              height:
-                commentPanelHeight > 0
-                  ? `calc(100vh - 600rpx + ${commentPanelPosition}rpx)`
-                  : 'calc(100vh - 600rpx)',
-            }}
-            ref={scrollViewRef}
-          >
-            <View className="actComment-container">
-              <CommentList
-                comments={response}
-                replycomment={replyCom}
-                setReplyId={setReplyId}
-                longClick={() => setCommentOperation(true)}
-                setCommentItems={setCommentItems}
-                setCommentCreator={setCommentCreator}
-                setCommentid={setCommentid}
-              />
+            <View className="drag-handle-bar" />
+            <View className="drag-handle-content">
+              <Span className="drag-handle-content-text">回复 {selectedItem.commentNum}</Span>
+              <Span className="drag-handle-content-text">点赞 {selectedItem.likeNum}</Span>
+              <Span className="drag-handle-content-text">收藏 {selectedItem.collectNum}</Span>
             </View>
-          </ScrollView>
+          </View>
+
+          <View className="comment-panel">
+            <ScrollView
+              scrollY
+              style={{ height: '100%' }}
+              showScrollbar={false}
+              scrollIntoView={scrollToCommentId}
+              scrollWithAnimation={true}
+            >
+              <View className="actComment-container">
+                <CommentList
+                  comments={response}
+                  replycomment={replyCom}
+                  setReplyId={setReplyId}
+                  longClick={() => setCommentOperation(true)}
+                  setCommentItems={setCommentItems}
+                  setCommentCreator={setCommentCreator}
+                  setCommentid={setCommentid}
+                  targetCommentBid={selectComment}
+                />
+              </View>
+            </ScrollView>
+          </View>
         </View>
 
         <View className="actComment-footer">
@@ -501,10 +540,11 @@ const Index = () => {
           commentItems={commentItems}
           commentCreator={commentCreator}
           commentid={commentid}
+          getComments={getCommentsAgain}
         />
       )}
     </>
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

@@ -1,6 +1,11 @@
 import { apiClient } from './request';
 import Taro from '@tarojs/taro';
-import { CreateActivityRequest, GetActivityResponse, FilteAcitivityRequest } from '../types';
+import {
+  CreateActivityRequest,
+  GetActivityResponse,
+  GetActivityResponsePage,
+  FilteAcitivityRequest,
+} from '../types';
 
 // 创建活动
 export const createActivity = (activityData: CreateActivityRequest) => {
@@ -8,15 +13,8 @@ export const createActivity = (activityData: CreateActivityRequest) => {
 };
 
 // 获取活动列表
-export const getActivityList = (params?: {
-  page?: number;
-  size?: number;
-  type?: string;
-  holderType?: string;
-  date?: string;
-  position?: string;
-}) => {
-  return apiClient.get<GetActivityResponse[]>('/act/all', params);
+export const getActivityList = (params?: { page: number; limit: number }) => {
+  return apiClient.post<GetActivityResponsePage>('/act/all', params);
 };
 
 export const getActivityDraft = () => {
@@ -24,19 +22,34 @@ export const getActivityDraft = () => {
 };
 
 // 获取我的活动列表
-export const getMyActivityList = (type: 'release' | 'like' | 'favourite') => {
+export const getMyActivityList = (
+  type: 'release' | 'like' | 'favourite',
+  limit: number,
+  page: number,
+  keyword?: string
+) => {
   if (type === 'release') {
-    return apiClient.get<GetActivityResponse[]>('/act/own');
+    return apiClient.post<GetActivityResponsePage>('/act/own', { limit, page, keyword });
   } else if (type === 'like') {
-    return apiClient.post<GetActivityResponse[]>('/user/like/act', {
-      studentId: Taro.getStorageSync('sid'),
-    });
+    return apiClient.post<GetActivityResponsePage>('/user/like/act', { limit, page, keyword });
   } else if (type === 'favourite') {
-    return apiClient.post<GetActivityResponse[]>('/user/collect/act', {
-      studentId: Taro.getStorageSync('sid'),
-    });
+    return apiClient.post<GetActivityResponsePage>('/user/collect/act', { limit, page, keyword });
   }
   throw new Error('Invalid type for activity list');
+};
+
+// 通过id获取活动
+export const getActivityById = (activityId: string) => {
+  return apiClient.get<GetActivityResponse>(`/act/${activityId}`);
+};
+
+// 获取其他用户活动列表
+export const getOtherUserActivityList = (limit: number, page: number, studentId: string) => {
+  return apiClient.post<GetActivityResponsePage>(`/act/student/${studentId}`, {
+    limit,
+    page,
+    studentId,
+  });
 };
 
 // 获取活动详情
@@ -45,11 +58,11 @@ export const getActivityDetail = (activityId: string) => {
 };
 
 // 根据搜索获取帖子列表
-export const searchActivityList = (data?: { name: string }) => {
-  return apiClient.post<GetActivityResponse[]>('/act/name', data);
+export const searchActivityList = (data?: { name: string; limit: number; page: number }) => {
+  return apiClient.post<GetActivityResponsePage>('/act/name', data);
 };
 
 // 筛选活动
 export const filterActivity = (filterData: FilteAcitivityRequest) => {
-  return apiClient.post<GetActivityResponse[]>('/act/search', filterData);
+  return apiClient.post<GetActivityResponsePage>('/act/search', filterData);
 };

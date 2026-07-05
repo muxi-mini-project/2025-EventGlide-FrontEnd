@@ -4,7 +4,7 @@ import ReplyItem from '../ReplyItem/ReplyItem';
 import ReplyList from '../ReplyList/ReplyList';
 import { CommentItemProps } from '@/common/types';
 
-const CommentItem: React.FC<CommentItemProps> = ({
+const CommentItem: React.FC<CommentItemProps & { defaultExpand?: boolean }> = ({
   comment,
   replycomment,
   setReplyId,
@@ -13,6 +13,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   setCommentid,
   longClick,
   expandLimit = 5,
+  defaultExpand = false,
 }) => {
   // 如果没有评论数据，直接返回null
   if (!comment) {
@@ -28,17 +29,20 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <View className="CommentItem">
       {/* 一级评论 */}
-      <ReplyItem
-        {...commentForReplyItem}
-        isLike={comment.isLike}
-        likeNum={comment.likeNum}
-        replycomment={replycomment}
-        setReplyId={setReplyId}
-        setCommentItems={setCommentItems}
-        setCommentCreator={setCommentCreator}
-        setCommentid={setCommentid}
-        longClick={longClick}
-      />
+      <View className="CommentItem-first" id={`comment-${comment.id}`}>
+        <ReplyItem
+          {...commentForReplyItem}
+          isLike={comment.isLike}
+          likeNum={comment.likeNum}
+          replycomment={replycomment}
+          setReplyId={setReplyId}
+          setCommentItems={setCommentItems}
+          setCommentCreator={setCommentCreator}
+          setCommentid={setCommentid}
+          longClick={longClick}
+          son={false}
+        />
+      </View>
 
       {/* 子评论列表 */}
       <ReplyList
@@ -50,6 +54,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         setCommentid={setCommentid}
         longClick={longClick}
         expandLimit={expandLimit}
+        defaultExpand={defaultExpand}
       />
     </View>
   );

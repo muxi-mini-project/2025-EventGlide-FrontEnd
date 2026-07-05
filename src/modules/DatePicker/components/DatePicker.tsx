@@ -124,220 +124,251 @@ const generateCalendar = (year: number, month: number, selectedDate: string): Ca
   return days;
 };
 
-const DatePicker: React.FC<any> = memo(({ isVisiable, setIsVisiable, handleConfirm }) => {
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedTime, setSelectedTime] = useState<string>('');
-  const [showFullDatePicker, setShowFullDatePicker] = useState<boolean>(false);
-  const [dateList, setDateList] = useState<DateItem[]>([]);
-  const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [fullDateValue, setFullDateValue] = useState<string>('');
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
-  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
-  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+const DatePicker: React.FC<any> = memo(
+  ({ isVisiable, setIsVisiable, handleConfirm, allowTimeClear = false }) => {
+    const [selectedDate, setSelectedDate] = useState<string>('');
+    const [selectedTime, setSelectedTime] = useState<string>('');
+    const [showFullDatePicker, setShowFullDatePicker] = useState<boolean>(false);
+    const [dateList, setDateList] = useState<DateItem[]>([]);
+    const [timeSlots, setTimeSlots] = useState<string[]>([]);
+    const [fullDateValue, setFullDateValue] = useState<string>('');
+    const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+    const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth());
+    const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
 
-  useEffect(() => {
-    setDateList(generateDateList(undefined, true));
-    setTimeSlots(generateTimeSlots());
+    useEffect(() => {
+      setDateList(generateDateList(undefined, true));
+      setTimeSlots(generateTimeSlots());
 
-    const today = new Date().toISOString().split('T')[0];
-    setSelectedDate(today);
-    setFullDateValue(today);
-    setSelectedTime('00:00');
-    const now = new Date();
-    setCurrentYear(now.getFullYear());
-    setCurrentMonth(now.getMonth());
-  }, []);
+      const today = new Date().toISOString().split('T')[0];
+      setSelectedDate(today);
+      setFullDateValue(today);
+      setSelectedTime('00:00');
+      const now = new Date();
+      setCurrentYear(now.getFullYear());
+      setCurrentMonth(now.getMonth());
+    }, []);
 
-  useEffect(() => {
-    if (showFullDatePicker) {
-      const days = generateCalendar(currentYear, currentMonth, fullDateValue);
-      setCalendarDays(days);
-    }
-  }, [currentYear, currentMonth, fullDateValue, showFullDatePicker]);
+    useEffect(() => {
+      if (showFullDatePicker) {
+        const days = generateCalendar(currentYear, currentMonth, fullDateValue);
+        setCalendarDays(days);
+      }
+    }, [currentYear, currentMonth, fullDateValue, showFullDatePicker]);
 
-  const handleDateSelect = (date: DateItem) => {
-    setSelectedDate(date.value);
-  };
+    const handleDateSelect = (date: DateItem) => {
+      setSelectedDate(date.value);
+    };
 
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-  };
+    const handleTimeSelect = (time: string) => {
+      setSelectedTime(time);
+    };
 
-  const handleFullDateConfirm = () => {
-    const newSelectedDate = fullDateValue;
-    setSelectedDate(newSelectedDate);
+    const handleFullDateConfirm = () => {
+      const newSelectedDate = fullDateValue;
+      setSelectedDate(newSelectedDate);
 
-    const today = new Date();
-    const initialEndDate = new Date();
-    initialEndDate.setDate(today.getDate() + 6);
-    const selectedDateObj = new Date(newSelectedDate);
+      const today = new Date();
+      const initialEndDate = new Date();
+      initialEndDate.setDate(today.getDate() + 6);
+      const selectedDateObj = new Date(newSelectedDate);
 
-    const shouldUseInitialList = selectedDateObj >= today && selectedDateObj <= initialEndDate;
-    const newDateList = generateDateList(
-      shouldUseInitialList ? undefined : newSelectedDate,
-      shouldUseInitialList
-    );
-    setDateList(newDateList);
+      const shouldUseInitialList = selectedDateObj >= today && selectedDateObj <= initialEndDate;
+      const newDateList = generateDateList(
+        shouldUseInitialList ? undefined : newSelectedDate,
+        shouldUseInitialList
+      );
+      setDateList(newDateList);
 
-    setShowFullDatePicker(false);
-  };
+      setShowFullDatePicker(false);
+    };
 
-  const goToPrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentYear(currentYear - 1);
-      setCurrentMonth(11);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
-  };
+    const goToPrevMonth = () => {
+      if (currentMonth === 0) {
+        setCurrentYear(currentYear - 1);
+        setCurrentMonth(11);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    };
 
-  const goToNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentYear(currentYear + 1);
-      setCurrentMonth(0);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
-  };
+    const goToNextMonth = () => {
+      if (currentMonth === 11) {
+        setCurrentYear(currentYear + 1);
+        setCurrentMonth(0);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    };
 
-  const selectCalendarDate = (dateString: string) => {
-    setFullDateValue(dateString);
-  };
+    const selectCalendarDate = (dateString: string) => {
+      setFullDateValue(dateString);
+    };
 
-  const onConfirm = () => {
-    handleConfirm({
-      date: selectedDate,
-      time: selectedTime,
-    });
-    setIsVisiable(false);
-  };
+    const onConfirm = () => {
+      handleConfirm({
+        date: selectedDate,
+        time: selectedTime,
+      });
+      setIsVisiable(false);
+    };
+    const resetDatePicker = () => {
+      setDateList(generateDateList(undefined, true));
+      setTimeSlots(generateTimeSlots());
 
-  const monthNames = [
-    '一月',
-    '二月',
-    '三月',
-    '四月',
-    '五月',
-    '六月',
-    '七月',
-    '八月',
-    '九月',
-    '十月',
-    '十一月',
-    '十二月',
-  ];
+      const today = new Date().toISOString().split('T')[0];
+      setSelectedDate(today);
+      setFullDateValue(today);
+      setSelectedTime('00:00');
+      const now = new Date();
+      setCurrentYear(now.getFullYear());
+      setCurrentMonth(now.getMonth());
+    };
 
-  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+    const monthNames = [
+      '一月',
+      '二月',
+      '三月',
+      '四月',
+      '五月',
+      '六月',
+      '七月',
+      '八月',
+      '九月',
+      '十月',
+      '十一月',
+      '十二月',
+    ];
 
-  return (
-    <>
-      <Drawer
-        visible={isVisiable}
-        onClose={() => setIsVisiable(false)}
-        placement="bottom"
-        showHeader={false}
-      >
-        <View className="scrolled-title">
-          <View className="scrolled-title-text">选择时间</View>
-        </View>
+    const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
 
-        <View className="date-picker-layer">
-          <ScrollView scrollX className="date-scroll-view" enhanced showScrollbar={false}>
-            <View className="date-list">
-              {dateList.map((date, index) => (
+    return (
+      <>
+        <Drawer
+          visible={isVisiable}
+          onClose={() => setIsVisiable(false)}
+          placement="bottom"
+          showHeader={false}
+        >
+          <View className="scrolled-title">
+            <View className="scrolled-title-text">选择时间</View>
+          </View>
+
+          <View className="date-picker-layer">
+            <ScrollView scrollX className="date-scroll-view" enhanced showScrollbar={false}>
+              <View className="date-list">
+                {dateList.map((date, index) => (
+                  <View
+                    key={index}
+                    className={classnames('date-item', {
+                      active: selectedDate === date.value,
+                    })}
+                    onClick={() => handleDateSelect(date)}
+                  >
+                    {date.subLabel && <View className="date-sublabel">{date.subLabel}</View>}
+                    <View className="date-label">{date.label}</View>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+            <View className="all-date" onClick={() => setShowFullDatePicker(true)}>
+              <View className="all-date-label">全部日期</View>
+            </View>
+          </View>
+
+          <View className="time-picker-layer">
+            <View className="time-grid">
+              {timeSlots.map((time, index) => (
                 <View
                   key={index}
-                  className={classnames('date-item', {
-                    active: selectedDate === date.value,
+                  className={classnames('time-slot', {
+                    active: selectedTime === time,
                   })}
-                  onClick={() => handleDateSelect(date)}
+                  onClick={() => {
+                    if (allowTimeClear && selectedTime === time) {
+                      setSelectedTime('');
+                    } else {
+                      handleTimeSelect(time);
+                    }
+                  }}
                 >
-                  {date.subLabel && <View className="date-sublabel">{date.subLabel}</View>}
-                  <View className="date-label">{date.label}</View>
+                  {time}
                 </View>
               ))}
             </View>
-          </ScrollView>
-          <View className="all-date" onClick={() => setShowFullDatePicker(true)}>
-            <View className="all-date-label">全部日期</View>
           </View>
-        </View>
 
-        <View className="time-picker-layer">
-          <View className="time-grid">
-            {timeSlots.map((time, index) => (
-              <View
-                key={index}
-                className={classnames('time-slot', {
-                  active: selectedTime === time,
-                })}
-                onClick={() => handleTimeSelect(time)}
-              >
-                {time}
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <View className="confirm">
-          <View className="confirm-btn" onClick={onConfirm}>
-            确定
-          </View>
-        </View>
-      </Drawer>
-
-      {showFullDatePicker && (
-        <View className="full-date-picker">
-          <View className="scrolled-title">
-            <View className="scrolled-title-text1" onClick={() => setShowFullDatePicker(false)}>
-              取消
+          <View className="confirm">
+            <View
+              className="confirm-reset"
+              onClick={resetDatePicker}
+              style={{ display: showFullDatePicker ? 'none' : 'block' }}
+            >
+              重置
             </View>
-            <View className="scrolled-title-text2">选择日期</View>
-            <View className="scrolled-title-text3" onClick={handleFullDateConfirm}>
+            <View
+              className="confirm-btn"
+              onClick={onConfirm}
+              style={{ display: showFullDatePicker ? 'none' : 'block' }}
+            >
               确定
             </View>
           </View>
+        </Drawer>
 
-          <View className="calendar-header">
-            <View className="nav-button prev" onClick={goToPrevMonth}>
-              &lt;
-            </View>
-            <View className="month-year">
-              {currentYear}年 {monthNames[currentMonth]}
-            </View>
-            <View className="nav-button next" onClick={goToNextMonth}>
-              &gt;
-            </View>
-          </View>
-
-          <View className="week-days">
-            {weekDays.map((day, index) => (
-              <View key={index} className="week-day">
-                {day}
+        {showFullDatePicker && (
+          <View className="full-date-picker">
+            <View className="scrolled-title">
+              <View className="scrolled-title-text1" onClick={() => setShowFullDatePicker(false)}>
+                取消
               </View>
-            ))}
-          </View>
-
-          <View className="calendar-days">
-            {calendarDays.map((day, index) => (
-              <View
-                key={index}
-                className={classnames('calendar-day', {
-                  'current-month': day.isCurrentMonth,
-                  today: day.isToday,
-                  selected: day.isSelected,
-                })}
-                onClick={() => selectCalendarDate(day.dateString)}
-              >
-                <View className="day-number">{day.day}</View>
-                {day.isToday && <View className="today-indicator"></View>}
+              <View className="scrolled-title-text2">选择日期</View>
+              <View className="scrolled-title-text3" onClick={handleFullDateConfirm}>
+                确定
               </View>
-            ))}
+            </View>
+
+            <View className="calendar-header">
+              <View className="nav-button prev" onClick={goToPrevMonth}>
+                &lt;
+              </View>
+              <View className="month-year">
+                {currentYear}年 {monthNames[currentMonth]}
+              </View>
+              <View className="nav-button next" onClick={goToNextMonth}>
+                &gt;
+              </View>
+            </View>
+
+            <View className="week-days">
+              {weekDays.map((day, index) => (
+                <View key={index} className="week-day">
+                  {day}
+                </View>
+              ))}
+            </View>
+
+            <View className="calendar-days">
+              {calendarDays.map((day, index) => (
+                <View
+                  key={index}
+                  className={classnames('calendar-day', {
+                    'current-month': day.isCurrentMonth,
+                    today: day.isToday,
+                    selected: day.isSelected,
+                  })}
+                  onClick={() => selectCalendarDate(day.dateString)}
+                >
+                  <View className="day-number">{day.day}</View>
+                  {day.isToday && <View className="today-indicator"></View>}
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-      )}
-    </>
-  );
-});
+        )}
+      </>
+    );
+  }
+);
 
 export default DatePicker;

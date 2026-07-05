@@ -22,13 +22,15 @@ export interface MyActivityList {
 export interface SelectedInfo {
   holderType: string[];
   type: string[];
-  detailTime: { startTime: string; endTime: string };
+  detailTime: string;
   position: string[];
   ifRegister: string;
+  limit: number;
+  page: number;
 }
 
 export interface ActivityDetailInfo {
-  bid: string;
+  id: string;
   userInfo: UserInfo;
   title: string;
   detailTime: { startTime: string; endTime: string };
@@ -47,13 +49,17 @@ export interface ActivityDetailInfo {
 }
 
 export interface LetterType {
-  message: string;
-  publishedAt: string;
-  status: string;
-  targetBid: string;
-  userInfo: {
-    avatar: string;
-    studentId: string;
-    username: string;
+  FirstPic?: string;
+  Message: string;
+  PublishedAt: string;
+  Status: string;
+  TargetId: string;
+  RootType?: string;
+  RootID?: string;
+  Subject: string;
+  Userinfo: {
+    Avatar: string;
+    StudentID: string;
+    Username: string;
   };
 }

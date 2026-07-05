@@ -8,10 +8,13 @@
   font-family: SimHei;
   &-back {
     position: absolute;
-    width: 20rpx;
-    left: 20rpx;
-    bottom: 30rpx;
     z-index: 101;
+    bottom: 25rpx;
+    width: 100rpx;
+    &-icon {
+      margin-left: 20rpx;
+      width: 20rpx;
+    }
   }
   &-user {
     position: absolute;
@@ -21,14 +24,14 @@
     gap: 20rpx;
     align-items: center;
     &-avatar {
-      width: 60rpx;
-      height: 60rpx;
+      width: 70rpx;
+      height: 70rpx;
       border-radius: 50%;
       background-color: #f9f8fc;
     }
     &-name {
-      font-size: 36rpx;
-      color: #222222;
+      font-size: 30rpx;
+      color: #3d3d3d;
     }
   }
   &-title {

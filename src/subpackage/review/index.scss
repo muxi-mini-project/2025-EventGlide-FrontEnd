@@ -1,7 +1,8 @@
 .reviewPage {
   font-family: SimHei;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 180rpx);
+  margin-top: 180rpx;
   background-color: #f9f8fc;
   position: relative;
 
@@ -25,46 +26,68 @@
     border: 2rpx solid #f0f2fa;
     border-radius: 20rpx;
     width: 90%;
-    height: 900rpx;
+    padding-bottom: 40rpx;
+  }
+  &-headercontainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20rpx;
   }
 
   &-header {
     margin: 30rpx 10rpx 0 30rpx;
     color: #170a1e;
-    font-size: 44rpx;
+    font-size: 36rpx;
+  }
+  &-status {
+    margin-top: 40rpx;
+    padding: 0 15rpx;
+    height: 35rpx;
+    line-height: 35rpx;
+    text-align: center;
+    border-radius: 8rpx;
+    color: #fff;
+    font-size: 24rpx;
   }
 
   &-gapline1 {
     width: 90%;
     margin-left: 5%;
-    margin-top: 20rpx;
+    margin-top: 10rpx;
     height: 2rpx;
     background-color: #d8c6ef;
   }
 
   &-content {
-    margin: 30rpx 10rpx 0 30rpx;
+    margin: 30rpx 20rpx 0 30rpx;
     color: #5e5064;
     font-size: 28rpx;
   }
 
-  &-label {
-    overflow-x: scroll;
-    margin-left: 20rpx;
-    margin-top: 100rpx;
+  &-types {
     display: flex;
-    width: 540rpx;
-
-    &-item {
-      font-size: 24rpx;
-      color: #5e5064;
-      height: 40rpx;
-      width: 200rpx;
-      background-color: #f3f3fb;
-      border-radius: 20rpx;
-      margin: 0 10rpx;
-      line-height: 40rpx;
+    flex-direction: row;
+    font-size: 22rpx;
+    margin-top: 20rpx;
+    margin-left: 30rpx;
+    &-holder {
+      padding: 0 20rpx;
+      height: 35rpx;
+      line-height: 35rpx;
       text-align: center;
+      border-radius: 10rpx;
+      background-color: #bd96ee;
+      color: #fff;
+    }
+    &-type {
+      padding: 0 20rpx;
+      height: 35rpx;
+      margin-left: 20rpx;
+      line-height: 35rpx;
+      text-align: center;
+      border-radius: 10rpx;
+      color: white;
     }
   }
 

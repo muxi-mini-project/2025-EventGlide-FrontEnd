@@ -50,11 +50,11 @@ const handleChooseImage = ({
       if (url !== '') navigateTo({ url: url });
     },
     fail: (err) => {
-      Taro.showToast({
+      /* Taro.showToast({
         title: err.errMsg,
         icon: 'none',
         duration: 2000,
-      });
+      }); */
       console.error(err);
     },
   });

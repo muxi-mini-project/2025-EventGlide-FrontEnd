@@ -1,6 +1,7 @@
 export default {
   pages: [
     'pages/login/index',
+    'pages/main/index',
     'pages/indexHome/index',
     'pages/addHome/index',
     'pages/postHome/index',
@@ -16,17 +17,19 @@ export default {
         'postDetail/index',
         'postAdd/index',
         'userProfile/index',
-        'actScreen/index',
         'addLabel/index',
         'addSuccess/index',
         'review/index',
         'addPeopleIndex/index',
         'addPeoplePage/index',
         'album/index',
+        'mySearch/index',
+        'otherUser/index',
       ],
     },
   ],
   window: {
+    navigationStyle: 'custom',
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#F9F8FC',
     navigationBarTitleText: 'WeChat',
@@ -34,11 +37,16 @@ export default {
     backgroundColor: '#F9F8FC',
   },
   tabBar: {
+    custom: true,
     color: '#C8C8C8',
     selectedColor: '#BE7CE0',
     backgroundColor: '#fff',
     borderStyle: 'white',
     list: [
+      {
+        pagePath: 'pages/main/index',
+        text: '主页',
+      },
       {
         pagePath: 'pages/indexHome/index',
         text: '首页',

@@ -4,28 +4,45 @@ import { MyActivityTab } from '@/modules/MyPageContent';
 import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
 import { useState, useEffect } from 'react';
 import classnames from 'classnames';
-import arrowheadw from '@/common/assets/arrowhead/引导箭头-白.png';
-import check from '@/common/assets/Postlist/check.png';
+import arrowheadw from '@/common/svg/arrowhead/引导箭头-白.svg';
+import check from '@/common/svg/mineInfo/search.svg';
 import { getMyPostList, getUserInfo } from '@/common/api';
+import { getMyActivityList } from '@/common/api/Activity';
 import useUserStore from '@/store/userStore';
 import useActivityStore from '@/store/ActivityStore';
-import { PostDetailInfo } from '@/common/types';
+import { PostDetailInfo, ActivityDetailInfo } from '@/common/types';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import PostCard from '@/modules/PostCard';
 import usePostStore from '@/store/PostStore';
 import ActivityModal from '@/modules/ActivityModal';
 import MinePageNull from '@/modules/EmptyComponent/components/minepagenull';
+import withDoorGuard from '@/common/hoc';
 
 const Index = () => {
   const [activePage, setActivePage] = useState<'activity' | 'post'>('post');
   const [activeIndex, setActiveIndex] = useState<'release' | 'like' | 'favourite'>('release');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
+  const [showNavBar, setShowNavBar] = useState(true); // 控制导航栏显示/隐藏
   const { setPostIndex, setBackPage } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
-  const { avatar, username, school, setAvatar, setUsername, setSchool } = useUserStore();
+  const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
+    useUserStore();
   const sid = Taro.getStorageSync('sid');
   const { setIsSelect } = useActivityStore();
+  const [page, setPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const LIMIT = 10;
+  const BUFFER = 300;
+
+  // 活动相关状态
+  const [activityPage, setActivityPage] = useState(1);
+  const [totalActivities, setTotalActivities] = useState(0);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityHasMore, setActivityHasMore] = useState(true);
+  const [mineActivityList, setMineActivityList] = useState<ActivityDetailInfo[]>([]);
 
   useDidShow(() => {
     setIsSelect(false);
@@ -34,36 +51,50 @@ const Index = () => {
   useDidShow(async () => {
     try {
       const res = await getUserInfo(sid);
+      console.log(res);
       setAvatar(res.data.avatar);
       setUsername(res.data.username);
       setSchool(res.data.school);
+      setCollege(res.data.college);
     } catch (err) {
       console.log(err);
     }
   });
 
+  const loadPosts = async (pageNum = 1, refresh = false) => {
+    try {
+      const res = await getMyPostList(activeIndex, LIMIT, pageNum);
+      console.log(`${activeIndex}:`, res.data);
+      if (res.data.details === null) {
+        if (refresh) {
+          setMinePostList([]);
+        }
+        return;
+      }
+      const newPostList: PostDetailInfo[] = res.data.details.map(
+        (item: unknown) => item as PostDetailInfo
+      );
+      if (refresh) {
+        setMinePostList(newPostList);
+      } else {
+        setMinePostList([...minePostList, ...newPostList]);
+      }
+      setPage(pageNum);
+      setTotalPosts(res.data.total || 0);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     if (activePage === 'post') {
-      const fetchPosts = async () => {
-        try {
-          const res = await getMyPostList(activeIndex);
-          console.log(`${activeIndex}:`, res.data);
-          if (res.data === null) {
-            setMinePostList([]);
-            return;
-          }
-          const newPostList: PostDetailInfo[] = [];
-          res.data.forEach((item: unknown) => {
-            newPostList.push(item as PostDetailInfo);
-          });
-          setMinePostList(newPostList);
-          handleScroll();
-        } catch (err) {
-          console.log(err);
-        }
-      };
-
-      fetchPosts();
+      setHasMore(true);
+      setIsShowList([]);
+      loadPosts(1, true);
+    } else {
+      // 切换到活动页面时，初始化活动列表
+      setActivityHasMore(true);
+      loadActivities(1, true);
     }
   }, [activeIndex, activePage]);
 
@@ -74,8 +105,27 @@ const Index = () => {
     }
   }, [activePage, minePostList]);
 
-  const handleScroll = () => {
+  const handleScroll = (e?: any) => {
+    let scrollTop = 0;
+    // 处理导航栏显示/隐藏逻辑
+    if (e && e.detail) {
+      scrollTop = e.detail.scrollTop;
+      setShowNavBar(scrollTop < 50);
+
+      // 滚动加载更多
+      const distanceToBottom =
+        e.detail.scrollHeight - (scrollTop + (Taro.getWindowInfo().windowHeight || 0));
+      if (distanceToBottom <= BUFFER) {
+        loadMore();
+      }
+    }
+
+    // 处理图片懒加载逻辑
     const windowHeight = Taro.getWindowInfo().windowHeight;
+    const buffer = windowHeight * 0.3;
+    const visibleTop = scrollTop - buffer;
+    const visibleBottom = scrollTop + windowHeight + buffer;
+
     const query = Taro.createSelectorQuery();
     minePostList.forEach((_, index) => {
       query.select(`#post-item-${index}`).boundingClientRect();
@@ -84,34 +134,99 @@ const Index = () => {
       res.forEach((rect, index) => {
         if (!rect) return;
         const { top, bottom } = rect;
-        if (top <= windowHeight && bottom >= 0) {
+        // 判断元素是否在带缓冲区的可见区域内
+        if (top <= visibleBottom && bottom >= visibleTop) {
           setIsShowList((prevList) => {
             if (!prevList.includes(index)) {
               return [...prevList, index];
             }
             return prevList;
           });
-        } else {
-          setIsShowList((prevList) => {
-            return prevList.filter((item) => item !== index);
-          });
         }
       });
     });
   };
 
+  const loadMore = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    try {
+      await loadPosts(page + 1, false);
+      if (minePostList.length >= totalPosts) {
+        setHasMore(false);
+      }
+      setTimeout(() => {
+        handleScroll();
+      }, 200);
+    } catch (error) {
+      console.error('加载更多失败:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 加载活动列表
+  const loadActivities = async (pageNum = 1, refresh = false) => {
+    try {
+      const res = await getMyActivityList(activeIndex, LIMIT, pageNum);
+      console.log(`activity ${activeIndex}:`, res.data);
+      if (res.data.details === null) {
+        if (refresh) {
+          setMineActivityList([]);
+        }
+        return;
+      }
+      const newActivityList: ActivityDetailInfo[] = res.data.details.map(
+        (item: unknown) => item as ActivityDetailInfo
+      );
+      if (refresh) {
+        setMineActivityList(newActivityList);
+      } else {
+        setMineActivityList([...mineActivityList, ...newActivityList]);
+      }
+      setActivityPage(pageNum);
+      setTotalActivities(res.data.total || 0);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 加载更多活动
+  const loadMoreActivities = async () => {
+    if (activityLoading || !activityHasMore) return;
+    setActivityLoading(true);
+    try {
+      await loadActivities(activityPage + 1, false);
+      if (mineActivityList.length >= totalActivities) {
+        setActivityHasMore(false);
+      }
+    } catch (error) {
+      console.error('加载更多活动失败:', error);
+    } finally {
+      setActivityLoading(false);
+    }
+  };
+
   return (
     <>
-      <NavigationBarTabBar backgroundColor="#FFFFFF" title="我的" />
+      <NavigationBarTabBar
+        backgroundColor="transparent"
+        color="#ffffff"
+        title="我的"
+        style={{
+          transition: 'opacity 0.1s ease, transform 0.1s ease',
+          opacity: showNavBar ? 1 : 0,
+        }}
+      />
       <ScrollView
         className="mine-page"
         scrollY={true}
         type="custom"
-        onScroll={() => handleScroll()}
+        onScroll={(e) => handleScroll(e)}
         usingSticky={true}
         enhanced={true}
         showScrollbar={false}
-        style={{ height: 'calc(100vh - 180rpx)' }}
+        style={{ height: 'calc(100vh - 120rpx)' }}
         id="scrollView"
       >
         <View className="mine-user">
@@ -148,13 +263,17 @@ const Index = () => {
             >
               活动
             </View>
-            <View
+            {/* <View
               className="mine-order-title-choice-check"
               onClick={() => navigateTo({ url: '/subpackage/review/index' })}
             >
               审核
-            </View>
-            <Image className="mine-order-title-choice-img" src={check}></Image>
+            </View> */}
+            <Image
+              onClick={() => navigateTo({ url: '/subpackage/mySearch/index' })}
+              className="mine-order-title-choice-img"
+              src={check}
+            ></Image>
           </View>
           <View className="mine-order-title-line"></View>
           <View className="mine-order-title-index">
@@ -167,20 +286,20 @@ const Index = () => {
               发布
             </View>
             <View
-              className={classnames('mine-order-title-index-mid', {
-                'active-decoration-item': activeIndex === 'like',
-              })}
-              onClick={() => setActiveIndex('like')}
-            >
-              点赞
-            </View>
-            <View
               className={classnames('mine-order-title-index-right', {
                 'active-decoration-item': activeIndex === 'favourite',
               })}
               onClick={() => setActiveIndex('favourite')}
             >
               收藏
+            </View>
+            <View
+              className={classnames('mine-order-title-index-mid', {
+                'active-decoration-item': activeIndex === 'like',
+              })}
+              onClick={() => setActiveIndex('like')}
+            >
+              点赞
             </View>
           </View>
         </View>
@@ -190,26 +309,31 @@ const Index = () => {
             minePostList.length === 0 ? (
               <MinePageNull />
             ) : (
-              <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-                {minePostList.map((item, index) => (
-                  <View
-                    key={index}
-                    style={{ padding: '10rpx' }}
-                    id={`post-item-${index}`}
-                    onClick={() => {
-                      setPostIndex(item.bid);
-                      setBackPage('mineHome');
-                    }}
-                  >
-                    <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
-                  </View>
-                ))}
-              </GridView>
+              <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
+                <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
+                  {minePostList.map((item, index) => (
+                    <View
+                      key={index}
+                      id={`post-item-${index}`}
+                      onClick={() => {
+                        setPostIndex(item.id);
+                        setBackPage('mineHome');
+                      }}
+                    >
+                      <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
+                    </View>
+                  ))}
+                </GridView>
+              </View>
             )
           ) : (
             <MyActivityTab
               activeIndex={activeIndex}
               setIsShowActivityWindow={setIsShowActivityWindow}
+              userActivityList={mineActivityList}
+              onLoadMore={loadMoreActivities}
+              hasMore={activityHasMore}
+              loading={activityLoading}
             />
           )}
         </View>

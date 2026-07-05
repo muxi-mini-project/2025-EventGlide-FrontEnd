@@ -1,6 +1,7 @@
 .add-label {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 180rpx);
+  margin-top: 180rpx;
   overflow-x: scroll;
   background-color: #f9f8fc;
   display: flex;
@@ -9,7 +10,7 @@
   align-items: center;
   &-form-container {
     width: 100%;
-    height: 88vh;
+    height: calc(100vh - 340rpx);
     overflow-x: scroll;
     display: flex;
     flex-direction: column;
@@ -21,22 +22,24 @@
     -ms-overflow-style: none;
   }
   &-title {
-    height: 140rpx;
+    height: 120rpx;
     width: 670rpx;
     background-color: #fff;
-    font-size: 40rpx;
+    font-size: 34rpx;
     padding-left: 20rpx;
-    line-height: 140rpx;
-    border-radius: 10rpx;
+    line-height: 120rpx;
+    border-radius: 15rpx;
     margin-bottom: 15rpx;
   }
   &-form {
     width: 690rpx;
-    margin-bottom: 10rpx;
+    margin-bottom: 15rpx;
   }
   &-last {
     @extend.add-label-title;
     margin-bottom: 30rpx;
+    font-size: 34rpx;
+    padding-left: 20rpx;
   }
   &-floor {
     width: 100%;
@@ -51,9 +54,9 @@
       flex-direction: column;
       align-items: center;
       &-text {
-        margin-top: 10rpx;
-        font-size: 30rpx;
-        color: #606266;
+        margin-top: 5rpx;
+        font-size: 24rpx;
+        color: #828283;
       }
     }
     &-btn {

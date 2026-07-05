@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Image } from '@tarojs/components';
 import './style.scss';
 import { ScrollTopProps } from '@/common/types';
+import toTop from '@/common/assets/Postlist/totop.png';
 
 const ScrollTop: React.FC<ScrollTopProps> = ({ setScrollTop, isVisible, bottom = 100 }) => {
   const onScrollTop = () => {
@@ -17,11 +18,7 @@ const ScrollTop: React.FC<ScrollTopProps> = ({ setScrollTop, isVisible, bottom =
       style={{ bottom }}
       onClick={onScrollTop}
     >
-      <Image
-        className="scroll-top-icon"
-        src="https://img.icons8.com/ios-filled/50/9b59b6/up--v1.png"
-        mode="widthFix"
-      />
+      <Image className="scroll-top-icon" src={toTop} mode="widthFix" />
     </View>
   );
 };

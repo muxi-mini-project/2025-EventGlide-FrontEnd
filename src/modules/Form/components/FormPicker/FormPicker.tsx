@@ -50,7 +50,6 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
           setIsVisiable={props.setIsVisiable}
           imgUrl={props.activeForm}
           setImgUrl={props.setActiveForm}
-          isOverlay={true}
           type="event"
         />
       );
@@ -92,7 +91,7 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
                 <View
                   className="formWindow-item-btn"
                   style={{
-                    backgroundColor: selectedValue === index ? '#D8C6EF' : '#FFFFFF',
+                    backgroundColor: selectedValue === index ? '#7D73F0' : '#FFFFFF',
                   }}
                   onClick={() => handleSelect(index)}
                 ></View>

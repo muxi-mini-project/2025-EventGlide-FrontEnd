@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components';
 import './style.scss';
-import Null from '@/common/assets/activity/null.png';
+import Null from '@/common/svg/activity/null.svg';
 const NoticePageNull: React.FC = () => {
   return (
     <View className="notice-page-null">
@@ -11,7 +11,6 @@ const NoticePageNull: React.FC = () => {
         style={{ width: '25%', height: '25%' }}
       />
       <Text className="notice-page-null-text">这里空空如也</Text>
-      <Text className="notice-page-null-text">QAQ</Text>
     </View>
   );
 };

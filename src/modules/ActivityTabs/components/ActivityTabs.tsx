@@ -1,42 +1,38 @@
 import './style.scss';
-import { View, Radio, RadioGroup, Input, Label, Image } from '@tarojs/components';
-import { useState, memo } from 'react';
-import Taro, { navigateTo } from '@tarojs/taro';
-import classnames from 'classnames';
-import searchpic from '@/common/assets/Postlist/搜索.png';
+import { View, Input, Image } from '@tarojs/components';
+import { useState, memo, useEffect } from 'react';
+import Taro from '@tarojs/taro';
+import searchpic from '@/common/svg/Postlist/搜索.svg';
+import choosestyle from '@/common/svg/Postlist/路径.svg';
+import choosestyle_active from '@/common/svg/Postlist/路径-active.svg';
+import gantanhaozhong from '@/common/svg/Postlist/gantanhaozhong.svg';
 import useActivityStore from '@/store/ActivityStore';
 import { getActivityList, searchActivityList } from '@/common/api';
 
-const datelist = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 const typelist = ['文艺', '体育', '竞赛', '游戏', '学术'];
 
 const ActivityTabs: React.FC<{
   setApproximateTime: (value: string) => void;
-  setType: (value: string) => void;
-}> = memo(function ({ ...props }) {
+  setType: (value: string[]) => void;
+  showTypeDrawer: boolean;
+  setChooseDrawerVisible: (value: boolean) => void;
+  chooseDrawerType: string;
+  setChooseDrawerType: (value: string) => void;
+  setShowColorExplain: (value: boolean) => void;
+  onSearch: (keyword: string) => void;
+}> = memo(function ({ onSearch, ...props }) {
   const [checkDateIndex, setCheckDateIndex] = useState<number>(-1);
-  const [checkTypeIndex, setCheckTypeIndex] = useState<number>(-1);
+  const [checkTypeIndex, setCheckTypeIndex] = useState<number[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
-  const { setActiveList } = useActivityStore();
+  const { setActiveList, setSelectInfo, selectedInfo } = useActivityStore();
   const [placeholder, setPlaceholder] = useState<string>('在这里可以查找你想要的活动哦');
-  const handleDateClick = (index: number) => {
-    if (checkDateIndex === index) {
-      setCheckDateIndex(-1);
-      props.setApproximateTime('');
-    } else {
-      setCheckDateIndex(index);
-      props.setApproximateTime(datelist[index]);
-    }
-  };
-  const handleTypeClick = (index: number) => {
-    if (checkTypeIndex === index) {
-      setCheckTypeIndex(-1);
-      props.setType('');
-    } else {
-      setCheckTypeIndex(index);
-      props.setType(typelist[index]);
-    }
-  };
+
+  useEffect(() => {
+    const typeIndexes = selectedInfo.type
+      .map((type) => typelist.indexOf(type))
+      .filter((index) => index !== -1);
+    setCheckTypeIndex(typeIndexes);
+  }, [selectedInfo]);
   const handleFocusChange = () => {
     setPlaceholder('');
   };
@@ -47,47 +43,7 @@ const ActivityTabs: React.FC<{
     setSearchValue(e.detail.value);
   };
   const handleSearch = async () => {
-    if (searchValue === '') {
-      try {
-        const res = await getActivityList();
-        if (res.msg === 'success') {
-          setActiveList(res.data);
-        } else {
-          Taro.showToast({
-            title: `${res.msg}`,
-            icon: 'none',
-            duration: 1000,
-          });
-        }
-      } catch (error) {
-        console.error('获取活动列表失败:', error);
-        Taro.showToast({
-          title: '获取活动列表失败',
-          icon: 'none',
-          duration: 1000,
-        });
-      }
-    } else {
-      try {
-        const res = await searchActivityList({ name: searchValue });
-        if (res.msg === 'success') {
-          setActiveList(res.data);
-        } else {
-          Taro.showToast({
-            title: `${res.msg}`,
-            icon: 'none',
-            duration: 1000,
-          });
-        }
-      } catch (error) {
-        console.error('搜索活动失败:', error);
-        Taro.showToast({
-          title: '搜索活动失败',
-          icon: 'none',
-          duration: 1000,
-        });
-      }
-    }
+    onSearch(searchValue);
   };
   return (
     <View className="sticky-container">
@@ -99,57 +55,126 @@ const ActivityTabs: React.FC<{
             onFocus={handleFocusChange}
             onBlur={handleBlurChange}
             placeholder={placeholder}
+            placeholder-class="input-placeholder"
             value={searchValue}
             onInput={handleInputChange}
             onConfirm={handleSearch}
             type="text"
+            confirmType="search"
           />
         </View>
-        <View className="search-btn" onClick={handleSearch}>
-          搜索
-        </View>
       </View>
-      <View className="sticky-date">
-        <View className="sticky-date-line"></View>
-        <RadioGroup className="sticky-date-group">
-          {datelist.map((item, index) => (
-            <Label
-              className={classnames('date-list-view', {
-                'date-checked': checkDateIndex === index,
-              })}
-              for={'index'}
-              onClick={() => handleDateClick(index)}
-            >
-              <Radio className="none" key={index} value={item}></Radio>
-              {item}
-            </Label>
-          ))}
-        </RadioGroup>
+      <View className="sticky-sift">
         <View
-          className="sticky-date-check"
+          className="sticky-sift-box"
           onClick={() => {
-            navigateTo({ url: '/subpackage/actScreen/index' });
+            props.setChooseDrawerType('dateChoice');
+            props.setChooseDrawerVisible(true);
           }}
         >
-          筛选
+          <View
+            className={
+              props.chooseDrawerType === 'dateChoice' && props.showTypeDrawer
+                ? 'sticky-sift-text-checked'
+                : 'sticky-sift-text'
+            }
+          >
+            时间
+          </View>
+          <Image
+            src={
+              props.chooseDrawerType === 'dateChoice' && props.showTypeDrawer
+                ? choosestyle_active
+                : choosestyle
+            }
+            className="sticky-sift-icon"
+            mode="widthFix"
+          ></Image>
         </View>
-      </View>
-      <View className="sticky-type">
-        <RadioGroup className="sticky-type-group">
-          {typelist.map((item, index) => (
-            <View className="type-list-view-box" key={index} onClick={() => handleTypeClick(index)}>
-              <Label
-                className={classnames('type-list-view', {
-                  'type-checked': checkTypeIndex === index,
-                })}
-                for={'index'}
-              >
-                <Radio className="none" key={index} value={item}></Radio>
-                {item}
-              </Label>
-            </View>
-          ))}
-        </RadioGroup>
+        <View
+          className="sticky-sift-box"
+          onClick={() => {
+            props.setChooseDrawerType('typeChoice');
+            props.setChooseDrawerVisible(true);
+          }}
+        >
+          <View
+            className={
+              props.chooseDrawerType === 'typeChoice' && props.showTypeDrawer
+                ? 'sticky-sift-text-checked'
+                : 'sticky-sift-text'
+            }
+          >
+            类型
+          </View>
+          <Image
+            src={
+              props.chooseDrawerType === 'typeChoice' && props.showTypeDrawer
+                ? choosestyle_active
+                : choosestyle
+            }
+            className="sticky-sift-icon"
+            mode="widthFix"
+          ></Image>
+        </View>
+        <View
+          className="sticky-sift-box"
+          onClick={() => {
+            props.setChooseDrawerType('organizerChoice');
+            props.setChooseDrawerVisible(true);
+          }}
+        >
+          <View
+            className={
+              props.chooseDrawerType === 'organizerChoice' && props.showTypeDrawer
+                ? 'sticky-sift-text-checked'
+                : 'sticky-sift-text'
+            }
+          >
+            承办方
+          </View>
+          <Image
+            src={
+              props.chooseDrawerType === 'organizerChoice' && props.showTypeDrawer
+                ? choosestyle_active
+                : choosestyle
+            }
+            className="sticky-sift-icon"
+            mode="widthFix"
+          ></Image>
+        </View>
+        <View
+          className="sticky-sift-box"
+          onClick={() => {
+            props.setChooseDrawerType('siteChoice');
+            props.setChooseDrawerVisible(true);
+          }}
+        >
+          <View
+            className={
+              props.chooseDrawerType === 'siteChoice' && props.showTypeDrawer
+                ? 'sticky-sift-text-checked'
+                : 'sticky-sift-text'
+            }
+          >
+            地点
+          </View>
+          <Image
+            src={
+              props.chooseDrawerType === 'siteChoice' && props.showTypeDrawer
+                ? choosestyle_active
+                : choosestyle
+            }
+            className="sticky-sift-icon"
+            mode="widthFix"
+          ></Image>
+        </View>
+        <Image
+          onClick={() => props.setShowColorExplain(true)}
+          src={gantanhaozhong}
+          className="sticky-sift-notice"
+          mode="widthFix"
+        ></Image>
       </View>
     </View>
   );

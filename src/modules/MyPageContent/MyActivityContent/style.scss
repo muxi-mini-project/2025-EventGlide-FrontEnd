@@ -110,8 +110,14 @@
 .mine-activity-page {
   width: 100%;
   height: auto;
-  overflow-x: scroll;
-  background-color: #f9f8fc;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
+  &-bottomline {
+    width: 96%;
+    height: 2rpx;
+    background-color: #d8c6ef;
+    margin-left: 2%;
+    transform: translateX(-30rpx);
+  }
 }

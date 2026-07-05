@@ -4,6 +4,7 @@ import { ButtonProps } from '@/common/types';
 import { View, Button as TaroButton } from '@tarojs/components';
 import { navigateTo, reLaunch } from '@tarojs/taro';
 import classnames from 'classnames';
+import Taro from '@tarojs/taro';
 
 const Button: React.FC<ButtonProps> = memo(function ({ ...props }) {
   const handleClick = () => {
@@ -11,6 +12,8 @@ const Button: React.FC<ButtonProps> = memo(function ({ ...props }) {
       reLaunch({ url: props.url });
     } else if (!props.url) {
       return;
+    } else if (props.url === '/pages/main/index') {
+      Taro.switchTab({ url: props.url });
     } else navigateTo({ url: props.url });
   };
 

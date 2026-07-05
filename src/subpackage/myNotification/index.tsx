@@ -1,32 +1,82 @@
 import { View, Image } from '@tarojs/components';
 import { memo, useState } from 'react';
 import './index.scss';
+import withDoorGuard from '@/common/hoc';
 import { GetNotificationListReponse, LetterType } from '@/common/types';
 import classnames from 'classnames';
 import { get } from '@/common/api/request';
-import { useDidShow } from '@tarojs/taro';
+import Taro, { useDidShow, navigateTo } from '@tarojs/taro';
 import NoticePageNull from '@/modules/EmptyComponent/components/noticepagenull';
+import formatTime from '@/common/utils/FormatTime';
+import { NavigationBarBack } from '@/common/components/NavigationBar';
+import useActivityStore from '@/store/ActivityStore';
+import usePostStore from '@/store/PostStore';
+import { getPostById } from '@/common/api/PostRequest';
+import { getActivityById } from '@/common/api/Activity';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
+  const { setSelectedItem, setSelectComment } = useActivityStore();
+  const { setPostList, setPostIndex, setSelectCommentPost } = usePostStore();
+  const handleClick = async (props: LetterType) => {
+    console.log(props);
+    try {
+      if (props.Subject === 'activity') {
+        const res = await getActivityById(props.TargetId);
+        console.log(res);
+        setSelectedItem(res.data);
+        navigateTo({ url: '/subpackage/actComment/index' });
+      } else if (props.Subject === 'post') {
+        const res = await getPostById(props.TargetId);
+        console.log(res);
+        const post = [] as any[];
+        post.push(res.data);
+        setPostList(post);
+        setPostIndex(res.data.id);
+        navigateTo({ url: '/subpackage/postDetail/index' });
+      } else if (props.Subject === 'comment' && props.RootID) {
+        if (props.RootType === 'activity') {
+          const res = await getActivityById(props.RootID);
+          console.log(res);
+          setSelectComment(props.TargetId);
+          setSelectedItem(res.data);
+          navigateTo({ url: '/subpackage/actComment/index' });
+        } else if (props.RootType === 'post') {
+          const res = await getPostById(props.RootID);
+          console.log(res);
+          setSelectCommentPost(props.TargetId);
+          const post = [] as any[];
+          post.push(res.data);
+          setPostList(post);
+          setPostIndex(res.data.id);
+          navigateTo({ url: '/subpackage/postDetail/index' });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <View className="letter-list-item">
       <Image
-        src={props.userInfo.avatar}
+        src={props.Userinfo.Avatar}
         mode="aspectFill"
         className="letter-list-item-avatar"
         lazyLoad={true}
+        onClick={() => {
+          Taro.setStorageSync('targetUser', props.Userinfo.StudentID);
+          navigateTo({ url: '/subpackage/otherUser/index' });
+        }}
       ></Image>
       <View className="letter-list-item-content">
-        <View className="letter-list-item-content-username">{props.userInfo.username}</View>
-        <View className="letter-list-item-content-message">{props.message}</View>
-        {/*<View className="letter-list-item-content-message">
-          {props.publishedAt}
-        </View>*/}
+        <View className="letter-list-item-content-username">{props.Userinfo.Username}</View>
+        <View className="letter-list-item-content-message">{props.Message}</View>
+        <View className="letter-list-item-content-message">{formatTime(props.PublishedAt)}</View>
       </View>
       <Image
         mode="aspectFill"
-        src={props.userInfo.avatar}
+        src={props.FirstPic || props.Userinfo.Avatar}
         className="letter-list-item-decPic"
+        onClick={() => handleClick(props)}
       ></Image>
     </View>
   );
@@ -46,18 +96,18 @@ const Index = () => {
   useDidShow(async () => {
     try {
       const res: any = await get<GetNotificationListReponse>('/feed/list');
-      console.log(res.data);
-      const likes = res.data?.likes || [];
-      const collects = res.data.collects || [];
+      console.log('通知列表', res.data);
+      const likes = res.data?.Likes || [];
+      const collects = res.data.Collects || [];
       const mergedFavor = mergeSortedArrays(likes, collects);
       setFavor(mergedFavor);
       readnotice(mergedFavor);
 
-      const comments = res.data?.comments || [];
-      const ats = res.data.ats || [];
+      const comments = res.data?.Comments || [];
+      const ats = res.data.Ats || [];
       const mergedLetter = mergeSortedArrays(comments, ats);
       setLetter(mergedLetter);
-      if (mergedLetter[0] && mergedLetter[0].status === '未读') {
+      if (mergedLetter[0] && mergedLetter[0].Status === '未读') {
         setNotice(true);
       }
     } catch (err) {
@@ -71,8 +121,8 @@ const Index = () => {
     let j = 0;
 
     while (i < arr1.length && j < arr2.length) {
-      const date1 = parseDateSafely(arr1[i].publishedAt);
-      const date2 = parseDateSafely(arr2[j].publishedAt);
+      const date1 = parseDateSafely(arr1[i].PublishedAt);
+      const date2 = parseDateSafely(arr2[j].PublishedAt);
 
       if (date1 <= date2) {
         result.push(arr1[i]);
@@ -114,53 +164,60 @@ const Index = () => {
   };
 
   return (
-    <View className="myNotification-page">
-      <View className="myNotification-page-header">
-        <View
-          onClick={() => handleClick('favor')}
-          className={classnames('myNotification-page-header-item', {
-            activeItem: isActive,
-          })}
-        >
-          赞和收藏
-        </View>
-        <View
-          onClick={() => {
-            handleClick('letter');
-            setNotice(false);
-            readnotice(letter);
-          }}
-          className={classnames('myNotification-page-header-item', {
-            activeItem: !isActive,
-          })}
-        >
-          <View>评论</View>
+    <>
+      <NavigationBarBack backgroundColor="#FFFFFF" title="账号设置" url="/pages/postHome/index" />
+      <View className="myNotification-page">
+        <View className="myNotification-page-header">
           <View
-            style={{
-              display: notice ? 'block' : 'none',
-              position: 'absolute',
-              width: '10rpx',
-              height: '10rpx',
-              borderRadius: '5rpx',
-              backgroundColor: '#FF4D4F',
-              right: 0,
-              top: 0,
-              marginRight: '90rpx',
-              marginTop: '40rpx',
+            onClick={() => handleClick('favor')}
+            className={classnames('myNotification-page-header-item', {
+              activeItem: isActive,
+            })}
+          >
+            赞和收藏
+          </View>
+          <View
+            onClick={() => {
+              handleClick('letter');
+              setNotice(false);
+              readnotice(letter);
             }}
-          />
+            className={classnames('myNotification-page-header-item', {
+              activeItem: !isActive,
+            })}
+          >
+            <View>评论和@</View>
+            <View
+              style={{
+                display: notice ? 'block' : 'none',
+                position: 'absolute',
+                width: '10rpx',
+                height: '10rpx',
+                borderRadius: '5rpx',
+                backgroundColor: '#FF4D4F',
+                right: 0,
+                top: 0,
+                marginRight: '90rpx',
+                marginTop: '40rpx',
+              }}
+            />
+          </View>
+        </View>
+        <View className="myNotification-page-content">
+          {(showPage === 'favor' && favor.length === 0) ||
+          (showPage === 'letter' && letter.length === 0) ? (
+            <NoticePageNull key="notice-null" />
+          ) : null}
+          {showPage === 'favor' &&
+            favor.length > 0 &&
+            favor.map((item, index) => <LetterListItem key={index} {...item} />)}
+          {showPage === 'letter' &&
+            letter.length > 0 &&
+            letter.map((item, index) => <LetterListItem key={index} {...item} />)}
         </View>
       </View>
-      <View className="myNotification-page-content">
-        {showPage === 'favor' && favor.length === 0 && <NoticePageNull />}
-        {showPage === 'favor' &&
-          favor.map((item, index) => <LetterListItem key={index} {...item} />)}
-        {showPage === 'letter' && letter.length === 0 && <NoticePageNull />}
-        {showPage === 'letter' &&
-          letter.map((item, index) => <LetterListItem key={index} {...item} />)}
-      </View>
-    </View>
+    </>
   );
 };
 
-export default Index;
+export default withDoorGuard(Index);

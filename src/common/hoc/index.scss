@@ -1,0 +1,34 @@
+.door-page {
+  width: 100%;
+  height: 500rpx;
+  font-family: SimHei;
+  margin-top: 500rpx;
+  &-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #7d73f0;
+    margin-top: 100rpx;
+    margin-bottom: 60rpx;
+    height: 400rpx;
+    position: relative;
+    &-img {
+      position: absolute;
+      top: 40rpx;
+      width: 150rpx;
+    }
+    &-text {
+      position: absolute;
+      top: 260rpx;
+      font-size: 54rpx;
+      margin-bottom: 10rpx;
+      letter-spacing: 10rpx;
+      margin-left: 10rpx;
+    }
+    &-desc {
+      position: absolute;
+      top: 340rpx;
+      font-size: 44rpx;
+    }
+  }
+}

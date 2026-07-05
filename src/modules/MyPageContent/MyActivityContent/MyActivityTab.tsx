@@ -1,8 +1,7 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { View } from '@tarojs/components';
 import './style.scss';
-import MyActivityCard from './MyActivityCard';
-import { getMyActivityList } from '@/common/api/Activity';
+import ActivityCard from '@/modules/ActivityCard/index';
 import useActivityStore from '@/store/ActivityStore';
 import { ActivityDetailInfo } from '@/common/types';
 import MinePageNull from '@/modules/EmptyComponent/components/minepagenull';
@@ -10,66 +9,61 @@ import MinePageNull from '@/modules/EmptyComponent/components/minepagenull';
 const MyActivityTab: React.FC<{
   activeIndex: 'release' | 'like' | 'favourite';
   setIsShowActivityWindow: (isShow: boolean) => void;
-}> = memo(function ({ activeIndex, setIsShowActivityWindow }) {
-  const [activeList, setActiveList] = useState<ActivityDetailInfo[]>([]);
+  searchValue?: string;
+  userActivityList?: ActivityDetailInfo[];
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  loading?: boolean;
+}> = memo(function ({
+  activeIndex,
+  setIsShowActivityWindow,
+  searchValue,
+  userActivityList,
+  onLoadMore,
+  hasMore,
+  loading,
+}) {
   const { setSelectedItem } = useActivityStore();
 
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const res = await getMyActivityList(activeIndex);
-        console.log(`${activeIndex}:`, res.data);
-
-        if (res.data === null) {
-          setActiveList([]);
-          return;
-        }
-        const newActiveList: ActivityDetailInfo[] = [];
-        res.data.forEach((item) => {
-          if (item.title !== '')
-            newActiveList.push({
-              ...item,
-            });
-        });
-        setActiveList(newActiveList);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchActivities();
-  }, [activeIndex]);
+  const filteredActiveList = useMemo(() => {
+    if (!userActivityList) {
+      return [];
+    }
+    if (!searchValue?.trim()) {
+      return userActivityList;
+    }
+    const searchLower = searchValue.toLowerCase().trim();
+    return userActivityList.filter((activity) =>
+      activity.title.toLowerCase().includes(searchLower)
+    );
+  }, [userActivityList, searchValue]);
 
   return (
     <View className="mine-activity-page">
-      {activeList.length === 0 ? (
+      {filteredActiveList.length === 0 ? (
         <MinePageNull />
       ) : (
-        activeList.map((item, index) => {
-          return (
-            <View
-              key={index}
-              onClick={() => {
-                setSelectedItem(item);
-                setIsShowActivityWindow(true);
-              }}
-            >
-              <MyActivityCard
+        <View style={{ paddingLeft: '30rpx' }}>
+          {filteredActiveList.map((item, index) => {
+            return (
+              <View
                 key={index}
-                avatar={item.userInfo.avatar}
-                title={item.title}
-                name={item.userInfo.username}
-                likes={item.likeNum}
-                comment={item.commentNum}
-                introduce={item.introduce}
-                showImg={item.showImg}
-                isLike={item.isLike}
-                isCollect={item.isCollect}
-                collectNum={item.collectNum}
-              />
-            </View>
-          );
-        })
+                onClick={() => {
+                  setSelectedItem(item);
+                  //setIsShowActivityWindow(true);
+                }}
+              >
+                <ActivityCard
+                  key={index}
+                  activeItem={item}
+                  setShowPostWindow={setIsShowActivityWindow}
+                  isbottomline={false}
+                />
+                <View className="mine-activity-page-bottomline"></View>
+              </View>
+            );
+          })}
+        </View>
       )}
     </View>
   );

@@ -2,11 +2,11 @@ import './style.scss';
 import { View, Image } from '@tarojs/components';
 import { ReplyItemProps } from '@/common/types';
 import { memo } from 'react';
-import TimeTranslation from '@/common/utils/TimeTranslation';
 import favor from '@/common/svg/post/heart.svg';
 import favorAct from '@/common/svg/post/heartAct.svg';
 import { useState } from 'react';
 import handleInteraction from '@/common/utils/Interaction';
+import formatTime from '@/common/utils/FormatTime';
 
 const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
   const [islike, setIslike] = useState(props.isLike);
@@ -19,12 +19,14 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
   const param = {
     studentId: studentId,
     subject: 'comment',
-    targetid: props.bid,
+    targetId: props.id,
     receiver: studentId,
   };
 
   const clickLove = async () => {
     const action = islike === 'true' ? 'dislike' : 'like';
+    console.log(props);
+
     const tag = handleInteraction(action, param);
     try {
       const res = await tag;
@@ -44,15 +46,23 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
   };
 
   return (
-    <View className="ReplyComment">
+    <View className="ReplyComment" id={`comment-${props.id}`}>
       <View className="ReplyComment-content">
-        <Image className="ReplyComment-avatar" src={creator?.avatar || ''} mode="scaleToFill" />
+        <Image
+          className="ReplyComment-avatar"
+          src={creator?.avatar || ''}
+          mode="scaleToFill"
+          style={
+            props.son ? { width: '55rpx', height: '55rpx' } : { width: '70rpx', height: '70rpx' }
+          }
+        />
         <View
           className="ReplyComment-info"
+          style={props.son ? { marginLeft: '95rpx' } : { marginLeft: '115rpx' }}
           onClick={() => {
             if (props.replycomment) {
               props.replycomment(true);
-              props.setReplyId(props.bid);
+              props.setReplyId(props.id);
             }
           }}
           onLongPress={() => {
@@ -64,7 +74,7 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
             ) {
               props.setCommentItems(props.content || props.replyContent || '');
               props.setCommentCreator(creator || { username: '', avatar: '', studentId: '' });
-              props.setCommentid(props.bid);
+              props.setCommentid(props.id);
               props.longClick();
             }
           }}
@@ -75,7 +85,7 @@ const ReplyItem: React.FC<ReplyItemProps> = memo(({ ...props }) => {
             {props.content || props.replyContent}
           </View>
           <View className="ReplyComment-info-timesite">
-            {TimeTranslation(props.replyTime || props.commentedTime || '')}&nbsp;&nbsp;
+            {formatTime(props.replyTime || props.commentedTime || '')}&nbsp;&nbsp;
             <View style={' color: #5E5064;'}>回复</View>
           </View>
         </View>

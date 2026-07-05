@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components';
 import './style.scss';
-import Null from '@/common/assets/activity/null.png';
+import Null from '@/common/svg/activity/null.svg';
 const MinePageNull: React.FC = () => {
   return (
     <View className="mine-page-null">
@@ -11,7 +11,6 @@ const MinePageNull: React.FC = () => {
         style={{ width: '25%', height: '25%' }}
       />
       <Text className="mine-page-null-text">暂时还没有活动</Text>
-      <Text className="mine-page-null-text">QAQ</Text>
     </View>
   );
 };

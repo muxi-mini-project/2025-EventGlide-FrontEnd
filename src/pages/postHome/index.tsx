@@ -14,7 +14,7 @@ import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import { getPostList, searchPostList } from '@/common/api';
 import { GetNotificationCountResponse } from '@/common/types';
 import ScrollTop from '@/modules/ScrollTop';
-import withDoorGuard from '@/common/hoc';
+import useDoorStore from '@/store/DoorStote';
 
 const Index = () => {
   const [isAlbumVisiable, setIsAlbumVisiable] = useState(false);
@@ -44,9 +44,8 @@ const Index = () => {
     }[]
   >([]);
   const scrollRaf = useRef(false);
-  useDidShow(() => {
-    setIsSelect(false);
-  });
+  const hasLoadedPosts = useRef(false);
+  const { doorStatus } = useDoorStore();
 
   const loadPosts = async (page = 1, refresh = false, searchKeyword = '') => {
     const shouldSearch = searchKeyword !== '';
@@ -75,9 +74,12 @@ const Index = () => {
 
   useDidShow(async () => {
     setIsSelect(false);
-    setHasMore(true);
-    await loadPosts(1, true, '');
-    setImgUrl([]);
+    if (!hasLoadedPosts.current) {
+      hasLoadedPosts.current = true;
+      setHasMore(true);
+      await loadPosts(1, true, '');
+      setImgUrl([]);
+    }
   });
 
   useEffect(() => {
@@ -257,12 +259,15 @@ const Index = () => {
     }
   };
 
+  // 限制展示的帖子数量
+  const visiblePostList = doorStatus !== 'pass' ? PostList?.slice(0, 3) : PostList;
+
   return (
     <>
       <NavigationBarTabBar backgroundColor="#FFFFFF" title="发现" />
       <View className="blog-page">
         <ScrollTop setScrollTop={setScrollTop} isVisible={showScrollTop} bottom={150} />
-        <AddPostButton setIsVisiable={setIsAlbumVisiable} />
+        {doorStatus === 'pass' && <AddPostButton setIsVisiable={setIsAlbumVisiable} />}
         <ImagePicker
           isVisiable={isAlbumVisiable}
           setIsVisiable={setIsAlbumVisiable}
@@ -325,9 +330,9 @@ const Index = () => {
           refresherBackground="#f9f8fc"
         >
           <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-            {PostList === null
+            {visiblePostList === null
               ? null
-              : PostList.map((item, index) => (
+              : visiblePostList.map((item, index) => (
                   <View
                     key={index}
                     id={`post-item-${index}`}

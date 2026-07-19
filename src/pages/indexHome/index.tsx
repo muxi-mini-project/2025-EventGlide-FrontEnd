@@ -11,7 +11,6 @@ import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import IndexPageNull from '@/modules/EmptyComponent/components/indexpagenull';
 import { filterActivity, getActivityList, searchActivityList } from '@/common/api';
 import ScrollTop from '@/modules/ScrollTop/components/ScrollTop';
-import withDoorGuard from '@/common/hoc';
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);

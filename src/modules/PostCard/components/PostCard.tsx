@@ -4,12 +4,9 @@ import Taro, { navigateTo } from '@tarojs/taro';
 import favorite from '@/common/svg/post/heart.svg';
 import favoriteActive from '@/common/svg/post/likeicon.svg';
 import { memo, useState, useEffect } from 'react';
-import usePostStore from '@/store/PostStore';
 import handleInteraction from '@/common/utils/Interaction';
-import { imageCache } from '@/common/utils/imageCache';
 
-const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
-  const { setPostIndex } = usePostStore();
+const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
   const [islike, setIsLike] = useState(item.isLike === 'true');
   const [likeNum, setLikeNum] = useState(item.likeNum);
   const [localImageUrl, setLocalImageUrl] = useState<string>('');
@@ -20,20 +17,20 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
     setLikeNum(item.likeNum);
   }, [item]);
 
-  // 加载图片缓存
-  /*   useEffect(() => {
+  // 只有在可见时才加载图片资源
+  useEffect(() => {
     if (!isShowImg || !item.showImg || item.showImg.length === 0) {
       setIsLoading(false);
+      setLocalImageUrl('');
       return;
     }
 
-    const loadImage = async () => {
+    /* const loadImage = async () => {
       setIsLoading(true);
       const imageUrl = item.showImg[0];
 
       try {
         const cachedUrl = await imageCache.getImage(imageUrl);
-
         setLocalImageUrl(cachedUrl);
       } catch (error) {
         setLocalImageUrl(imageUrl);
@@ -42,8 +39,8 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
       }
     };
 
-    loadImage();
-  }, [isShowImg, item.showImg]); */
+    loadImage(); */
+  }, [isShowImg, item.showImg]);
 
   const handleFavorite = async () => {
     const params = {
@@ -84,17 +81,19 @@ const PostCard: React.FC<any> = memo(function ({ item, index, isShowImg }) {
         style={{ maxHeight: '500rpx', overflow: 'hidden' }}
         onClick={() => {
           navigateTo({ url: '/subpackage/postDetail/index' });
-          setPostIndex(index);
         }}
       >
         {isShowImg ? (
-          <Image
-            className="img"
-            mode="widthFix"
-            lazyLoad={true}
-            src={localImageUrl || item.showImg[0]}
-            onLoad={() => setIsLoading(false)}
-          ></Image>
+          <View>
+            <Image
+              className="img"
+              mode="widthFix"
+              lazyLoad={true}
+              src={localImageUrl || item.showImg[0]}
+              onLoad={() => setIsLoading(false)}
+            ></Image>
+            {isLoading && <View className="image-loader"></View>}
+          </View>
         ) : (
           <View className="image-loader"></View>
         )}

@@ -16,7 +16,7 @@ import PostCard from '@/modules/PostCard';
 import usePostStore from '@/store/PostStore';
 import ActivityModal from '@/modules/ActivityModal';
 import MinePageNull from '@/modules/EmptyComponent/components/minepagenull';
-import withDoorGuard from '@/common/hoc';
+import useDoorStore from '@/store/DoorStote';
 
 const Index = () => {
   const [activePage, setActivePage] = useState<'activity' | 'post'>('post');
@@ -36,6 +36,7 @@ const Index = () => {
   const [hasMore, setHasMore] = useState(true);
   const LIMIT = 10;
   const BUFFER = 300;
+  const { doorStatus } = useDoorStore();
 
   // 活动相关状态
   const [activityPage, setActivityPage] = useState(1);
@@ -304,39 +305,47 @@ const Index = () => {
           </View>
         </View>
 
-        <View className="mine-content">
-          {activePage === 'post' ? (
-            minePostList.length === 0 ? (
-              <MinePageNull />
+        {doorStatus === 'pass' ? (
+          <View className="mine-content">
+            {activePage === 'post' ? (
+              minePostList.length === 0 ? (
+                <MinePageNull />
+              ) : (
+                <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
+                  <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
+                    {minePostList.map((item, index) => (
+                      <View
+                        key={index}
+                        id={`post-item-${index}`}
+                        onClick={() => {
+                          setPostIndex(item.id);
+                          setBackPage('mineHome');
+                        }}
+                      >
+                        <PostCard
+                          item={item}
+                          index={index}
+                          isShowImg={isShowList.includes(index)}
+                        />
+                      </View>
+                    ))}
+                  </GridView>
+                </View>
+              )
             ) : (
-              <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
-                <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-                  {minePostList.map((item, index) => (
-                    <View
-                      key={index}
-                      id={`post-item-${index}`}
-                      onClick={() => {
-                        setPostIndex(item.id);
-                        setBackPage('mineHome');
-                      }}
-                    >
-                      <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
-                    </View>
-                  ))}
-                </GridView>
-              </View>
-            )
-          ) : (
-            <MyActivityTab
-              activeIndex={activeIndex}
-              setIsShowActivityWindow={setIsShowActivityWindow}
-              userActivityList={mineActivityList}
-              onLoadMore={loadMoreActivities}
-              hasMore={activityHasMore}
-              loading={activityLoading}
-            />
-          )}
-        </View>
+              <MyActivityTab
+                activeIndex={activeIndex}
+                setIsShowActivityWindow={setIsShowActivityWindow}
+                userActivityList={mineActivityList}
+                onLoadMore={loadMoreActivities}
+                hasMore={activityHasMore}
+                loading={activityLoading}
+              />
+            )}
+          </View>
+        ) : (
+          <MinePageNull />
+        )}
       </ScrollView>
       <ActivityModal
         isShowActivityWindow={isShowActivityWindow}

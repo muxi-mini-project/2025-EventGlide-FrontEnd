@@ -27,32 +27,31 @@ class ApiRequest {
   }
 
   async request<T>(config: RequestConfig): Promise<ApiResponse<T>> {
+    const headers: Record<string, string> = {
+      ContentType: 'application/json;charse=UTF-8',
+      ...config.header,
+    };
+
+    if (
+      !config.skipAuth &&
+      !config.url.includes('/user/login') &&
+      !config.url.includes('/checkStatus')
+    ) {
+      const token = await this.getToken();
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+    }
+
+    let url = this.baseURL + config.url;
+
+    if (config.params) {
+      const queryString = Object.keys(config.params)
+        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(config.params[key])}`)
+        .join('&');
+      url += (url.includes('?') ? '&' : '?') + queryString;
+    }
     try {
-      const headers: Record<string, string> = {
-        ContentType: 'application/json;charse=UTF-8',
-        ...config.header,
-      };
-
-      if (
-        !config.skipAuth &&
-        !config.url.includes('/user/login') &&
-        !config.url.includes('/checkStatus')
-      ) {
-        const token = await this.getToken();
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
-      }
-
-      let url = this.baseURL + config.url;
-
-      if (config.params) {
-        const queryString = Object.keys(config.params)
-          .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(config.params[key])}`)
-          .join('&');
-        url += (url.includes('?') ? '&' : '?') + queryString;
-      }
-
       const response = await Taro.request({
         url,
         method: config.method || 'GET',

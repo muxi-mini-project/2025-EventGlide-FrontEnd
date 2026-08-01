@@ -8,14 +8,27 @@ import AddHome from '@/pages/addHome';
 import PostHome from '@/pages/postHome';
 import MineHome from '@/pages/mineHome';
 import './index.scss';
+import { apiClient } from '@/common/api';
+import { CheckLoginResponse } from '@/common/types';
 
 function MainPage() {
   useDidShow(() => {
+    const checkTokendate = async (sid: string) => {
+      try {
+        const result = await apiClient.get<CheckLoginResponse>(`/user/info/${sid}`);
+        console.log(result.data);
+      } catch (error) {
+        Taro.reLaunch({ url: '/pages/login/index' });
+      }
+    };
     const checkToken = () => {
       try {
         const token = Taro.getStorageSync('token');
-        if (!token) {
+        const sid = Taro.getStorageSync('sid');
+        if (!token || !sid) {
           Taro.reLaunch({ url: '/pages/login/index' });
+        } else {
+          checkTokendate(sid);
         }
       } catch (error) {
         Taro.reLaunch({ url: '/pages/login/index' });

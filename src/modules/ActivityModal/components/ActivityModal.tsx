@@ -93,6 +93,8 @@ const ActivityModal: React.FC<{
           <ActivityFooter
             isCollect={activeItem.isCollect}
             favorNum={activeItem.collectNum}
+            isLike={activeItem.isLike}
+            likeNum={activeItem.likeNum}
             commentNum={activeItem.commentNum}
             setShowPostWindow={props.setShowPostWindow}
           />

@@ -188,10 +188,9 @@ const Index = () => {
   };
 
   return (
-    <>
+    <View className="add-label">
       <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
-      <View className="add-label">
-        <Form onSubmit={handleFormSubmitEvent}>
+        <Form className="add-label-form-wrapper" onSubmit={handleFormSubmitEvent}>
           <View className="add-label-form-container">
             <View className="add-label-title">{title}</View>
             {formList.map((item, index) => (
@@ -266,8 +265,7 @@ const Index = () => {
             setActiveForm={updateActiveForm}
           ></FormPicker>
         )}
-      </View>
-    </>
+    </View>
   );
 };
 

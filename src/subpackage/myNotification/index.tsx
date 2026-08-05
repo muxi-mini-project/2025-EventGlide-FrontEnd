@@ -16,7 +16,7 @@ import { getActivityById } from '@/common/api/Activity';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
   const { setSelectedItem, setSelectComment } = useActivityStore();
-  const { setPostList, setPostIndex, setSelectCommentPost } = usePostStore();
+  const { setSelectPostList, setPostIndex, setSelectCommentPost } = usePostStore();
   const handleClick = async (props: LetterType) => {
     console.log(props);
     try {
@@ -30,7 +30,7 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
         console.log(res);
         const post = [] as any[];
         post.push(res.data);
-        setPostList(post);
+        setSelectPostList(post);
         setPostIndex(res.data.id);
         navigateTo({ url: '/subpackage/postDetail/index' });
       } else if (props.Subject === 'comment' && props.RootID) {
@@ -46,7 +46,7 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
           setSelectCommentPost(props.TargetId);
           const post = [] as any[];
           post.push(res.data);
-          setPostList(post);
+          setSelectPostList(post);
           setPostIndex(res.data.id);
           navigateTo({ url: '/subpackage/postDetail/index' });
         }

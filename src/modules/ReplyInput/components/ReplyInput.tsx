@@ -61,6 +61,8 @@ const ReplyInput: React.FC<ReplyInputProps> = memo(({ ...props }) => {
             onInput={(e: any) => setReplyText(e?.detail?.value ?? '')}
             wrapperStyle={{ border: 'none' }}
             focus={true}
+            adjustPosition={true}
+            cursorSpacing={80}
             onConfirm={() => handleSubmit()}
             autoHeight={true}
             maxLength={140}

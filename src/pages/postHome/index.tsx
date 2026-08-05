@@ -8,7 +8,7 @@ import ImagePicker from '@/modules/ImagePicker';
 import searchpic from '@/common/svg/Postlist/搜索.svg';
 import Info from '@/common/svg/Post/info.svg';
 import usePostStore from '@/store/PostStore';
-import { get } from '@/common/api/request';
+import { get, post } from '@/common/api/request';
 import useActivityStore from '@/store/ActivityStore';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import { getPostList, searchPostList } from '@/common/api';
@@ -26,7 +26,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { showImg: imgUrl, setImgUrl } = usePostStore();
-  const { PostList, setPostList, setBackPage, setPostIndex } = usePostStore();
+  const { PostList, setPostList, setSelectPostList, setBackPage, setPostIndex } = usePostStore();
   const { setIsSelect } = useActivityStore();
   const [msgCount, setMsgCount] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -63,8 +63,10 @@ const Index = () => {
     const list = res.data.details || [];
     if (refresh) {
       setPostList(list);
+      setSelectPostList(list);
     } else {
       setPostList([...PostList, ...list]);
+      setSelectPostList([...PostList, ...list]);
     }
     setPage(page);
     if (res.data.total !== undefined) {
@@ -337,6 +339,7 @@ const Index = () => {
                     key={index}
                     id={`post-item-${index}`}
                     onClick={() => {
+                      setSelectPostList(PostList);
                       setPostIndex(item.id);
                       setBackPage('postHome');
                     }}

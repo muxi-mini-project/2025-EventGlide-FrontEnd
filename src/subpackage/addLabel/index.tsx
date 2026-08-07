@@ -252,19 +252,17 @@ const Index = () => {
           setShowPostWindow={setShowPostWindow}
         ></ActivityModal>
 
-        {showFormWindow && (
-          <FormPicker
-            type={typeChoice(showFormIndex)}
-            options={formList[showFormIndex].options ?? []}
-            isVisiable={showFormWindow}
-            showFormIndex={showFormIndex}
-            setIsVisiable={setShowFormWindow}
-            formValue={formValue}
-            setFormValue={setFormValue}
-            activeForm={activeForm}
-            setActiveForm={updateActiveForm}
-          ></FormPicker>
-        )}
+        <FormPicker
+          type={typeChoice(showFormIndex)}
+          options={formList[showFormIndex]?.options ?? []}
+          isVisiable={showFormWindow}
+          showFormIndex={showFormIndex}
+          setIsVisiable={setShowFormWindow}
+          formValue={formValue}
+          setFormValue={setFormValue}
+          activeForm={activeForm}
+          setActiveForm={updateActiveForm}
+        ></FormPicker>
     </View>
   );
 };

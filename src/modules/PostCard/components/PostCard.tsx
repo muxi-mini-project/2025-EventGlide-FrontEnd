@@ -5,17 +5,47 @@ import favorite from '@/common/svg/post/heart.svg';
 import favoriteActive from '@/common/svg/post/likeicon.svg';
 import { memo, useState, useEffect } from 'react';
 import handleInteraction from '@/common/utils/Interaction';
+import usePostStore from '@/store/PostStore';
 
 const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
-  const [islike, setIsLike] = useState(item.isLike === 'true');
-  const [likeNum, setLikeNum] = useState(item.likeNum);
+  // const [islike, setIsLike] = useState(item.isLike === 'true');
+  // const [likeNum, setLikeNum] = useState(item.likeNum);
   const [localImageUrl, setLocalImageUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const studentId = Taro.getStorageSync('sid');
-  useEffect(() => {
-    setIsLike(item.isLike === 'true');
-    setLikeNum(item.likeNum);
-  }, [item]);
+
+  const { setLikeNumChange, setCollectNumChange } = usePostStore((state) => state);
+  const params = {
+    subject: 'post',
+    studentId: studentId,
+    targetId: item.id,
+  };
+  const handleLike = async () => {
+    if (item.isLike === 'true') {
+      try {
+        const res = await handleInteraction('dislike', params);
+        if (res.msg === 'success') {
+          setLikeNumChange(item, 0);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else if (item.isLike === 'false') {
+      try {
+        const res = await handleInteraction('like', params);
+        console.log(res);
+        if (res.msg === 'success') {
+          setLikeNumChange(item, 1);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+  // useEffect(() => {
+  //   setIsLike(item.isLike === 'true');
+  //   setLikeNum(item.likeNum);
+  // }, [item]);
 
   // 只有在可见时才加载图片资源
   useEffect(() => {
@@ -49,13 +79,13 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
       targetId: item.id,
       receiver: item.userInfo.studentId,
     };
-    if (islike) {
+    if (item.isCollect === 'true') {
       try {
         const res = await handleInteraction('dislike', params);
         if (res.msg === 'success') {
-          setIsLike(false);
-          setLikeNum(likeNum - 1);
+          setCollectNumChange(item, 0);
         }
+
       } catch (err) {
         console.log(err);
       }
@@ -63,8 +93,7 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
       try {
         const res = await handleInteraction('like', params);
         if (res.msg === 'success') {
-          setIsLike(true);
-          setLikeNum(likeNum + 1);
+          handleLike();
         }
       } catch (err) {
         console.log(err);
@@ -110,11 +139,11 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
           <View className="post-favorite">
             <Image
               className="avatar"
-              src={islike ? favoriteActive : favorite}
+              src={item.isLike === 'true' ? favoriteActive : favorite}
               mode="widthFix"
               onClick={() => handleFavorite()}
             ></Image>
-            <View className="count">{likeNum}</View>
+            <View className="count">{item.likeNum}</View>
           </View>
         </View>
       </View>

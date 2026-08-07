@@ -52,7 +52,7 @@ export interface LetterType {
   FirstPic?: string;
   Message: string;
   PublishedAt: string;
-  Status: string;
+  status: string;
   TargetId: string;
   RootType?: string;
   RootID?: string;

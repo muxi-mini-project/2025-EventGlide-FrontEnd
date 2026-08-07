@@ -13,72 +13,131 @@ import useActivityStore from '@/store/ActivityStore';
 import usePostStore from '@/store/PostStore';
 import { getPostById } from '@/common/api/PostRequest';
 import { getActivityById } from '@/common/api/Activity';
+import handleInteraction from '@/common/utils/Interaction';
+import ConfirmModal from '@/modules/ConfirmModal';
+import Message from '@/common/components/Message';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
   const { setSelectedItem, setSelectComment } = useActivityStore();
   const { setSelectPostList, setPostIndex, setSelectCommentPost } = usePostStore();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const handleItemClick = (item: LetterType) => {
+    if (item.status === 'pending') {
+      setShowConfirmModal(true);
+    }
+  };
+
   const handleClick = async (props: LetterType) => {
     console.log(props);
-    try {
-      if (props.Subject === 'activity') {
-        const res = await getActivityById(props.TargetId);
-        console.log(res);
-        setSelectedItem(res.data);
-        navigateTo({ url: '/subpackage/actComment/index' });
-      } else if (props.Subject === 'post') {
-        const res = await getPostById(props.TargetId);
-        console.log(res);
-        const post = [] as any[];
-        post.push(res.data);
-        setSelectPostList(post);
-        setPostIndex(res.data.id);
-        navigateTo({ url: '/subpackage/postDetail/index' });
-      } else if (props.Subject === 'comment' && props.RootID) {
-        if (props.RootType === 'activity') {
-          const res = await getActivityById(props.RootID);
+    if (props.status === 'pending') {
+      handleItemClick(props);
+    } else {
+      try {
+        if (props.Subject === 'activity') {
+          const res = await getActivityById(props.TargetId);
           console.log(res);
-          setSelectComment(props.TargetId);
           setSelectedItem(res.data);
           navigateTo({ url: '/subpackage/actComment/index' });
-        } else if (props.RootType === 'post') {
-          const res = await getPostById(props.RootID);
+        } else if (props.Subject === 'post') {
+          const res = await getPostById(props.TargetId);
           console.log(res);
-          setSelectCommentPost(props.TargetId);
           const post = [] as any[];
           post.push(res.data);
           setSelectPostList(post);
           setPostIndex(res.data.id);
           navigateTo({ url: '/subpackage/postDetail/index' });
+        } else if (props.Subject === 'comment' && props.RootID) {
+          if (props.RootType === 'activity') {
+            const res = await getActivityById(props.RootID);
+            console.log(res);
+            setSelectComment(props.TargetId);
+            setSelectedItem(res.data);
+            navigateTo({ url: '/subpackage/actComment/index' });
+          } else if (props.RootType === 'post') {
+            const res = await getPostById(props.RootID);
+            console.log(res);
+            setSelectCommentPost(props.TargetId);
+            const post = [] as any[];
+            post.push(res.data);
+            setSelectPostList(post);
+            setPostIndex(res.data.id);
+            navigateTo({ url: '/subpackage/postDetail/index' });
+          }
         }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+  const approveInvitation = async (props: LetterType) => {
+    console.log(props);
+    try {
+      const res = await handleInteraction('approve', {
+        subject: props.Subject,
+        targetId: props.TargetId,
+      });
+      console.log(res);
+      if (res.code === 200) {
+        Message.success('同意成功');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const rejectInvitation = async (props: LetterType) => {
+    console.log(props);
+    try {
+      const res = await handleInteraction('reject', {
+        subject: props.Subject,
+        targetId: props.TargetId,
+      });
+      console.log(res);
+      if (res.code === 200) {
+        Message.success('拒绝成功');
       }
     } catch (error) {
       console.log(error);
     }
   };
   return (
-    <View className="letter-list-item">
-      <Image
-        src={props.Userinfo.Avatar}
-        mode="aspectFill"
-        className="letter-list-item-avatar"
-        lazyLoad={true}
-        onClick={() => {
-          Taro.setStorageSync('targetUser', props.Userinfo.StudentID);
-          navigateTo({ url: '/subpackage/otherUser/index' });
-        }}
-      ></Image>
-      <View className="letter-list-item-content">
-        <View className="letter-list-item-content-username">{props.Userinfo.Username}</View>
-        <View className="letter-list-item-content-message">{props.Message}</View>
-        <View className="letter-list-item-content-message">{formatTime(props.PublishedAt)}</View>
+    <>
+      <View className="letter-list-item" onClick={() => handleItemClick(props)}>
+        <Image
+          src={props.Userinfo.Avatar}
+          mode="aspectFill"
+          className="letter-list-item-avatar"
+          lazyLoad={true}
+          onClick={(event) => {
+            event.stopPropagation();
+            Taro.setStorageSync('targetUser', props.Userinfo.StudentID);
+            navigateTo({ url: '/subpackage/otherUser/index' });
+          }}
+        ></Image>
+        <View className="letter-list-item-content">
+          <View className="letter-list-item-content-username">{props.Userinfo.Username}</View>
+          <View className="letter-list-item-content-message">{props.Message}</View>
+          <View className="letter-list-item-content-message">{formatTime(props.PublishedAt)}</View>
+        </View>
+        <Image
+          mode="aspectFill"
+          src={props.FirstPic || props.Userinfo.Avatar}
+          className="letter-list-item-decPic"
+          onClick={(event) => {
+            event.stopPropagation();
+            handleClick(props);
+          }}
+        ></Image>
       </View>
-      <Image
-        mode="aspectFill"
-        src={props.FirstPic || props.Userinfo.Avatar}
-        className="letter-list-item-decPic"
-        onClick={() => handleClick(props)}
-      ></Image>
-    </View>
+      <ConfirmModal
+        title="是否同意该邀请？"
+        visible={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={() => approveInvitation(props)}
+        onReject={() => rejectInvitation(props)}
+        headerClassName="textmid"
+      />
+    </>
   );
 });
 
@@ -97,17 +156,22 @@ const Index = () => {
     try {
       const res: any = await get<GetNotificationListReponse>('/feed/list');
       console.log('通知列表', res.data);
+      const invitations: any = await get<GetNotificationListReponse>('/feed/auditor');
+      console.log('邀请列表', invitations.data);
+      const invitationsList = invitations.data?.Invitations || [];
       const likes = res.data?.Likes || [];
       const collects = res.data.Collects || [];
       const mergedFavor = mergeSortedArrays(likes, collects);
-      setFavor(mergedFavor);
+      const favorWithInvitations = mergeSortedArrays(mergedFavor, invitationsList);
+      console.log('合并后的通知列表', favorWithInvitations);
+      setFavor(favorWithInvitations);
       readnotice(mergedFavor);
 
       const comments = res.data?.Comments || [];
       const ats = res.data.Ats || [];
       const mergedLetter = mergeSortedArrays(comments, ats);
       setLetter(mergedLetter);
-      if (mergedLetter[0] && mergedLetter[0].Status === '未读') {
+      if (mergedLetter[0] && mergedLetter[0].status === '未读') {
         setNotice(true);
       }
     } catch (err) {

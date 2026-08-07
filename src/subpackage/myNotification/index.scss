@@ -30,6 +30,7 @@
   border-bottom: 2rpx solid #f1eefc;
   &-avatar {
     position: absolute;
+    z-index: 1;
     width: 100rpx;
     height: 100rpx;
     top: 50%;
@@ -54,6 +55,7 @@
   }
   &-decPic {
     position: absolute;
+    z-index: 1;
     top: 50%;
     transform: translateY(-50%);
     right: 25rpx;

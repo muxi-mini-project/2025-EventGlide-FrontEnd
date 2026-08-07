@@ -22,6 +22,9 @@ const Modal: React.FC<ModalProps> = memo(({ ...props }) => {
   };
 
   const handleCancel = () => {
+    if (props.onCancel) {
+      props.onCancel();
+    }
     props.onClose();
   };
 

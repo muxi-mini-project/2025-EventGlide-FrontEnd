@@ -93,6 +93,7 @@ const CustomInput: React.FC<CustomInputProps> = memo(({ ...props }) => {
           maxlength={maxLength}
           focus={focus}
           autoHeight={autoHeight}
+          adjustPosition={adjustPosition}
           showConfirmBar={showConfirmBar}
           selectionStart={selectionStart}
           selectionEnd={selectionEnd}

@@ -31,7 +31,7 @@ const Index = () => {
   const { avatar } = useUserStore((state) => state);
   const studentId = Taro.getStorageSync('sid');
   const {
-    PostList,
+    selectPostList,
     PostIndex,
     setCommentNumChange,
     backPage,
@@ -58,8 +58,8 @@ const Index = () => {
   const { setLikeNumChange, setCollectNumChange } = usePostStore((state) => state);
   const windowWidth = Taro.getWindowInfo().windowWidth;
   const windowHeight = Taro.getWindowInfo().windowHeight;
-  const Item = PostList[PostIndex];
-  console.log(PostList, PostIndex, Item);
+  const Item = selectPostList[PostIndex];
+  console.log('postDetail', selectPostList, PostIndex, Item);
   const params = {
     subject: 'post',
     studentId: studentId,

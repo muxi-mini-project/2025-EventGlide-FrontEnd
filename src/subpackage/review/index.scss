@@ -5,6 +5,11 @@
   margin-top: 180rpx;
   background-color: #f9f8fc;
   position: relative;
+  overflow: hidden;
+
+  &-scroll {
+    height: 100%;
+  }
 
   &-state {
     position: absolute;

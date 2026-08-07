@@ -4,6 +4,8 @@ import { memo } from 'react';
 import { navigateTo } from '@tarojs/taro';
 import favor from '@/common/svg/post/star.svg';
 import favorAct from '@/common/svg/post/starAct.svg';
+import like from '@/common/svg/post/heart.svg';
+import likeAct from '@/common/svg/post/heartAct.svg';
 import commentPic from '@/common/svg/post/comment.svg';
 import useActivityStore from '@/store/ActivityStore';
 import useUserStore from '@/store/userStore';
@@ -13,10 +15,12 @@ const ActivityFooter: React.FC<{
   favorNum: number;
   commentNum: number;
   isCollect: string;
+  likeNum: number;
+  isLike: string;
   setShowPostWindow: (show: boolean) => void;
 }> = memo(({ ...props }) => {
   const { studentId } = useUserStore((state) => state);
-  const { setCollectNumChange, selectedItem, setSelectedItem } = useActivityStore();
+  const { setCollectNumChange, setLikeNumChange, selectedItem, setSelectedItem } = useActivityStore();
   const params = {
     studentId: studentId,
     subject: 'activity',
@@ -54,9 +58,48 @@ const ActivityFooter: React.FC<{
       }
     }
   };
-
+  const handleLike = async () => {
+    if (selectedItem.isLike === 'true') {
+      try {
+        const res = await handleInteraction('dislike', params);
+        if (res.msg === 'success') {
+          setLikeNumChange(selectedItem.id, 'reduce');
+          setSelectedItem({
+            ...selectedItem,
+            isLike: 'false',
+            likeNum: selectedItem.likeNum - 1,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else if (selectedItem.isLike === 'false') {
+      try {
+        const res = await handleInteraction('like', params);
+        if (res.msg === 'success') {
+          setLikeNumChange(selectedItem.id, 'add');
+          setSelectedItem({
+            ...selectedItem,
+            isLike: 'true',
+            likeNum: selectedItem.likeNum + 1,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
   return (
     <View className="activity-content-footer" onClick={(e) => e.stopPropagation()}>
+      <View className="activity-content-footer-item">
+        <Image
+          onClick={handleLike}
+          src={props.isLike === 'true' ? likeAct : like}
+          className="pwfai-img"
+          style={'width: 36rpx;'}
+        ></Image>
+        <View>{props.likeNum}</View>
+      </View>
       <View className="activity-content-footer-item">
         <Image
           src={props.isCollect === 'true' ? favorAct : favor}
@@ -78,6 +121,8 @@ const ActivityFooter: React.FC<{
         ></Image>
         <View>{props.commentNum}</View>
       </View>
+
+
     </View>
   );
 });

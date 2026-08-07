@@ -11,6 +11,8 @@ export interface ModalProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
+  /** 点击取消按钮时触发；未传入时仅执行 onClose */
+  onCancel?: () => void;
   /** 是否显示取消按钮 */
   showCancel?: boolean;
   /** 是否显示确认按钮 */
@@ -147,11 +149,11 @@ export interface ImagePickerProps {
   isRequest?: boolean;
 }
 
-export interface ConfirmModalProps extends Pick<
-  ModalProps,
-  'visible' | 'onClose' | 'onConfirm' | 'title'
-> {
+export interface ConfirmModalProps
+  extends Pick<ModalProps, 'visible' | 'onClose' | 'onConfirm' | 'title'> {
   headerClassName?: string;
+  /** 点击拒绝按钮时触发；关闭图标和遮罩不会触发 */
+  onReject?: () => void;
 }
 
 export interface AddPeopleProps {

@@ -24,7 +24,7 @@ const Index = () => {
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const [showNavBar, setShowNavBar] = useState(true); // 控制导航栏显示/隐藏
-  const { setPostIndex, setBackPage } = usePostStore();
+  const { setPostIndex, setBackPage, setSelectPostList } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
   const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
     useUserStore();
@@ -264,12 +264,12 @@ const Index = () => {
             >
               活动
             </View>
-            {/* <View
+            <View
               className="mine-order-title-choice-check"
               onClick={() => navigateTo({ url: '/subpackage/review/index' })}
             >
               审核
-            </View> */}
+            </View>
             <Image
               onClick={() => navigateTo({ url: '/subpackage/mySearch/index' })}
               className="mine-order-title-choice-img"
@@ -313,22 +313,27 @@ const Index = () => {
               ) : (
                 <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
                   <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-                    {minePostList.map((item, index) => (
-                      <View
-                        key={index}
-                        id={`post-item-${index}`}
-                        onClick={() => {
-                          setPostIndex(item.id);
-                          setBackPage('mineHome');
-                        }}
-                      >
-                        <PostCard
-                          item={item}
-                          index={index}
-                          isShowImg={isShowList.includes(index)}
-                        />
-                      </View>
-                    ))}
+                    {minePostList.map((item, index) => {
+                      if (!item) return null;
+
+                      return (
+                        <View
+                          key={item.id ?? index}
+                          id={`post-item-${index}`}
+                          onClick={() => {
+                            setSelectPostList(minePostList);
+                            setPostIndex(item.id);
+                            setBackPage('mineHome');
+                          }}
+                        >
+                          <PostCard
+                            item={item}
+                            index={index}
+                            isShowImg={isShowList.includes(index)}
+                          />
+                        </View>
+                      );
+                    })}
                   </GridView>
                 </View>
               )

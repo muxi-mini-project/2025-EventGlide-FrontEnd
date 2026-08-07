@@ -7,12 +7,14 @@ interface PostStoreType {
   introduce: string;
   studentId: string;
   PostList: PostDetailInfo[];
+  selectPostList: PostDetailInfo[];
   PostIndex: number;
   backPage: string;
   selectCommentPost: string;
   setSelectCommentPost: (bid: string) => void;
   setBackPage: (page: string) => void;
   setPostList: (PostList: PostDetailInfo[]) => void;
+  setSelectPostList: (PostList: PostDetailInfo[]) => void;
   setPostIndex: (bid: string) => void;
   setLikeNumChange: (blog: PostDetailInfo, type: number) => void;
   setCollectNumChange: (blog: PostDetailInfo, type: number) => void;
@@ -28,19 +30,21 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   introduce: '',
   studentId: '',
   PostList: [],
+  selectPostList: [],
   PostIndex: -1,
   backPage: '',
   selectCommentPost: '',
   setSelectCommentPost: (bid) => set(() => ({ selectCommentPost: bid })),
   setBackPage: (page) => set(() => ({ backPage: page })),
   setPostList: (PostList) => set(() => ({ PostList })),
+  setSelectPostList: (PostList) => set(() => ({ selectPostList: PostList })),
   setPostIndex: (bid) => {
-    const currentPostList = get().PostList;
+    const currentPostList = get().selectPostList;
     const index = currentPostList.findIndex((b) => b.id === bid); // 找到 bid 对应的索引
     set(() => ({ PostIndex: index }));
   },
   setLikeNumChange: (blog, type) => {
-    const currentPostList = get().PostList;
+    const currentPostList = get().selectPostList;
     const updatedPostList = currentPostList.map((b) => {
       if (b.id === blog.id) {
         return {
@@ -51,10 +55,10 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       }
       return b;
     });
-    set(() => ({ PostList: updatedPostList }));
+    set(() => ({ selectPostList: updatedPostList }));
   },
   setCollectNumChange: (blog, type) => {
-    const currentPostList = get().PostList;
+    const currentPostList = get().selectPostList;
     const updatedPostList = currentPostList.map((b) => {
       if (b.id === blog.id) {
         return {
@@ -65,14 +69,14 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       }
       return b;
     });
-    set(() => ({ PostList: updatedPostList }));
+    set(() => ({ selectPostList: updatedPostList }));
   },
   setPoststudentId: (id) => set(() => ({ studentId: id })),
   setImgUrl: (url) => set(() => ({ showImg: url })),
   setContent: (title, description, imgUrl) =>
     set(() => ({ title, introduce: description, showImg: imgUrl })),
   setCommentNumChange: (blog) => {
-    const currentPostList = get().PostList;
+    const currentPostList = get().selectPostList;
     const updatedPostList = currentPostList.map((b) => {
       if (b.id === blog.id) {
         return {
@@ -82,7 +86,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       }
       return b;
     });
-    set(() => ({ PostList: updatedPostList }));
+    set(() => ({ selectPostList: updatedPostList }));
   },
 }));
 

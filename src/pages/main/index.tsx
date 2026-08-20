@@ -48,14 +48,15 @@ function MainPage() {
   return (
     <View className="main-layout">
       <View className="page-container">
-        <View className="page active">
-          {pages[activeTab]}
-        </View>
+        {pages.map((page, i) => (
+          <View key={i} className={`page ${activeTab === i ? 'active' : ''}`}>
+            {page}
+          </View>
+        ))}
       </View>
 
       <CustomTabBar activeIndex={activeTab} onChange={setActiveTab} />
     </View>
   );
 }
-
 export default MainPage;

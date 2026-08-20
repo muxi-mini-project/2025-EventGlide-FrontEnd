@@ -188,10 +188,9 @@ const Index = () => {
   };
 
   return (
-    <>
+    <View className="add-label">
       <NavigationBarBack backgroundColor="#F9F8FC" title="添加" url="/pages/mineHome/index" />
-      <View className="add-label">
-        <Form onSubmit={handleFormSubmitEvent}>
+        <Form className="add-label-form-wrapper" onSubmit={handleFormSubmitEvent}>
           <View className="add-label-form-container">
             <View className="add-label-title">{title}</View>
             {formList.map((item, index) => (
@@ -253,21 +252,18 @@ const Index = () => {
           setShowPostWindow={setShowPostWindow}
         ></ActivityModal>
 
-        {showFormWindow && (
-          <FormPicker
-            type={typeChoice(showFormIndex)}
-            options={formList[showFormIndex].options ?? []}
-            isVisiable={showFormWindow}
-            showFormIndex={showFormIndex}
-            setIsVisiable={setShowFormWindow}
-            formValue={formValue}
-            setFormValue={setFormValue}
-            activeForm={activeForm}
-            setActiveForm={updateActiveForm}
-          ></FormPicker>
-        )}
-      </View>
-    </>
+        <FormPicker
+          type={typeChoice(showFormIndex)}
+          options={formList[showFormIndex]?.options ?? []}
+          isVisiable={showFormWindow}
+          showFormIndex={showFormIndex}
+          setIsVisiable={setShowFormWindow}
+          formValue={formValue}
+          setFormValue={setFormValue}
+          activeForm={activeForm}
+          setActiveForm={updateActiveForm}
+        ></FormPicker>
+    </View>
   );
 };
 

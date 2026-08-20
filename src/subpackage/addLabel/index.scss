@@ -1,25 +1,23 @@
 .add-label {
+  position: relative;
   width: 100%;
-  height: calc(100vh - 180rpx);
-  margin-top: 180rpx;
-  overflow-x: scroll;
+  min-height: 100vh;
+  padding-top: 180rpx;
   background-color: #f9f8fc;
-  display: flex;
-  flex-direction: column;
   font-family: SimHei;
-  align-items: center;
-  &-form-container {
+  &-form-wrapper {
     width: 100%;
-    height: calc(100vh - 340rpx);
-    overflow-x: scroll;
     display: flex;
     flex-direction: column;
     align-items: center;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    padding-bottom: 160rpx;
+  }
+
+  &-form-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   &-title {
     height: 120rpx;
@@ -36,17 +34,18 @@
     margin-bottom: 15rpx;
   }
   &-last {
-    @extend.add-label-title;
+    @extend .add-label-title;
     margin-bottom: 30rpx;
     font-size: 34rpx;
     padding-left: 20rpx;
   }
   &-floor {
-    width: 100%;
-    position: absolute;
+    position: fixed;
     bottom: 94rpx;
+    width: 100%;
     display: flex;
     align-items: center;
+    z-index: 10;
     &-draft {
       position: absolute;
       left: 30rpx;

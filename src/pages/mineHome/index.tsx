@@ -24,8 +24,38 @@ const Index = () => {
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const [showNavBar, setShowNavBar] = useState(true); // 控制导航栏显示/隐藏
-  const { setPostIndex, setBackPage } = usePostStore();
+  const { setPostIndex, setBackPage, PostList, postUpdates } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
+
+  useEffect(() => {
+    const hasUpdates = Object.keys(postUpdates).length > 0;
+    if (!hasUpdates && (!PostList || PostList.length === 0)) return;
+
+    setMinePostList((prev) =>
+      prev.map((item) => {
+        let merged = item;
+
+        if (postUpdates[item.id]) {
+          merged = { ...merged, ...postUpdates[item.id] };
+        }
+
+        if (PostList && PostList.length > 0) {
+          const updated = PostList.find((p) => p.id === item.id);
+          if (updated) {
+            merged = {
+              ...merged,
+              isLike: updated.isLike,
+              likeNum: updated.likeNum,
+              isCollect: updated.isCollect,
+              collectNum: updated.collectNum,
+            };
+          }
+        }
+
+        return merged;
+      })
+    );
+  }, [PostList, postUpdates]);
   const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
     useUserStore();
   const sid = Taro.getStorageSync('sid');
@@ -313,7 +343,7 @@ const Index = () => {
               ) : (
                 <View style={{ marginLeft: '30rpx', marginRight: '30rpx', marginTop: '5rpx' }}>
                   <GridView type="masonry" crossAxisGap={5} mainAxisGap={5}>
-                    {minePostList.map((item, index) => (
+                    {minePostList.filter(Boolean).map((item, index) => (
                       <View
                         key={index}
                         id={`post-item-${index}`}

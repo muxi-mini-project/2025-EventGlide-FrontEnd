@@ -14,7 +14,7 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
   const [isLoading, setIsLoading] = useState(true);
   const studentId = Taro.getStorageSync('sid');
 
-  const { setLikeNumChange, setCollectNumChange } = usePostStore((state) => state);
+  const { setLikeNumChange } = usePostStore((state) => state);
   const params = {
     subject: 'post',
     studentId: studentId,
@@ -72,34 +72,34 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
     loadImage(); */
   }, [isShowImg, item.showImg]);
 
-  const handleFavorite = async () => {
-    const params = {
-      subject: 'post',
-      studentId: studentId,
-      targetId: item.id,
-      receiver: item.userInfo.studentId,
-    };
-    if (item.isCollect === 'true') {
-      try {
-        const res = await handleInteraction('dislike', params);
-        if (res.msg === 'success') {
-          setCollectNumChange(item, 0);
-        }
+  // const handleFavorite = async () => {
+  //   const params = {
+  //     subject: 'post',
+  //     studentId: studentId,
+  //     targetId: item.id,
+  //     receiver: item.userInfo.studentId,
+  //   };
+  //   if (item.isCollect === 'true') {
+  //     try {
+  //       const res = await handleInteraction('dislike', params);
+  //       if (res.msg === 'success') {
+  //         setCollectNumChange(item, 0);
+  //       }
 
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const res = await handleInteraction('like', params);
-        if (res.msg === 'success') {
-          handleLike();
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   } else {
+  //     try {
+  //       const res = await handleInteraction('like', params);
+  //       if (res.msg === 'success') {
+  //         handleLike();
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }
+  // };
 
   return (
     <View className="post-container">
@@ -141,7 +141,7 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
               className="avatar"
               src={item.isLike === 'true' ? favoriteActive : favorite}
               mode="widthFix"
-              onClick={() => handleFavorite()}
+              onClick={() => handleLike()}
             ></Image>
             <View className="count">{item.likeNum}</View>
           </View>

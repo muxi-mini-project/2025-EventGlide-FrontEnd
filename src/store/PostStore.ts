@@ -9,6 +9,7 @@ interface PostStoreType {
   PostList: PostDetailInfo[];
   selectPostList: PostDetailInfo[];
   PostIndex: number;
+  postUpdates: Record<string, Partial<PostDetailInfo>>;
   backPage: string;
   selectCommentPost: string;
   setSelectCommentPost: (bid: string) => void;
@@ -31,6 +32,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   studentId: '',
   PostList: [],
   selectPostList: [],
+  postUpdates: {},
   PostIndex: -1,
   backPage: '',
   selectCommentPost: '',
@@ -55,7 +57,20 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       }
       return b;
     });
-    set(() => ({ selectPostList: updatedPostList }));
+    const postUpdates = { ...get().postUpdates };
+    const updatedItem = updatedPostList.find((b) => b.id === blog.id);
+    if (updatedItem) {
+      postUpdates[blog.id] = {
+        likeNum: updatedItem.likeNum,
+        isLike: updatedItem.isLike,
+      };
+    }
+
+    set(() => ({
+      PostList: updatedPostList,
+      selectPostList: updatedPostList,
+      postUpdates,
+    }));
   },
   setCollectNumChange: (blog, type) => {
     const currentPostList = get().selectPostList;
@@ -69,7 +84,20 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       }
       return b;
     });
-    set(() => ({ selectPostList: updatedPostList }));
+    const postUpdates = { ...get().postUpdates };
+    const updatedItem = updatedPostList.find((b) => b.id === blog.id);
+    if (updatedItem) {
+      postUpdates[blog.id] = {
+        collectNum: updatedItem.collectNum,
+        isCollect: updatedItem.isCollect,
+      };
+    }
+
+    set(() => ({
+      PostList: updatedPostList,
+      selectPostList: updatedPostList,
+      postUpdates,
+    }));
   },
   setPoststudentId: (id) => set(() => ({ studentId: id })),
   setImgUrl: (url) => set(() => ({ showImg: url })),
@@ -86,7 +114,19 @@ const usePostStore = create<PostStoreType>((set, get) => ({
       }
       return b;
     });
-    set(() => ({ selectPostList: updatedPostList }));
+    const postUpdates = { ...get().postUpdates };
+    const updatedItem = updatedPostList.find((b) => b.id === blog.id);
+    if (updatedItem) {
+      postUpdates[blog.id] = {
+        commentNum: updatedItem.commentNum,
+      };
+    }
+
+    set(() => ({
+      PostList: updatedPostList,
+      selectPostList: updatedPostList,
+      postUpdates,
+    }));
   },
 }));
 

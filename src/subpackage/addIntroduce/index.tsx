@@ -157,18 +157,16 @@ const Index = () => {
   };
 
   return (
-    <>
+    <View className="add-introduce">
       <NavigationBarBack
         backgroundColor="#F9F8FC"
         title="添加"
         url="/pages/mineHome/index"
         onBack={handleBack}
       />
-      <View>
-        <View className="add-introduce">
-          <View className="add-introduce-container">
-            <View className="add-introduce-container-title">{count}/1000</View>
-            <View className="add-introduce-container-content">
+      <View className="add-introduce-container">
+        <View className="add-introduce-container-title">{count}/1000</View>
+        <View className="add-introduce-container-content">
               <Textarea
                 style={
                   'color: #170A1E;font-family: SimHei;min-height: 50rpx;max-height: 100rpx;resize: none;'
@@ -221,7 +219,6 @@ const Index = () => {
             <View className="add-introduce-floor-btn" onClick={handleNextClick}>
               <Button {...btn} />
             </View>
-          </View>
         </View>
 
         {/* 草稿保存modal */}
@@ -264,8 +261,7 @@ const Index = () => {
           setImgUrl={setImgUrl}
           type={'event'}
         />
-      </View>
-    </>
+    </View>
   );
 };
 

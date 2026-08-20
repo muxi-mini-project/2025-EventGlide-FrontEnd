@@ -294,12 +294,12 @@ const Index = () => {
             >
               活动
             </View>
-            {/* <View
+            <View
               className="mine-order-title-choice-check"
               onClick={() => navigateTo({ url: '/subpackage/review/index' })}
             >
               审核
-            </View> */}
+            </View>
             <Image
               onClick={() => navigateTo({ url: '/subpackage/mySearch/index' })}
               className="mine-order-title-choice-img"

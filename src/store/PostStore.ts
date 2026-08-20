@@ -7,6 +7,7 @@ interface PostStoreType {
   introduce: string;
   studentId: string;
   PostList: PostDetailInfo[];
+  selectPostList: PostDetailInfo[];
   PostIndex: number;
   backPage: string;
   selectCommentPost: string;
@@ -14,6 +15,7 @@ interface PostStoreType {
   setSelectCommentPost: (bid: string) => void;
   setBackPage: (page: string) => void;
   setPostList: (PostList: PostDetailInfo[]) => void;
+  setSelectPostList: (PostList: PostDetailInfo[]) => void;
   setPostIndex: (bid: string) => void;
   setLikeNumChange: (blog: PostDetailInfo, type: number) => void;
   setCollectNumChange: (blog: PostDetailInfo, type: number) => void;
@@ -29,6 +31,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   introduce: '',
   studentId: '',
   PostList: [],
+  selectPostList: [],
   PostIndex: -1,
   backPage: '',
   selectCommentPost: '',
@@ -36,6 +39,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setSelectCommentPost: (bid) => set(() => ({ selectCommentPost: bid })),
   setBackPage: (page) => set(() => ({ backPage: page })),
   setPostList: (PostList) => set(() => ({ PostList })),
+  setSelectPostList: (PostList) => set(() => ({ selectPostList: PostList })),
   setPostIndex: (bid) => {
     const currentPostList = get().PostList;
     const index = currentPostList.findIndex((b) => b.id === bid);
@@ -100,7 +104,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setContent: (title, description, imgUrl) =>
     set(() => ({ title, introduce: description, showImg: imgUrl })),
   setCommentNumChange: (blog) => {
-    const currentPostList = get().PostList;
+    const currentPostList = get().selectPostList;
     const updatedPostList = currentPostList.map((b) => {
       if (b.id === blog.id) {
         return {

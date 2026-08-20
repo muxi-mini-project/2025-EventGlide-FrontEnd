@@ -392,7 +392,9 @@ const Index = () => {
               <View style={{ fontSize: 20, fontWeight: 400, color: '#170A1E' }}>
                 {selectedItem.title}
               </View>
-              <View style={{ fontSize: 16, fontWeight: 400, color: '#5E5064' }}>
+              <View
+                style={{ fontSize: 16, fontWeight: 400, color: '#5E5064', whiteSpace: 'pre-wrap' }}
+              >
                 {selectedItem.introduce}
               </View>
             </View>

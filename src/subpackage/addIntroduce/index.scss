@@ -1,15 +1,12 @@
 .add-introduce {
+  position: relative;
   width: 100%;
-  height: calc(100vh - 180rpx);
+  min-height: 100vh;
+  padding-top: 180rpx;
   background-color: #f9f8fc;
   font-family: SimHei;
-  position: relative;
-  margin-top: 180rpx;
-
   &-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    padding-bottom: 160rpx;
 
     &-title {
       margin-left: 72rpx;
@@ -21,12 +18,9 @@
     &-content {
       margin-left: 5%;
       margin-right: 5%;
-      margin-bottom: 180rpx;
       padding: 30rpx;
       background: #fff;
       border-radius: 16rpx;
-      max-height: calc(100% - 50rpx);
-      overflow-y: auto;
 
       &-title {
         font-size: 38rpx;
@@ -55,7 +49,6 @@
         margin-top: 40rpx;
         display: flex;
         flex-wrap: wrap;
-        overflow-x: scroll;
 
         &-add {
           width: 180rpx;
@@ -74,11 +67,12 @@
   }
 
   &-floor {
-    width: 100%;
-    position: absolute;
+    position: fixed;
     bottom: 94rpx;
+    width: 100%;
     display: flex;
     align-items: center;
+    z-index: 10;
 
     &-draft {
       position: absolute;

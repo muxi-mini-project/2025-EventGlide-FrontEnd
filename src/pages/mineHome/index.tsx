@@ -2,7 +2,7 @@ import { View, Image, ScrollView, GridView } from '@tarojs/components';
 import './index.scss';
 import { MyActivityTab } from '@/modules/MyPageContent';
 import Taro, { navigateTo, useDidShow } from '@tarojs/taro';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import arrowheadw from '@/common/svg/arrowhead/引导箭头-白.svg';
 import check from '@/common/svg/mineInfo/search.svg';
@@ -24,38 +24,24 @@ const Index = () => {
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const [showNavBar, setShowNavBar] = useState(true); // 控制导航栏显示/隐藏
-  const { setPostIndex, setBackPage, PostList, postUpdates } = usePostStore();
+  const { setPostIndex, setBackPage, postUpdates } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
+  const activeIndexRef = useRef(activeIndex);
+  activeIndexRef.current = activeIndex;
 
   useEffect(() => {
-    const hasUpdates = Object.keys(postUpdates).length > 0;
-    if (!hasUpdates && (!PostList || PostList.length === 0)) return;
-
-    setMinePostList((prev) =>
-      prev.map((item) => {
-        let merged = item;
-
-        if (postUpdates[item.id]) {
-          merged = { ...merged, ...postUpdates[item.id] };
-        }
-
-        if (PostList && PostList.length > 0) {
-          const updated = PostList.find((p) => p.id === item.id);
-          if (updated) {
-            merged = {
-              ...merged,
-              isLike: updated.isLike,
-              likeNum: updated.likeNum,
-              isCollect: updated.isCollect,
-              collectNum: updated.collectNum,
-            };
-          }
-        }
-
-        return merged;
-      })
-    );
-  }, [PostList, postUpdates]);
+    if (Object.keys(postUpdates).length === 0) return;
+    if (activePage !== 'post') return;
+    getMyPostList(activeIndexRef.current, LIMIT, 1).then((res) => {
+      if (res.data.details === null) {
+        setMinePostList([]);
+        return;
+      }
+      setMinePostList(res.data.details.map((item: unknown) => item as PostDetailInfo));
+      setPage(1);
+      setTotalPosts(res.data.total || 0);
+    });
+  }, [postUpdates]);
   const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
     useUserStore();
   const sid = Taro.getStorageSync('sid');

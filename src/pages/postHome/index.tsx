@@ -51,14 +51,14 @@ const Index = () => {
     const shouldSearch = searchKeyword !== '';
     const res = shouldSearch
       ? await searchPostList({
-          page: page,
-          limit: LIMIT,
-          name: searchKeyword,
-        })
+        page: page,
+        limit: LIMIT,
+        name: searchKeyword,
+      })
       : await getPostList({
-          page: page,
-          limit: LIMIT,
-        });
+        page: page,
+        limit: LIMIT,
+      });
     console.log(res);
     const list = res.data.details || [];
     if (refresh) {
@@ -335,18 +335,18 @@ const Index = () => {
             {visiblePostList === null
               ? null
               : visiblePostList.map((item, index) => (
-                  <View
-                    key={index}
-                    id={`post-item-${index}`}
-                    onClick={() => {
-                      setSelectPostList(PostList);
-                      setPostIndex(item.id);
-                      setBackPage('postHome');
-                    }}
-                  >
-                    <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
-                  </View>
-                ))}
+                <View
+                  key={index}
+                  id={`post-item-${index}`}
+                  onClick={() => {
+                    setSelectPostList(PostList);
+                    setPostIndex(item.id);
+                    setBackPage('postHome');
+                  }}
+                >
+                  <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
+                </View>
+              ))}
           </GridView>
         </ScrollView>
       </View>

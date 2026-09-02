@@ -10,6 +10,7 @@ import { PostDetailInfo } from '@/common/types';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
 import PostCard from '@/modules/PostCard';
 import usePostStore from '@/store/PostStore';
+import useActivityStore from '@/store/ActivityStore';
 import ActivityModal from '@/modules/ActivityModal';
 import MinePageNull from '@/modules/EmptyComponent/components/minepagenull';
 import { ActivityDetailInfo } from '@/common/types';
@@ -18,7 +19,8 @@ const Index = () => {
   const [activePage, setActivePage] = useState<'activity' | 'post'>('post');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
-  const { setPostIndex, setBackPage } = usePostStore();
+  const { setPostIndex, setBackPage, postUpdates } = usePostStore();
+  const { activityUpdates } = useActivityStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
   const [activityList, setActivityList] = useState<ActivityDetailInfo[]>([]);
   const [avatar, setAvatar] = useState('');
@@ -62,6 +64,18 @@ const Index = () => {
       loadPosts(1, true);
     }
   }, [activePage]);
+
+  useEffect(() => {
+    if (Object.keys(activityUpdates).length === 0) return;
+    if (activePage !== 'activity') return;
+    loadActivities(1, true);
+  }, [activityUpdates]);
+
+  useEffect(() => {
+    if (Object.keys(postUpdates).length === 0) return;
+    if (activePage !== 'post') return;
+    loadPosts(1, true);
+  }, [postUpdates]);
 
   useEffect(() => {
     if (minePostList.length > 0 && activePage === 'post') {

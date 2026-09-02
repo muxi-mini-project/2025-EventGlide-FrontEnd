@@ -7,6 +7,7 @@ interface ActivityStoreState {
   selectedItem: ActivityDetailInfo;
   isSelect: boolean;
   selectComment: string;
+  activityUpdates: Record<string, Partial<ActivityDetailInfo>>;
   setSelectComment: (comment: string) => void;
   setIsSelect: (type: boolean) => void;
   setSelectInfo: (info: SelectedInfo) => void; //筛选条件
@@ -16,7 +17,7 @@ interface ActivityStoreState {
   setCollectNumChange: (id: string, type: string) => void;
 }
 
-const useActivityStore = create<ActivityStoreState>((set) => ({
+const useActivityStore = create<ActivityStoreState>((set, get) => ({
   selectedInfo: {
     limit: 10,
     page: 1,
@@ -30,13 +31,14 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
   selectedItem: {} as ActivityDetailInfo,
   isSelect: false,
   selectComment: '',
+  activityUpdates: {},
   setSelectComment: (comment) => set(() => ({ selectComment: comment })),
   setIsSelect: (type) => set(() => ({ isSelect: type })),
   setSelectInfo: (info) => set(() => ({ selectedInfo: info })),
   setActiveList: (list) => set(() => ({ activeList: list })),
   setSelectedItem: (Item) => set(() => ({ selectedItem: Item })),
   setLikeNumChange: (id, type) => {
-    const currentActiveList = useActivityStore.getState().activeList;
+    const currentActiveList = get().activeList;
     const updatedActiveList = currentActiveList.map((item) => {
       if (item.id === id) {
         return {
@@ -47,10 +49,18 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
       }
       return item;
     });
-    set(() => ({ activeList: updatedActiveList }));
+    const activityUpdates = { ...get().activityUpdates };
+    const updatedItem = updatedActiveList.find((item) => item.id === id);
+    if (updatedItem) {
+      activityUpdates[id] = {
+        likeNum: updatedItem.likeNum,
+        isLike: updatedItem.isLike,
+      };
+    }
+    set(() => ({ activeList: updatedActiveList, activityUpdates }));
   },
   setCollectNumChange: (id, type) => {
-    const currentActiveList = useActivityStore.getState().activeList;
+    const currentActiveList = get().activeList;
     const updatedActiveList = currentActiveList.map((item) => {
       if (item.id === id) {
         return {
@@ -61,7 +71,15 @@ const useActivityStore = create<ActivityStoreState>((set) => ({
       }
       return item;
     });
-    set(() => ({ activeList: updatedActiveList }));
+    const activityUpdates = { ...get().activityUpdates };
+    const updatedItem = updatedActiveList.find((item) => item.id === id);
+    if (updatedItem) {
+      activityUpdates[id] = {
+        collectNum: updatedItem.collectNum,
+        isCollect: updatedItem.isCollect,
+      };
+    }
+    set(() => ({ activeList: updatedActiveList, activityUpdates }));
   },
 }));
 

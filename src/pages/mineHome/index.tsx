@@ -24,7 +24,8 @@ const Index = () => {
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
   const [showNavBar, setShowNavBar] = useState(true); // 控制导航栏显示/隐藏
-  const { setPostIndex, setBackPage, postUpdates } = usePostStore();
+  const { setPostIndex, setBackPage, postUpdates, setSelectPostList } = usePostStore();
+  const { setIsSelect, activityUpdates } = useActivityStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
   const activeIndexRef = useRef(activeIndex);
   activeIndexRef.current = activeIndex;
@@ -42,10 +43,15 @@ const Index = () => {
       setTotalPosts(res.data.total || 0);
     });
   }, [postUpdates]);
+
+  useEffect(() => {
+    if (Object.keys(activityUpdates).length === 0) return;
+    if (activePage !== 'activity') return;
+    loadActivities(1, true);
+  }, [activityUpdates]);
   const { avatar, username, school, setAvatar, setUsername, setSchool, setCollege } =
     useUserStore();
   const sid = Taro.getStorageSync('sid');
-  const { setIsSelect } = useActivityStore();
   const [page, setPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -60,6 +66,20 @@ const Index = () => {
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityHasMore, setActivityHasMore] = useState(true);
   const [mineActivityList, setMineActivityList] = useState<ActivityDetailInfo[]>([]);
+
+  useEffect(() => {
+    if (Object.keys(activityUpdates).length === 0) return;
+    if (activePage !== 'activity') return;
+    setMineActivityList((prev) =>
+      prev.map((item) => {
+        const update = activityUpdates[item.id];
+        if (update) {
+          return { ...item, ...update };
+        }
+        return item;
+      })
+    );
+  }, [activityUpdates]);
 
   useDidShow(() => {
     setIsSelect(false);
@@ -334,6 +354,7 @@ const Index = () => {
                         key={index}
                         id={`post-item-${index}`}
                         onClick={() => {
+                          setSelectPostList(minePostList)
                           setPostIndex(item.id);
                           setBackPage('mineHome');
                         }}

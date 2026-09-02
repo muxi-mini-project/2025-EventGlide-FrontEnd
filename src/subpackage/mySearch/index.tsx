@@ -21,9 +21,9 @@ const Index = () => {
   const [activeIndex, setActiveIndex] = useState<'release' | 'like' | 'favourite'>('release');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
-  const { setPostIndex, setBackPage } = usePostStore();
+  const { setPostIndex, setBackPage, postUpdates } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
-  const { setIsSelect } = useActivityStore();
+  const { setIsSelect, activityUpdates } = useActivityStore();
   const [searchValue, setSearchValue] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
 
@@ -73,6 +73,18 @@ const Index = () => {
       loadActivities(1, true);
     }
   }, [activeIndex, activePage]);
+
+  useEffect(() => {
+    if (Object.keys(activityUpdates).length === 0) return;
+    if (activePage !== 'activity') return;
+    loadActivities(1, true);
+  }, [activityUpdates]);
+
+  useEffect(() => {
+    if (Object.keys(postUpdates).length === 0) return;
+    if (activePage !== 'post') return;
+    loadPosts(1, true);
+  }, [postUpdates]);
 
   const filteredPostList = useMemo(() => {
     if (!searchKeyword.trim()) {

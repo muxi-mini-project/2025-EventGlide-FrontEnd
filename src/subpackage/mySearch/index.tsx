@@ -21,7 +21,7 @@ const Index = () => {
   const [activeIndex, setActiveIndex] = useState<'release' | 'like' | 'favourite'>('release');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
-  const { setPostIndex, setBackPage, postUpdates } = usePostStore();
+  const { setPostIndex, setBackPage, postUpdates, setSelectPostList } = usePostStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
   const { setIsSelect, activityUpdates } = useActivityStore();
   const [searchValue, setSearchValue] = useState('');
@@ -289,6 +289,7 @@ const Index = () => {
                       key={index}
                       id={`post-item-${index}`}
                       onClick={() => {
+                        setSelectPostList(minePostList);
                         setPostIndex(item.id);
                         setBackPage('mineHome');
                       }}

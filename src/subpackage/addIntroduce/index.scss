@@ -68,15 +68,19 @@
 
   &-floor {
     position: fixed;
-    bottom: 94rpx;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    display: flex;
-    align-items: center;
+    height: 180rpx;
+    background-color: #fff;
+    border-top: 2rpx solid #f1eefc;
     z-index: 10;
 
     &-draft {
       position: absolute;
       left: 60rpx;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -91,6 +95,8 @@
     &-btn {
       position: absolute;
       left: 180rpx;
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 }

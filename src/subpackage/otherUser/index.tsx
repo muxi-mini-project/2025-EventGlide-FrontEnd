@@ -92,6 +92,7 @@ const Index = () => {
       if (res.data === null) {
         if (refresh) {
           setMinePostList([]);
+          setSelectPostList([]);
         }
         return;
       }
@@ -100,8 +101,11 @@ const Index = () => {
       );
       if (refresh) {
         setMinePostList(newPostList);
+        setSelectPostList(newPostList);
       } else {
-        setMinePostList([...minePostList, ...newPostList]);
+        const merged = [...minePostList, ...newPostList];
+        setMinePostList(merged);
+        setSelectPostList(merged);
       }
       setPostPage(pageNum);
       setTotalPosts(res.data.total || 0);

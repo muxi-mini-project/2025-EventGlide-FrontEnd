@@ -46,8 +46,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
     set(() => ({ PostIndex: index }));
   },
   setLikeNumChange: (blog, type) => {
-    const currentPostList = get().selectPostList;
-    const updatedPostList = currentPostList.map((b) => {
+    const updateFn = (b: PostDetailInfo) => {
       if (b.id === blog.id) {
         return {
           ...b,
@@ -56,9 +55,11 @@ const usePostStore = create<PostStoreType>((set, get) => ({
         };
       }
       return b;
-    });
+    };
+    const updatedSelectList = get().selectPostList.map(updateFn);
+    const updatedPostList = get().PostList.map(updateFn);
     const postUpdates = { ...get().postUpdates };
-    const updatedItem = updatedPostList.find((b) => b.id === blog.id);
+    const updatedItem = updatedSelectList.find((b) => b.id === blog.id);
     if (updatedItem) {
       postUpdates[blog.id] = {
         likeNum: updatedItem.likeNum,
@@ -68,13 +69,12 @@ const usePostStore = create<PostStoreType>((set, get) => ({
 
     set(() => ({
       PostList: updatedPostList,
-      selectPostList: updatedPostList,
+      selectPostList: updatedSelectList,
       postUpdates,
     }));
   },
   setCollectNumChange: (blog, type) => {
-    const currentPostList = get().selectPostList;
-    const updatedPostList = currentPostList.map((b) => {
+    const updateFn = (b: PostDetailInfo) => {
       if (b.id === blog.id) {
         return {
           ...b,
@@ -83,9 +83,11 @@ const usePostStore = create<PostStoreType>((set, get) => ({
         };
       }
       return b;
-    });
+    };
+    const updatedSelectList = get().selectPostList.map(updateFn);
+    const updatedPostList = get().PostList.map(updateFn);
     const postUpdates = { ...get().postUpdates };
-    const updatedItem = updatedPostList.find((b) => b.id === blog.id);
+    const updatedItem = updatedSelectList.find((b) => b.id === blog.id);
     if (updatedItem) {
       postUpdates[blog.id] = {
         collectNum: updatedItem.collectNum,
@@ -95,7 +97,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
 
     set(() => ({
       PostList: updatedPostList,
-      selectPostList: updatedPostList,
+      selectPostList: updatedSelectList,
       postUpdates,
     }));
   },
@@ -104,8 +106,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   setContent: (title, description, imgUrl) =>
     set(() => ({ title, introduce: description, showImg: imgUrl })),
   setCommentNumChange: (blog) => {
-    const currentPostList = get().selectPostList;
-    const updatedPostList = currentPostList.map((b) => {
+    const updateFn = (b: PostDetailInfo) => {
       if (b.id === blog.id) {
         return {
           ...b,
@@ -113,9 +114,11 @@ const usePostStore = create<PostStoreType>((set, get) => ({
         };
       }
       return b;
-    });
+    };
+    const updatedSelectList = get().selectPostList.map(updateFn);
+    const updatedPostList = get().PostList.map(updateFn);
     const postUpdates = { ...get().postUpdates };
-    const updatedItem = updatedPostList.find((b) => b.id === blog.id);
+    const updatedItem = updatedSelectList.find((b) => b.id === blog.id);
     if (updatedItem) {
       postUpdates[blog.id] = {
         commentNum: updatedItem.commentNum,
@@ -124,7 +127,7 @@ const usePostStore = create<PostStoreType>((set, get) => ({
 
     set(() => ({
       PostList: updatedPostList,
-      selectPostList: updatedPostList,
+      selectPostList: updatedSelectList,
       postUpdates,
     }));
   },

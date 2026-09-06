@@ -19,7 +19,7 @@ const Index = () => {
   const [activePage, setActivePage] = useState<'activity' | 'post'>('post');
   const [isShowActivityWindow, setIsShowActivityWindow] = useState(false);
   const [isShowList, setIsShowList] = useState<number[]>([0, 1, 2, 3]);
-  const { setPostIndex, setBackPage, postUpdates } = usePostStore();
+  const { setPostIndex, setBackPage, postUpdates, setSelectPostList } = usePostStore();
   const { activityUpdates } = useActivityStore();
   const [minePostList, setMinePostList] = useState<PostDetailInfo[]>([]);
   const [activityList, setActivityList] = useState<ActivityDetailInfo[]>([]);
@@ -92,6 +92,7 @@ const Index = () => {
       if (res.data === null) {
         if (refresh) {
           setMinePostList([]);
+          setSelectPostList([]);
         }
         return;
       }
@@ -100,8 +101,11 @@ const Index = () => {
       );
       if (refresh) {
         setMinePostList(newPostList);
+        setSelectPostList(newPostList);
       } else {
-        setMinePostList([...minePostList, ...newPostList]);
+        const merged = [...minePostList, ...newPostList];
+        setMinePostList(merged);
+        setSelectPostList(merged);
       }
       setPostPage(pageNum);
       setTotalPosts(res.data.total || 0);
@@ -266,6 +270,7 @@ const Index = () => {
                       key={index}
                       id={`post-item-${index}`}
                       onClick={() => {
+                        setSelectPostList(minePostList);
                         setPostIndex(item.id);
                         setBackPage('mineHome');
                       }}

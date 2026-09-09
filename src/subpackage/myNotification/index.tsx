@@ -142,9 +142,14 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
 });
 
 const Index = () => {
-  const [isActive, setIsActive] = useState(true);
+  // const [isActive, setIsActive] = useState(true);
+  const [activeItem, setActiveItem] = useState('favor');
   const handleClick = (type: 'favor' | 'letter') => {
-    setIsActive(!isActive);
+    if (activeItem === type) {
+      return;
+    }
+    setActiveItem(type);
+    // setIsActive(!isActive);
     setShowPage(type);
   };
   const [showPage, setShowPage] = useState<'favor' | 'letter'>('favor');
@@ -235,7 +240,7 @@ const Index = () => {
           <View
             onClick={() => handleClick('favor')}
             className={classnames('myNotification-page-header-item', {
-              activeItem: isActive,
+              activeItem: activeItem === 'favor',
             })}
           >
             赞和收藏
@@ -247,7 +252,7 @@ const Index = () => {
               readnotice(letter);
             }}
             className={classnames('myNotification-page-header-item', {
-              activeItem: !isActive,
+              activeItem: activeItem === 'letter',
             })}
           >
             <View>评论和@</View>
@@ -269,7 +274,7 @@ const Index = () => {
         </View>
         <View className="myNotification-page-content">
           {(showPage === 'favor' && favor.length === 0) ||
-          (showPage === 'letter' && letter.length === 0) ? (
+            (showPage === 'letter' && letter.length === 0) ? (
             <NoticePageNull key="notice-null" />
           ) : null}
           {showPage === 'favor' &&

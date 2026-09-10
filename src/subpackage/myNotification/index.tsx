@@ -234,7 +234,7 @@ const Index = () => {
 
   return (
     <>
-      <NavigationBarBack backgroundColor="#FFFFFF" title="互动消息" url="/pages/postHome/index" />
+      <NavigationBarBack backgroundColor="#FFFFFF" title="消息" url="/pages/postHome/index" />
       <View className="myNotification-page">
         <View className="myNotification-page-header">
           <View

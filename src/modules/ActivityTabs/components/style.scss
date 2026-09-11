@@ -41,6 +41,15 @@
       .input-placeholder {
         color: #c8c8c8;
       }
+      .search-cancel {
+        position: absolute;
+        right: 15rpx;
+        color: #7d73f0;
+        font-size: 26rpx;
+        height: 60rpx;
+        line-height: 60rpx;
+        z-index: 10;
+      }
     }
     .search-btn {
       text-align: center;

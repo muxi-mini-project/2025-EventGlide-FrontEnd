@@ -50,6 +50,10 @@ const ActivityTabs: React.FC<{
   const handleSearch = async () => {
     onSearch(searchValue);
   };
+  const handleCancel = () => {
+    setSearchValue('');
+    onSearch('');
+  };
   return (
     <View className="sticky-container">
       <View className="sticky-search">
@@ -67,6 +71,11 @@ const ActivityTabs: React.FC<{
             type="text"
             confirmType="search"
           />
+          {searchValue && (
+            <View className="search-cancel" onClick={handleCancel}>
+              取消
+            </View>
+          )}
         </View>
       </View>
       <View className="sticky-sift">

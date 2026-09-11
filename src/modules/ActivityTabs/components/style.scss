@@ -168,11 +168,14 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  gap: 25rpx;
+  gap: 15rpx;
   font-size: 24rpx;
   margin-top: 5rpx;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   &-box {
-    width: 135rpx;
     height: 55rpx;
     line-height: 55rpx;
     border-radius: 20rpx;
@@ -180,15 +183,34 @@
     color: #9a9a9a;
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: center;
-    gap: 18rpx;
+    gap: 10rpx;
+    padding: 0 20rpx;
+    max-width: 200rpx;
+    flex-shrink: 0;
+    &-checked {
+      background-color: #eeedff;
+    }
+  }
+  &-text {
+    font-size: 24rpx;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140rpx;
   }
   &-text-checked {
     color: #7d73f0;
+    font-size: 24rpx;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140rpx;
   }
   &-icon {
     width: 20rpx;
-    margin-top: 20rpx;
+    flex-shrink: 0;
   }
   &-notice {
     width: 40rpx;

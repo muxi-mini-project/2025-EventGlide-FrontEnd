@@ -17,10 +17,9 @@ const Index = () => {
   const [showTypeDrawer, setShowTypeDrawer] = useState(false);
   const [showColorExplain, setShowColorExplain] = useState(false);
   const [activityType, setActivityType] = useState<string>('');
-  const { activeList, setActiveList, setSelectedItem, selectedInfo, isSelect, setSelectInfo } =
+  const { activeList, setActiveList, setSelectedItem, selectedInfo, setSelectInfo } =
     useActivityStore();
   const [approximateTime, setApproximateTime] = useState<string>('');
-  const [type, setType] = useState<string[]>([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [scrollRecord, setScrollRecord] = useState(false);
@@ -36,13 +35,22 @@ const Index = () => {
   const LIMIT = 10;
   const BUFFER = 300;
 
+  const hasActiveFilters = () => {
+    return (
+      selectedInfo.detailTime !== '' ||
+      selectedInfo.type.length > 0 ||
+      selectedInfo.holderType.length > 0 ||
+      selectedInfo.position.length > 0
+    );
+  };
+
   const loadActivities = async (pageNum = 1, refresh = false, searchKeyword = '') => {
     let res;
     const shouldSearch = searchKeyword !== '';
     if (shouldSearch) {
       // 搜索模式
       res = await searchActivityList({ name: searchKeyword, page: pageNum, limit: LIMIT });
-    } else if (isSelect) {
+    } else if (hasActiveFilters()) {
       // 筛选模式
       res = await filterActivity({ ...selectedInfo, page: pageNum, limit: LIMIT });
     } else {
@@ -73,12 +81,6 @@ const Index = () => {
     console.log(selectedInfo);
     setHasMore(true);
     await loadActivities(1, true);
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} 00:00`;
-    setSelectInfo({
-      ...selectedInfo,
-      detailTime: today,
-    });
   });
 
   useEffect(() => {
@@ -101,7 +103,7 @@ const Index = () => {
     } else {
       fetchFilteredActivities();
     }
-  }, [type]);
+  }, [selectedInfo]);
 
   useEffect(() => {
     if (showPostWindow || showColorExplain) {
@@ -204,7 +206,6 @@ const Index = () => {
       <View className="sticky-header" onClick={() => setScrollTop(scrollPosition)}>
         <ActivityTabs
           setApproximateTime={setApproximateTime}
-          setType={setType}
           showTypeDrawer={showTypeDrawer}
           setChooseDrawerVisible={setShowTypeDrawer}
           chooseDrawerType={activityType}
@@ -256,7 +257,6 @@ const Index = () => {
         isVisiable={showTypeDrawer}
         setIsVisiable={setShowTypeDrawer}
         type={activityType}
-        setType={setType}
       ></ActivityTypeDrawer>
       <ColorExplain
         visible={showColorExplain}

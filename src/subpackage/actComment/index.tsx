@@ -20,8 +20,8 @@ import { ScrollView } from '@tarojs/components';
 import CommentList from '@/modules/Comment';
 import CommentActionSheet from '@/modules/CommentActionSheet';
 
-export const SetReponseContext = createContext<(params: any) => void>(() => {});
-export const SetActivityComment = createContext<(params: any) => void>(() => {});
+export const SetReponseContext = createContext<(params: any) => void>(() => { });
+export const SetActivityComment = createContext<(params: any) => void>(() => { });
 
 const Index = () => {
   const {
@@ -440,11 +440,11 @@ const Index = () => {
             onTouchEnd={onDragEnd}
           >
             <View className="drag-handle-bar" />
-            <View className="drag-handle-content">
+            {/* <View className="drag-handle-content">
               <Span className="drag-handle-content-text">回复 {selectedItem.commentNum}</Span>
               <Span className="drag-handle-content-text">点赞 {selectedItem.likeNum}</Span>
               <Span className="drag-handle-content-text">收藏 {selectedItem.collectNum}</Span>
-            </View>
+            </View> */}
           </View>
 
           <View className="comment-panel">

@@ -125,7 +125,7 @@ const generateCalendar = (year: number, month: number, selectedDate: string): Ca
 };
 
 const DatePicker: React.FC<any> = memo(
-  ({ isVisiable, setIsVisiable, handleConfirm, allowTimeClear = false }) => {
+  ({ isVisiable, setIsVisiable, handleConfirm, allowTimeClear = false, onReset }) => {
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [selectedTime, setSelectedTime] = useState<string>('');
     const [showFullDatePicker, setShowFullDatePicker] = useState<boolean>(false);
@@ -213,16 +213,11 @@ const DatePicker: React.FC<any> = memo(
       setIsVisiable(false);
     };
     const resetDatePicker = () => {
-      setDateList(generateDateList(undefined, true));
-      setTimeSlots(generateTimeSlots());
-
-      const today = new Date().toISOString().split('T')[0];
-      setSelectedDate(today);
-      setFullDateValue(today);
-      setSelectedTime('00:00');
-      const now = new Date();
-      setCurrentYear(now.getFullYear());
-      setCurrentMonth(now.getMonth());
+      setSelectedDate('');
+      setSelectedTime('');
+      if (onReset) {
+        onReset();
+      }
     };
 
     const monthNames = [

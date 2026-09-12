@@ -11,9 +11,14 @@ import { getActivityList, searchActivityList } from '@/common/api';
 
 const typelist = ['文艺', '体育', '竞赛', '游戏', '学术'];
 
+const formatArrayDisplay = (arr: string[], defaultText: string): string => {
+  if (!arr || arr.length === 0) return defaultText;
+  if (arr.length === 1) return arr[0];
+  return `${arr[0]}等${arr.length}项`;
+};
+
 const ActivityTabs: React.FC<{
   setApproximateTime: (value: string) => void;
-  setType: (value: string[]) => void;
   showTypeDrawer: boolean;
   setChooseDrawerVisible: (value: boolean) => void;
   chooseDrawerType: string;
@@ -45,6 +50,10 @@ const ActivityTabs: React.FC<{
   const handleSearch = async () => {
     onSearch(searchValue);
   };
+  const handleCancel = () => {
+    setSearchValue('');
+    onSearch('');
+  };
   return (
     <View className="sticky-container">
       <View className="sticky-search">
@@ -62,11 +71,16 @@ const ActivityTabs: React.FC<{
             type="text"
             confirmType="search"
           />
+          {searchValue && (
+            <View className="search-cancel" onClick={handleCancel}>
+              取消
+            </View>
+          )}
         </View>
       </View>
       <View className="sticky-sift">
         <View
-          className="sticky-sift-box"
+          className={`sticky-sift-box ${selectedInfo.detailTime ? 'sticky-sift-box-checked' : ''}`}
           onClick={() => {
             props.setChooseDrawerType('dateChoice');
             props.setChooseDrawerVisible(true);
@@ -74,16 +88,16 @@ const ActivityTabs: React.FC<{
         >
           <View
             className={
-              props.chooseDrawerType === 'dateChoice' && props.showTypeDrawer
+              (selectedInfo.detailTime || (props.chooseDrawerType === 'dateChoice' && props.showTypeDrawer))
                 ? 'sticky-sift-text-checked'
                 : 'sticky-sift-text'
             }
           >
-            时间
+            {selectedInfo.detailTime || "时间"}
           </View>
           <Image
             src={
-              props.chooseDrawerType === 'dateChoice' && props.showTypeDrawer
+              (selectedInfo.detailTime || (props.chooseDrawerType === 'dateChoice' && props.showTypeDrawer))
                 ? choosestyle_active
                 : choosestyle
             }
@@ -92,7 +106,7 @@ const ActivityTabs: React.FC<{
           ></Image>
         </View>
         <View
-          className="sticky-sift-box"
+          className={`sticky-sift-box ${selectedInfo.type.length > 0 ? 'sticky-sift-box-checked' : ''}`}
           onClick={() => {
             props.setChooseDrawerType('typeChoice');
             props.setChooseDrawerVisible(true);
@@ -100,16 +114,16 @@ const ActivityTabs: React.FC<{
         >
           <View
             className={
-              props.chooseDrawerType === 'typeChoice' && props.showTypeDrawer
+              (selectedInfo.type.length > 0 || (props.chooseDrawerType === 'typeChoice' && props.showTypeDrawer))
                 ? 'sticky-sift-text-checked'
                 : 'sticky-sift-text'
             }
           >
-            类型
+            {formatArrayDisplay(selectedInfo.type, "类型")}
           </View>
           <Image
             src={
-              props.chooseDrawerType === 'typeChoice' && props.showTypeDrawer
+              (selectedInfo.type.length > 0 || (props.chooseDrawerType === 'typeChoice' && props.showTypeDrawer))
                 ? choosestyle_active
                 : choosestyle
             }
@@ -118,7 +132,7 @@ const ActivityTabs: React.FC<{
           ></Image>
         </View>
         <View
-          className="sticky-sift-box"
+          className={`sticky-sift-box ${selectedInfo.holderType.length > 0 ? 'sticky-sift-box-checked' : ''}`}
           onClick={() => {
             props.setChooseDrawerType('organizerChoice');
             props.setChooseDrawerVisible(true);
@@ -126,16 +140,16 @@ const ActivityTabs: React.FC<{
         >
           <View
             className={
-              props.chooseDrawerType === 'organizerChoice' && props.showTypeDrawer
+              (selectedInfo.holderType.length > 0 || (props.chooseDrawerType === 'organizerChoice' && props.showTypeDrawer))
                 ? 'sticky-sift-text-checked'
                 : 'sticky-sift-text'
             }
           >
-            承办方
+            {formatArrayDisplay(selectedInfo.holderType, "承办方")}
           </View>
           <Image
             src={
-              props.chooseDrawerType === 'organizerChoice' && props.showTypeDrawer
+              (selectedInfo.holderType.length > 0 || (props.chooseDrawerType === 'organizerChoice' && props.showTypeDrawer))
                 ? choosestyle_active
                 : choosestyle
             }
@@ -144,7 +158,7 @@ const ActivityTabs: React.FC<{
           ></Image>
         </View>
         <View
-          className="sticky-sift-box"
+          className={`sticky-sift-box ${selectedInfo.position.length > 0 ? 'sticky-sift-box-checked' : ''}`}
           onClick={() => {
             props.setChooseDrawerType('siteChoice');
             props.setChooseDrawerVisible(true);
@@ -152,16 +166,16 @@ const ActivityTabs: React.FC<{
         >
           <View
             className={
-              props.chooseDrawerType === 'siteChoice' && props.showTypeDrawer
+              (selectedInfo.position.length > 0 || (props.chooseDrawerType === 'siteChoice' && props.showTypeDrawer))
                 ? 'sticky-sift-text-checked'
                 : 'sticky-sift-text'
             }
           >
-            地点
+            {formatArrayDisplay(selectedInfo.position, "地点")}
           </View>
           <Image
             src={
-              props.chooseDrawerType === 'siteChoice' && props.showTypeDrawer
+              (selectedInfo.position.length > 0 || (props.chooseDrawerType === 'siteChoice' && props.showTypeDrawer))
                 ? choosestyle_active
                 : choosestyle
             }

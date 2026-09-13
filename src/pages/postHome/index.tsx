@@ -37,6 +37,12 @@ const Index = () => {
   const [page, setPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const LIMIT = 10;
+  const handleCancel = async () => {
+    setSearchValue('');
+    setCurrentSearchKeyword('');
+    setHasMore(true);
+    await loadPosts(1, true, '');
+  };
   const positions = useRef<
     {
       top: number;
@@ -301,7 +307,10 @@ const Index = () => {
                 value={searchValue}
                 onInput={(e) => setSearchValue(e.detail.value)}
                 onConfirm={() => handleSearch()}
-              />
+              />{searchValue && (
+                <View className="cancel-btn" onClick={handleCancel}>取消</View>
+              )}
+
             </View>
             {/* <View className="search-btn" onClick={() => handleSearch()}>
               搜索

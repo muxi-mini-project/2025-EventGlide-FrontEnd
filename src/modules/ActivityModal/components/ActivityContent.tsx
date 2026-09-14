@@ -1,9 +1,13 @@
 import './style.scss';
-import { View } from '@tarojs/components';
+import { View, Image } from '@tarojs/components';
 import { navigateTo } from '@tarojs/taro';
 import { memo } from 'react';
 import Picture from '@/common/components/Picture';
 import { holdertype, activeColor } from '@/common/const/Formconst';
+import pos from '@/common/svg/activity/pos.svg';
+import date from '@/common/svg/activity/date.svg';
+import info from '@/common/svg/post/info.svg';
+import TimeTranslation from '@/common/utils/TimeTranslation';
 
 interface ActivityData {
   title?: string;
@@ -12,6 +16,8 @@ interface ActivityData {
   type?: string;
   holderType?: string;
   ifRegister?: boolean | string;
+  detailTime?: { startTime: string; endTime: string };
+  position?: string;
 }
 
 interface ActivityContentProps {
@@ -28,7 +34,8 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
     isDraftMode = false,
     setShowPostWindow = () => {},
   }) => {
-    const { introduce: description, showImg, type, holderType, ifRegister } = activityData;
+    const { introduce: description, showImg, type, holderType, ifRegister, detailTime, position } =
+      activityData;
 
     // 处理报名状态文本
     let registerText = '无需报名';
@@ -57,6 +64,31 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
             : description
               ? description
               : '暂无介绍'}
+        </View>
+
+        <View className="activity-content-info">
+          {detailTime && detailTime.startTime && detailTime.endTime && (
+            <View className="activity-content-info-item">
+              <Image className="activity-content-info-icon" mode="widthFix" src={date}></Image>
+              <View className="activity-content-info-text">
+                {TimeTranslation(detailTime.startTime)} - {TimeTranslation(detailTime.endTime)}
+              </View>
+            </View>
+          )}
+          {position && (
+            <View className="activity-content-info-item">
+              <Image className="activity-content-info-icon" mode="widthFix" src={pos}></Image>
+              <View className="activity-content-info-text">{position}</View>
+            </View>
+          )}
+          {holderType && (
+            <View className="activity-content-info-item">
+              <Image className="activity-content-info-icon" mode="widthFix" src={info}></Image>
+              <View className="activity-content-info-text">
+                {holdertype.get(holderType) || holderType}
+              </View>
+            </View>
+          )}
         </View>
 
         <View className="activity-content-other">

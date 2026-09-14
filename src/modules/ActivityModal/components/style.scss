@@ -27,11 +27,39 @@
     text-overflow: ellipsis;
   }
 
+  &-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+    padding: 16rpx 0;
+    margin-bottom: -20rpx;
+    margin-top: -20rpx;
+
+    &-item {
+      display: flex;
+      align-items: center;
+      font-size: 24rpx;
+      color: #807d84;
+    }
+
+    &-icon {
+      width: 28rpx;
+      margin-right: 16rpx;
+    }
+
+    &-text {
+      font-size: 24rpx;
+      color: #807d84;
+      line-height: 1.4;
+    }
+  }
+
   &-types {
     display: flex;
     flex-wrap: wrap;
     gap: 10rpx;
     font-size: 18rpx;
+
     &-item {
       color: #fff;
       padding: 0 20rpx;
@@ -55,6 +83,7 @@
     gap: 10rpx;
     max-height: 400rpx;
     overflow-y: auto;
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -76,6 +105,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
       .pwfai-img {
         text-align: center;
         align-items: center;

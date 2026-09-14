@@ -78,6 +78,7 @@ const Index = () => {
     if (res.data.total !== undefined) {
       setTotalPosts(res.data.total);
     }
+    return list.length;
   };
 
   useDidShow(async () => {
@@ -118,11 +119,12 @@ const Index = () => {
         bottom: rect?.bottom ?? 0,
       }));
 
-      handleScroll({
-        detail: {
-          scrollTop: 0,
-        },
-      });
+      if (positions.current.length > 0) {
+        const lastBottom = positions.current[positions.current.length - 1].bottom;
+        if (lastBottom < windowHeight + BUFFER) {
+          loadMore();
+        }
+      }
     });
   };
 
@@ -241,6 +243,10 @@ const Index = () => {
       const feedRes = await get<GetNotificationCountResponse>('/feed/total');
       setMsgCount(feedRes.data.total);
       finishRefresh();
+
+      setTimeout(() => {
+        measurePostPositions();
+      }, 200);
     } catch (error) {
       finishRefresh();
       console.error('刷新过程发生错误:', error);

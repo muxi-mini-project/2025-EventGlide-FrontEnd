@@ -72,12 +72,14 @@ const ActivityModal: React.FC<{
             showImg: state.showImg,
             type: state.labelform.type,
             holderType: state.labelform.holderType,
+            organizerUnit: state.labelform.organizerUnit,
             ifRegister: state.labelform.ifRegister,
             detailTime: {
               startTime: state.labelform.startTime,
               endTime: state.labelform.endTime,
             },
             position: state.labelform.position,
+            address: state.labelform.address,
           }))}
           canDeleteImages={true}
           isDraftMode={true}

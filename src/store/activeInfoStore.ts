@@ -22,11 +22,13 @@ interface activeInfoState {
 const emptyLabelForm: LabelForm = {
   type: '',
   holderType: '',
+  organizerUnit: '',
   startTime: '',
   endTime: '',
   position: '',
+  address: '',
   ifRegister: '',
-  activeForm: '111',
+  activeForm: '',
   registerMethod: '',
   signer: [],
 };

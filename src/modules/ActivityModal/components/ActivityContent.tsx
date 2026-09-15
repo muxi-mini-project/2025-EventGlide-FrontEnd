@@ -54,8 +54,10 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
       <View
         className="activity-content"
         onClick={() => {
-          navigateTo({ url: '/subpackage/actComment/index' });
-          setShowPostWindow(false);
+          if (!isDraftMode) {
+            navigateTo({ url: '/subpackage/actComment/index' });
+            setShowPostWindow(false);
+          }
         }}
       >
         <View className="activity-content-text">

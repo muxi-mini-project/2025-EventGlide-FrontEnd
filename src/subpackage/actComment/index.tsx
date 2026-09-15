@@ -12,7 +12,7 @@ import collectActive from '@/common/svg/post/starAct.svg';
 import favorActive from '@/common/svg/post/heartAct.svg';
 import pos from '@/common/svg/activity/pos.svg';
 import date from '@/common/svg/activity/date.svg';
-import info from '@/common/svg/post/info.svg';
+import holder from '@/common/svg/activity/holder.svg';
 import { CommentResponse } from '@/common/types';
 import { getCommentsBySubject, createComment, replyComment } from '@/common/api/Comment';
 import useActivityStore from '@/store/ActivityStore';
@@ -276,9 +276,9 @@ const Index = () => {
             {descExpanded && (
               <View className="act-detail">
                 <View className="act-detail-item">
-                  <Image className="act-detail-icon" mode="widthFix" src={info} />
+                  <Image className="act-detail-icon" mode="widthFix" src={holder} />
                   <View className="act-detail-text">
-                    {holdertype.get(selectedItem.holderType || '') || selectedItem.holderType || '暂无信息'}
+                    {selectedItem.organizerUnit || '暂无信息'}
                   </View>
                 </View>
                 <View className="act-detail-item">
@@ -290,7 +290,7 @@ const Index = () => {
                 </View>
                 <View className="act-detail-item">
                   <Image className="act-detail-icon" mode="widthFix" src={pos} />
-                  <View className="act-detail-text">{selectedItem.position || '暂无信息'}</View>
+                  <View className="act-detail-text">{selectedItem.address || '暂无信息'}</View>
                 </View>
               </View>
             )}
@@ -306,6 +306,16 @@ const Index = () => {
                 >
                   {selectedItem.type || ''}
                 </View>
+                {selectedItem.position && (
+                  <View className="act-tag" style="background-color: #F39C12; color: #fff;">
+                    {selectedItem.position}
+                  </View>
+                )}
+                {selectedItem.ifRegister !== undefined && (
+                  <View className="act-tag" style="background-color: #999; color: #fff;">
+                    {selectedItem.ifRegister === true ? '需报名' : '无需报名'}
+                  </View>
+                )}
               </View>
             )}
           </View>

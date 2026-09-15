@@ -17,6 +17,19 @@ import { useSaveDraft } from '@/common/hooks/useSaveDraft';
 import { getActivityDraft } from '@/common/api';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
 
+const FORM_KEY_MAP: Record<number, keyof LabelForm> = {
+  0: 'type',
+  1: 'holderType',
+  2: 'organizerUnit',
+  3: 'startTime',
+  4: 'endTime',
+  5: 'position',
+  6: 'address',
+  7: 'ifRegister',
+  8: 'activeForm',
+  9: 'registerMethod',
+};
+
 const Index = () => {
   const { setLabelForm, labelform, setDraftData } = useActiveInfoStore();
   const { setAddSigner, setRemoveSigner } = useSignersStore();
@@ -80,9 +93,11 @@ const Index = () => {
         const newLabelForm: LabelForm = {
           type: formValue.type || res.data.labelform.type,
           holderType: formValue.holderType || res.data.labelform.holderType,
+          organizerUnit: formValue.organizerUnit || res.data.labelform.organizerUnit || '',
           startTime: formValue.startTime || res.data.labelform.startTime,
           endTime: formValue.endTime || res.data.labelform.endTime,
           position: formValue.position || res.data.labelform.position,
+          address: formValue.address || res.data.labelform.address || '',
           ifRegister: formValue.ifRegister || res.data.labelform.ifRegister,
           activeForm: formValue.activeForm || res.data.labelform.activeForm || '',
           registerMethod: formValue.registerMethod || res.data.labelform.registerMethod || '',
@@ -107,18 +122,18 @@ const Index = () => {
   });
 
   const typeChoice = (showFormIndex: number) => {
-    if (showFormIndex === 2 || showFormIndex === 3) return 'dateChoice';
-    else if (showFormIndex === 6) return 'albumChoice';
+    if (showFormIndex === 3 || showFormIndex === 4) return 'dateChoice';
+    else if (showFormIndex === 8) return 'albumChoice';
     else return 'SimpChoice';
   };
 
   const setSafeFormIndex = (value: number) => {
-    const safeValue = Math.min(Math.max(value, 0), 8);
+    const safeValue = Math.min(Math.max(value, 0), 9);
     setShowFormIndex(safeValue);
   };
 
   const handleFormSubmit = () => {
-    const { type, holderType, startTime, endTime, position, ifRegister, registerMethod } =
+    const { type, holderType, organizerUnit, startTime, endTime, position, address, ifRegister, registerMethod } =
       formValue;
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
@@ -155,7 +170,7 @@ const Index = () => {
       });
       return;
     }
-    if (!type || !holderType || !startTime || !endTime || !position || !ifRegister) {
+    if (!type || !holderType || !organizerUnit || !startTime || !endTime || !position || !address || !ifRegister) {
       Taro.showToast({
         title: '还有必填项未选择，请检查',
         icon: 'none',
@@ -204,9 +219,7 @@ const Index = () => {
                   disabled={item.disabled}
                   activeForm={activeForm}
                   setActiveForm={updateActiveForm}
-                  value={
-                    Object.values(formValue).filter((value) => typeof value === 'string')[index]
-                  }
+                  value={formValue[FORM_KEY_MAP[index]] as string}
                   formValue={formValue}
                   setFormValue={setFormValue}
                   setFormIndex={setSafeFormIndex}

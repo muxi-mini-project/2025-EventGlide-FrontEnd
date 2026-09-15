@@ -34,23 +34,29 @@
     padding: 16rpx 0;
     margin-bottom: -20rpx;
     margin-top: -20rpx;
+    overflow: hidden;
 
     &-item {
       display: flex;
       align-items: center;
       font-size: 24rpx;
       color: #807d84;
+      overflow: hidden;
     }
 
     &-icon {
       width: 28rpx;
       margin-right: 16rpx;
+      flex-shrink: 0;
     }
 
     &-text {
       font-size: 24rpx;
       color: #807d84;
       line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
@@ -59,6 +65,7 @@
     flex-wrap: wrap;
     gap: 10rpx;
     font-size: 18rpx;
+    overflow: hidden;
 
     &-item {
       color: #fff;
@@ -68,6 +75,11 @@
       text-align: center;
       border-radius: 10rpx;
       background-color: #bd96ee;
+      flex-shrink: 0;
+      max-width: 150rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

@@ -110,6 +110,7 @@
       align-items: center;
       font-size: 24rpx;
       color: #807d84;
+      overflow: hidden;
     }
 
     &-icon {
@@ -123,6 +124,9 @@
       color: #807d84;
       line-height: 1.4;
       word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
@@ -132,6 +136,7 @@
     flex-wrap: wrap;
     gap: 12rpx;
     margin-top: 20rpx;
+    overflow: hidden;
   }
 
   .act-tag {
@@ -143,6 +148,11 @@
     text-align: center;
     border-radius: 10rpx;
     background-color: #bd96ee;
+    flex-shrink: 0;
+    max-width: 150rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &--holder {
       background-color: #bd96ee;

@@ -68,10 +68,13 @@ const ActivityTypeDrawer: React.FC<any> = memo(function ActivityTypeDrawer({ ...
         detailTime: date,
       });
     } else {
+      const siteChoice = selectedIndexes.siteChoice;
+      const hasOther = siteChoice.includes('其它');
+      const fixedPositions = siteChoice.filter((item) => item !== '其它');
       setSelectInfo({
         ...selectedInfo,
         type: selectedIndexes.typeChoice,
-        position: selectedIndexes.siteChoice,
+        position: hasOther ? ['其它', ...fixedPositions] : fixedPositions,
         holderType: selectedIndexes.organizerChoice,
       });
     }

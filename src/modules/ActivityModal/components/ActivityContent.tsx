@@ -6,7 +6,7 @@ import Picture from '@/common/components/Picture';
 import { holdertype, activeColor } from '@/common/const/Formconst';
 import pos from '@/common/svg/activity/pos.svg';
 import date from '@/common/svg/activity/date.svg';
-import info from '@/common/svg/post/info.svg';
+import holder from '@/common/svg/activity/holder.svg';
 import TimeTranslation from '@/common/utils/TimeTranslation';
 
 interface ActivityData {
@@ -15,9 +15,11 @@ interface ActivityData {
   showImg?: string[] | null;
   type?: string;
   holderType?: string;
+  organizerUnit?: string;
   ifRegister?: boolean | string;
   detailTime?: { startTime: string; endTime: string };
   position?: string;
+  address?: string;
 }
 
 interface ActivityContentProps {
@@ -32,9 +34,9 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
     activityData,
     canDeleteImages = false,
     isDraftMode = false,
-    setShowPostWindow = () => {},
+    setShowPostWindow = () => { },
   }) => {
-    const { introduce: description, showImg, type, holderType, ifRegister, detailTime, position } =
+    const { introduce: description, showImg, type, holderType, organizerUnit, ifRegister, detailTime, position, address } =
       activityData;
 
     // 处理报名状态文本
@@ -75,17 +77,17 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
               </View>
             </View>
           )}
-          {position && (
+          {address && (
             <View className="activity-content-info-item">
               <Image className="activity-content-info-icon" mode="widthFix" src={pos}></Image>
-              <View className="activity-content-info-text">{position}</View>
+              <View className="activity-content-info-text">{address}</View>
             </View>
           )}
-          {holderType && (
+          {organizerUnit && (
             <View className="activity-content-info-item">
-              <Image className="activity-content-info-icon" mode="widthFix" src={info}></Image>
+              <Image className="activity-content-info-icon" mode="widthFix" src={holder}></Image>
               <View className="activity-content-info-text">
-                {holdertype.get(holderType) || holderType}
+                {organizerUnit}
               </View>
             </View>
           )}
@@ -106,6 +108,19 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
             >
               {type || ''}
             </View>
+            {position && (
+              <View
+                className="activity-content-types-item"
+                style="background-color: #F39C12; color: #fff;"
+              >
+                {position}
+              </View>
+            )}
+            {ifRegister !== undefined && (
+              <View className="activity-content-types-item" style="background-color: #999; color: #fff;">
+                {ifRegister === '是' || ifRegister === true ? '需报名' : '无需报名'}
+              </View>
+            )}
           </View>
 
           <View className="activity-content-pic">
@@ -115,7 +130,7 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
                 src={item}
                 isShowDelete={canDeleteImages}
                 imgUrl={[]}
-                setImgUrl={([]) => {}}
+                setImgUrl={([]) => { }}
               ></Picture>
             ))}
           </View>

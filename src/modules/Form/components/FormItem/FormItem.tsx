@@ -18,8 +18,9 @@ interface FormItemProps extends FormItemType {
 
 const FormItem: React.FC<FormItemProps> = memo(function ({ ...props }) {
   const handleInput = (e: any) => {
-    if (props.id === 4) props.setFormValue({ ...props.formValue, position: e.detail.value });
-    else if (props.id === 7)
+    if (props.id === 2) props.setFormValue({ ...props.formValue, organizerUnit: e.detail.value });
+    else if (props.id === 6) props.setFormValue({ ...props.formValue, address: e.detail.value });
+    else if (props.id === 9)
       props.setFormValue({ ...props.formValue, registerMethod: e.detail.value });
   };
   return (
@@ -35,13 +36,13 @@ const FormItem: React.FC<FormItemProps> = memo(function ({ ...props }) {
           </Text>
           <Text className="form-title">{props.text}</Text>
         </View>
-        <View className={props.id === 6 && props.activeForm.length !== 0 ? 'none' : 'form-item'}>
+        <View className={props.id === 8 && props.activeForm.length !== 0 ? 'none' : 'form-item'}>
           <View className="form-item-gap"></View>
           <Input
             className="form-input"
             onInput={handleInput}
             disabled={props.disabled}
-            value={props.value}
+            value={props.id === 8 ? '' : props.value}
             placeholder={`${props.reminder}`}
             onClick={() => {
               props.setIsVisable(true);
@@ -50,7 +51,7 @@ const FormItem: React.FC<FormItemProps> = memo(function ({ ...props }) {
           ></Input>
         </View>
         <View className="form-item-img">
-          {props.id === 6 && props.activeForm.length === 1 && (
+          {props.id === 8 && props.activeForm.length === 1 && (
             <Picture
               src={props.activeForm[0]}
               isShowDelete={true}

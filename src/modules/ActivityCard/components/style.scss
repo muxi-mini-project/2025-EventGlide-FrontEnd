@@ -76,51 +76,105 @@
       family: 'SimHei';
     }
     color: #807d84;
+    overflow: hidden;
     .active-icon {
-      width: 25rpx;
-      margin-right: 20rpx;
+      width: 24rpx;
+      height: 24rpx;
+      margin-right: 16rpx;
+      flex-shrink: 0;
     }
     .active-date {
       display: flex;
       width: 100%;
-      height: 20rpx;
       align-items: center;
-      line-height: 20rpx;
-      margin-top: 20rpx;
-      margin-bottom: 20rpx;
+      margin-top: 16rpx;
+      margin-bottom: 16rpx;
+      overflow: hidden;
+    }
+    .active-date-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .active-pos {
       display: flex;
       width: 100%;
       align-items: center;
-      line-height: 20rpx;
-      margin-top: 20rpx;
+      margin-top: 16rpx;
+      overflow: hidden;
+    }
+    .active-pos-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   .active-footer {
     position: absolute;
     left: 270rpx;
     top: 180rpx;
+    width: calc(100% - 290rpx);
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
     font-size: 18rpx;
+    overflow: hidden;
     &-holder {
-      padding: 0 20rpx;
+      padding: 0 12rpx;
       height: 30rpx;
       line-height: 30rpx;
       text-align: center;
       border-radius: 10rpx;
       background-color: #bd96ee;
       color: #fff;
+      flex-shrink: 1;
+      min-width: 0;
+      max-width: 100rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     &-type {
-      padding: 0 20rpx;
+      padding: 0 12rpx;
       height: 30rpx;
-      margin-left: 20rpx;
+      margin-left: 8rpx;
       line-height: 30rpx;
       text-align: center;
       border-radius: 10rpx;
       color: white;
+      flex-shrink: 1;
+      min-width: 0;
+      max-width: 80rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &-position {
+      padding: 0 12rpx;
+      height: 30rpx;
+      margin-left: 8rpx;
+      line-height: 30rpx;
+      text-align: center;
+      border-radius: 10rpx;
+      background-color: #F39C12;
+      color: #fff;
+      flex-shrink: 1;
+      min-width: 0;
+      max-width: 100rpx;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &-register {
+      padding: 0 12rpx;
+      height: 30rpx;
+      margin-left: 8rpx;
+      line-height: 30rpx;
+      text-align: center;
+      border-radius: 10rpx;
+      background-color: #999;
+      color: #fff;
+      flex-shrink: 0;
     }
   }
   .active-underline {

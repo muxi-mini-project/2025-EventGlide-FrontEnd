@@ -39,7 +39,7 @@ const ActivityCard: React.FC<{
         </View>
         <View className="active-pos">
           <Image className="active-icon" mode="widthFix" src={pos}></Image>
-          <View className="active-pos-text">{activeItem.position}</View>
+          <View className="active-pos-text">{activeItem.address}</View>
         </View>
       </View>
       <View className="active-footer">
@@ -55,6 +55,14 @@ const ActivityCard: React.FC<{
           }
         >
           {activeItem.type}
+        </View>
+        {activeItem.position && (
+          <View className="active-footer-position">
+            {activeItem.position}
+          </View>
+        )}
+        <View className="active-footer-register">
+          {activeItem.ifRegister === true ? '需报名' : '无需报名'}
         </View>
       </View>
       <View

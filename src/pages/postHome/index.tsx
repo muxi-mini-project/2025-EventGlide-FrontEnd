@@ -119,6 +119,22 @@ const Index = () => {
         bottom: rect?.bottom ?? 0,
       }));
 
+      // 初始化可见列表，确保首次加载时显示图片
+      const viewportTop = 0;
+      const viewportBottom = windowHeight + BUFFER;
+      const initialVisible = new Set<number>();
+
+      positions.current.forEach((position, index) => {
+        const { top, bottom } = position;
+        const inView = bottom >= viewportTop && top <= viewportBottom;
+        if (inView) {
+          initialVisible.add(index);
+        }
+      });
+
+      visibleSet.current = initialVisible;
+      setIsShowList(Array.from(initialVisible));
+
       if (positions.current.length > 0) {
         const lastBottom = positions.current[positions.current.length - 1].bottom;
         if (lastBottom < windowHeight + BUFFER) {

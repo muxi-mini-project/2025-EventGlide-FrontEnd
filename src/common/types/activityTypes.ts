@@ -40,7 +40,7 @@ export interface ActivityDetailInfo {
   holderType: string;
   organizerUnit: string;
   type: string;
-  ifRegister: boolean;
+  ifRegister: boolean | string;
   showImg: string[];
   collectNum: number;
   likeNum: number;

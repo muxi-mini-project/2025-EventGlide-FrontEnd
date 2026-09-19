@@ -1,9 +1,13 @@
 import './style.scss';
-import { View } from '@tarojs/components';
+import { View, Image } from '@tarojs/components';
 import { navigateTo } from '@tarojs/taro';
 import { memo } from 'react';
 import Picture from '@/common/components/Picture';
 import { holdertype, activeColor } from '@/common/const/Formconst';
+import pos from '@/common/svg/activity/pos.svg';
+import date from '@/common/svg/activity/date.svg';
+import holder from '@/common/svg/activity/holder.svg';
+import TimeTranslation from '@/common/utils/TimeTranslation';
 
 interface ActivityData {
   title?: string;
@@ -11,7 +15,11 @@ interface ActivityData {
   showImg?: string[] | null;
   type?: string;
   holderType?: string;
+  organizerUnit?: string;
   ifRegister?: boolean | string;
+  detailTime?: { startTime: string; endTime: string };
+  position?: string;
+  address?: string;
 }
 
 interface ActivityContentProps {
@@ -26,9 +34,10 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
     activityData,
     canDeleteImages = false,
     isDraftMode = false,
-    setShowPostWindow = () => {},
+    setShowPostWindow = () => { },
   }) => {
-    const { introduce: description, showImg, type, holderType, ifRegister } = activityData;
+    const { introduce: description, showImg, type, holderType, organizerUnit, ifRegister, detailTime, position, address } =
+      activityData;
 
     // 处理报名状态文本
     let registerText = '无需报名';
@@ -45,8 +54,10 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
       <View
         className="activity-content"
         onClick={() => {
-          navigateTo({ url: '/subpackage/actComment/index' });
-          setShowPostWindow(false);
+          if (!isDraftMode) {
+            navigateTo({ url: '/subpackage/actComment/index' });
+            setShowPostWindow(false);
+          }
         }}
       >
         <View className="activity-content-text">
@@ -57,6 +68,31 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
             : description
               ? description
               : '暂无介绍'}
+        </View>
+
+        <View className="activity-content-info">
+          {detailTime && detailTime.startTime && detailTime.endTime && (
+            <View className="activity-content-info-item">
+              <Image className="activity-content-info-icon" mode="widthFix" src={date}></Image>
+              <View className="activity-content-info-text">
+                {TimeTranslation(detailTime.startTime)} - {TimeTranslation(detailTime.endTime)}
+              </View>
+            </View>
+          )}
+          {address && (
+            <View className="activity-content-info-item">
+              <Image className="activity-content-info-icon" mode="widthFix" src={pos}></Image>
+              <View className="activity-content-info-text">{address}</View>
+            </View>
+          )}
+          {organizerUnit && (
+            <View className="activity-content-info-item">
+              <Image className="activity-content-info-icon" mode="widthFix" src={holder}></Image>
+              <View className="activity-content-info-text">
+                {organizerUnit}
+              </View>
+            </View>
+          )}
         </View>
 
         <View className="activity-content-other">
@@ -74,6 +110,19 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
             >
               {type || ''}
             </View>
+            {position && (
+              <View
+                className="activity-content-types-item"
+                style="background-color: #F39C12; color: #fff;"
+              >
+                {position}
+              </View>
+            )}
+            {ifRegister !== undefined && (
+              <View className="activity-content-types-item" style="background-color: #999; color: #fff;">
+                {ifRegister === '是' || ifRegister === true ? '需报名' : '无需报名'}
+              </View>
+            )}
           </View>
 
           <View className="activity-content-pic">
@@ -83,7 +132,7 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
                 src={item}
                 isShowDelete={canDeleteImages}
                 imgUrl={[]}
-                setImgUrl={([]) => {}}
+                setImgUrl={([]) => { }}
               ></Picture>
             ))}
           </View>

@@ -1,4 +1,4 @@
-import formType from '../types/FormType';
+import type { FormItemType } from '../types/formTypes';
 
 const activeOrganizerOption = ['学校', '学院', '社团', '个人'];
 
@@ -7,14 +7,14 @@ const activeTypeOption = ['文艺', '体育', '竞赛', '游戏', '学术'];
 const activeTwoOption = ['是', '否'];
 
 const activeSiteOption = [
-  '佑铭体育馆',
   '佑铭体育场',
   '南湖综合楼',
-  '桂中路',
-  '博雅广场',
-  '高职足球场',
+  '七号楼',
   '八号楼',
-  '其他',
+  '博雅广场',
+  '桂中路',
+  '高职足球场',
+  '其它',
 ];
 
 const activeColor = new Map([
@@ -32,7 +32,7 @@ const holdertype = new Map([
   ['个人', '学生承办'],
 ]);
 
-const formList: formType[] = [
+const formList: FormItemType[] = [
   {
     //0
     text: '类型',
@@ -53,6 +53,15 @@ const formList: formType[] = [
   },
   {
     //2
+    text: '活动承办单位',
+    type: 'textInpput',
+    reminder: '请输入',
+    required: true,
+    options: [],
+    disabled: false,
+  },
+  {
+    //3
     text: '活动开始时间',
     type: 'dateChoice',
     required: true,
@@ -61,7 +70,7 @@ const formList: formType[] = [
     disabled: true,
   },
   {
-    //3
+    //4
     text: '活动结束时间',
     type: 'dateChoice',
     required: true,
@@ -70,16 +79,25 @@ const formList: formType[] = [
     disabled: true,
   },
   {
-    //4
+    //5
     text: '活动地点',
-    type: 'textInpput',
+    type: 'SimpChoice',
+    reminder: '请选择',
     required: true,
-    reminder: '请填写',
+    options: activeSiteOption,
+    disabled: true,
+  },
+  {
+    //6
+    text: '活动地址',
+    type: 'textInpput',
+    reminder: '请输入',
+    required: true,
     options: [],
     disabled: false,
   },
   {
-    //5
+    //7
     text: '是否需要报名',
     type: 'SimpChoice',
     reminder: '请选择',
@@ -88,7 +106,7 @@ const formList: formType[] = [
     disabled: true,
   },
   {
-    //6
+    //8
     text: '活动申报表提交',
     type: 'SimpChoice',
     reminder: '请选择',
@@ -97,7 +115,7 @@ const formList: formType[] = [
     disabled: true,
   },
   {
-    //7
+    //9
     text: '报名方式',
     type: 'SimpChoice',
     reminder: '请填写',
@@ -116,4 +134,5 @@ export {
   activeSiteOption,
   activeColor,
   holdertype,
+  formList
 };

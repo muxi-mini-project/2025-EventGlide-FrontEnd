@@ -2,70 +2,170 @@
   position: relative;
   width: 100%;
   font-family: SimHei;
-  overflow-y: hidden;
+  overflow: hidden;
   height: 100vh;
   display: flex;
   flex-direction: column;
 
-  // 帖子内容区域
-  .post-content {
+  // 顶部图片轮播
+  .post-top {
     position: relative;
-    background: #fff;
-    z-index: 1;
-    //padding-bottom: 20rpx;
-  }
-  .sheet-wrapper {
-    position: fixed;
-    left: 0;
-    top: 0;
     width: 100%;
+    overflow: hidden;
+  }
+
+  .act-swiper {
+    width: 100%;
+
+    &-img {
+      width: 100%;
+      height: 100%;
+    }
+
+    &-empty {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f3f8;
+      color: #b0a8bc;
+      font-size: 28rpx;
+    }
+  }
+
+  // 活动信息
+  .act-info {
+    padding: 30rpx 40rpx;
     background: #fff;
+  }
+
+  .act-title {
+    font-size: 34rpx;
+    font-weight: 600;
+    color: #170a1e;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .act-divider {
+    width: 100%;
+    height: 2rpx;
+    background-color: #f1eefc;
+    margin: 24rpx 0;
+  }
+
+  // 描述区域
+  .act-desc-wrapper {
+    position: relative;
+  }
+
+  .act-desc {
+    font-size: 26rpx;
+    color: #5e5064;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 80rpx;
+
+    &--expanded {
+      -webkit-line-clamp: unset;
+      display: block;
+      padding-right: 0;
+    }
+  }
+
+  .act-desc-toggle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: 24rpx;
+    color: #7d73f0;
+    font-weight: 500;
+    padding: 4rpx 0;
+    background: #fff;
+
+    .act-desc--expanded~& {
+      position: static;
+      display: block;
+      margin-top: 12rpx;
+    }
+  }
+
+  // 详情信息（展开后）
+  .act-detail {
     display: flex;
     flex-direction: column;
+    gap: 16rpx;
     margin-top: 20rpx;
-    z-index: 10;
-  }
 
-  // 拖动把手
-  .drag-handle {
-    position: relative;
-    height: 80rpx;
-    background: #fff;
-    z-index: 20;
-    border-top: 2rpx solid #f1eefc;
-    &-bar {
-      margin-top: 10px;
-      margin-left: 50%;
-      transform: translateX(-40rpx);
-      width: 80rpx;
-      height: 6rpx;
-      background: #bebdbe;
-      border-radius: 4rpx;
-    }
-    &-content {
-      width: 100%;
-      margin-top: 10rpx;
+    &-item {
       display: flex;
-      gap: 80rpx;
-      justify-content: center;
-      &-text {
-        font-size: 28rpx;
-        color: #5e5064;
-      }
+      align-items: center;
+      font-size: 24rpx;
+      color: #807d84;
+      overflow: hidden;
+    }
+
+    &-icon {
+      width: 28rpx;
+      margin-right: 16rpx;
+      flex-shrink: 0;
+    }
+
+    &-text {
+      font-size: 24rpx;
+      color: #807d84;
+      line-height: 1.4;
+      word-break: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
-  // 评论面板
-  .comment-panel {
-    position: relative;
-    background: #fff;
-    z-index: 10;
-    border-radius: 20rpx 20rpx 0 0;
+  // Tags（未展开时）
+  .act-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12rpx;
+    margin-top: 20rpx;
     overflow: hidden;
-    min-height: 0;
+  }
+
+  .act-tag {
+    color: #fff;
+    font-size: 20rpx;
+    padding: 0 20rpx;
+    height: 36rpx;
+    line-height: 36rpx;
+    text-align: center;
+    border-radius: 10rpx;
+    background-color: #bd96ee;
+    flex-shrink: 0;
+    max-width: 150rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--holder {
+      background-color: #bd96ee;
+    }
+  }
+
+  // 统一滚动区域
+  .act-scroll-area {
     flex: 1;
-    overflow: hidden;
-    padding-bottom: 160rpx;
+    min-height: 0;
+    background: #fff;
+    z-index: 1;
+    padding-top: 180rpx;
   }
 
   &-container {
@@ -73,9 +173,10 @@
     flex-direction: column;
     width: 100%;
     min-height: 100%;
-    padding-bottom: 40rpx;
+    padding-bottom: 160rpx;
   }
 
+  // 底部操作栏
   &-footer {
     position: fixed;
     bottom: 0;
@@ -98,6 +199,7 @@
       gap: 10rpx;
       align-items: center;
       margin-left: 20rpx;
+
       &-icon {
         width: 40rpx;
         margin-left: 40rpx;
@@ -118,6 +220,7 @@
       gap: 15rpx;
       color: #695c6f;
       margin-right: 40rpx;
+
       &-item {
         display: flex;
         gap: 10rpx;
@@ -148,67 +251,7 @@
   }
 }
 
-.comment-popup {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: 9999;
-
-  &-cancel {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-  &-box {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    background-color: #fff;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 10rpx 15rpx 20rpx 15rpx;
-
-    &-input {
-      flex: 1;
-      width: 600rpx;
-      height: 120rpx;
-      border-radius: 40rpx;
-      background-color: #f9f8fc;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40rpx;
-      font-size: 30rpx;
-      font-family: SimHei;
-      margin-right: 10rpx;
-    }
-
-    &-send {
-      display: flex;
-      background-color: #d7ccf9;
-      border-radius: 30rpx;
-      height: 60rpx;
-      width: 130rpx;
-      align-items: center;
-      justify-content: center;
-      font-size: 35rpx;
-      color: #fff;
-      line-height: 50rpx;
-      padding: 6rpx 6rpx 6rpx 6rpx;
-      margin-right: 15rpx;
-
-      &-active {
-        background-color: #b36aeb;
-      }
-    }
-  }
-}
+// 全屏图片查看器
 .showpicture {
   position: fixed;
   top: 0;
@@ -238,12 +281,14 @@
   align-items: center;
   justify-content: center;
 }
+
 .showpicture-swiper-widthimg {
   width: 100%;
   display: flex;
   align-items: center;
   overflow-y: auto;
 }
+
 .showpicture-swiper-heigthimg {
   width: 100%;
   display: flex;

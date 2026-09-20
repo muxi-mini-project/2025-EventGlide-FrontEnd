@@ -7,6 +7,9 @@ import './app.scss';
 import { checkStatus } from './common/api';
 import useDoorStore from '@/store/DoorStote';
 
+import packageJson from '../package.json';
+const version = packageJson.version;
+
 class App extends Component<PropsWithChildren> {
   componentDidMount() {
     if (useDoorStore.getState().doorStatus === 'loading') {
@@ -16,7 +19,7 @@ class App extends Component<PropsWithChildren> {
 
   checkDoorStatus = async () => {
     try {
-      const res = await checkStatus();
+      const res = await checkStatus(version);
       if (res) {
         if (res.data.status) {
           useDoorStore.getState().setDoorStatus('pass');

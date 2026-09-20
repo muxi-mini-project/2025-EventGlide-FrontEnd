@@ -124,6 +124,6 @@ export const post = <T>(url: string, data?: any, config?: Partial<RequestConfig>
   return apiClient.post<T>(url, data, config);
 };
 const newClient = new ApiRequest('https://miniprograms.muxixyz.com');
-export const checkStatus = () => {
-  return newClient.post<{ status: boolean }>('/checkStatus', { name: 'eventglide' });
+export const checkStatus = (version: string) => {
+  return newClient.post<{ status: boolean }>('/checkStatus', { name: 'eventglide', version });
 };

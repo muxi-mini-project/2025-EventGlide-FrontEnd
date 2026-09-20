@@ -354,7 +354,7 @@ const Index = () => {
                         key={index}
                         id={`post-item-${index}`}
                         onClick={() => {
-                          setSelectPostList(minePostList)
+                          setSelectPostList(minePostList);
                           setPostIndex(item.id);
                           setBackPage('mineHome');
                         }}

@@ -141,7 +141,10 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
               className="avatar"
               src={item.isLike === 'true' ? favoriteActive : favorite}
               mode="widthFix"
-              onClick={(e) => { e.stopPropagation(); handleLike(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLike();
+              }}
             ></Image>
             <View className="count">{item.likeNum}</View>
           </View>

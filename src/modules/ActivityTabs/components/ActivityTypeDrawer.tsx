@@ -68,18 +68,26 @@ const ActivityTypeDrawer: React.FC<any> = memo(function ActivityTypeDrawer({ ...
         detailTime: date,
       });
     } else {
+      const siteChoice = selectedIndexes.siteChoice;
+      const hasOther = siteChoice.includes('其它');
+      const fixedPositions = siteChoice.filter((item) => item !== '其它');
       setSelectInfo({
         ...selectedInfo,
         type: selectedIndexes.typeChoice,
-        position: selectedIndexes.siteChoice,
+        position: hasOther ? ['其它', ...fixedPositions] : fixedPositions,
         holderType: selectedIndexes.organizerChoice,
       });
     }
-    props.setType([]);
     props.setIsVisiable(false);
   };
   const reset = () => {
-    if (props.type === 'typeChoice') {
+    if (props.type === 'dateChoice') {
+      setSelectInfo({
+        ...selectedInfo,
+        detailTime: '',
+      });
+      props.setIsVisiable(false);
+    } else if (props.type === 'typeChoice') {
       setSelectedIndexes((prev) => ({
         ...prev,
         typeChoice: [],
@@ -96,6 +104,14 @@ const ActivityTypeDrawer: React.FC<any> = memo(function ActivityTypeDrawer({ ...
       }));
     }
   };
+  const handleDateReset = () => {
+    setSelectInfo({
+      ...selectedInfo,
+      detailTime: '',
+    });
+    props.setIsVisiable(false);
+  };
+
   if (props.type === 'dateChoice') {
     return (
       <DatePicker
@@ -103,6 +119,7 @@ const ActivityTypeDrawer: React.FC<any> = memo(function ActivityTypeDrawer({ ...
         setIsVisiable={props.setIsVisiable}
         handleConfirm={handleConfirm}
         allowTimeClear={true}
+        onReset={handleDateReset}
         activeYearIndex={activeYearIndex}
         setActiveYearIndex={setActiveYearIndex}
         activeMonthIndex={activeMonthIndex}

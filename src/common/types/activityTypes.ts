@@ -35,10 +35,12 @@ export interface ActivityDetailInfo {
   title: string;
   detailTime: { startTime: string; endTime: string };
   position: string;
+  address: string;
   introduce: string;
   holderType: string;
+  organizerUnit: string;
   type: string;
-  ifRegister: boolean;
+  ifRegister: boolean | string;
   showImg: string[];
   collectNum: number;
   likeNum: number;

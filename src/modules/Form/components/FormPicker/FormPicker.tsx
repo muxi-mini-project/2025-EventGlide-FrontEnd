@@ -1,6 +1,6 @@
 import './style.scss';
 import { memo, useState, useEffect } from 'react';
-import { View } from '@tarojs/components';
+import { View, Input } from '@tarojs/components';
 import DatePicker from '@/modules/DatePicker';
 import ImagePicker from '@/modules/ImagePicker';
 import Drawer from '@/common/components/Drawer';
@@ -9,22 +9,25 @@ import Drawer from '@/common/components/Drawer';
 const FORM_KEY_MAP: Record<number, string> = {
   0: 'type',
   1: 'holderType',
-  2: 'startTime',
-  3: 'endTime',
-  4: 'position',
-  5: 'ifRegister',
-  6: 'activeForm',
-  7: 'registerMethod',
+  2: 'organizerUnit',
+  3: 'startTime',
+  4: 'endTime',
+  5: 'position',
+  6: 'address',
+  7: 'ifRegister',
+  8: 'activeForm',
+  9: 'registerMethod',
 };
 
 const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
-  const showLIst = [0, 1, 5];
+  const showLIst = [0, 1, 5, 7];
   const [selectedValue, setSelectedValue] = useState<number>(-1);
   const [activeYearIndex, setActiveYearIndex] = useState(0);
   const [activeMonthIndex, setActiveMonthIndex] = useState(0);
   const [activeDayIndex, setActiveDayIndex] = useState(0);
   const [activeHourIndex, setActiveHourIndex] = useState(0);
   const [activeMinuteIndex, setActiveMinuteIndex] = useState(0);
+  const [customPosition, setCustomPosition] = useState<string>('');
 
   // 切换表单字段时，从 formValue 同步 selectedValue
   useEffect(() => {
@@ -33,7 +36,14 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
       const val = props.formValue?.[key];
       if (val) {
         const idx = (props.options ?? []).indexOf(val);
-        setSelectedValue(idx >= 0 ? idx : -1);
+        if (idx >= 0) {
+          setSelectedValue(idx);
+        } else if (props.showFormIndex === 5 && val) {
+          setSelectedValue(props.options.length - 1);
+          setCustomPosition(val);
+        } else {
+          setSelectedValue(-1);
+        }
       } else {
         setSelectedValue(-1);
       }
@@ -43,8 +53,12 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
   const handleSelect = (value: number) => {
     if (selectedValue === value) {
       setSelectedValue(-1);
+      setCustomPosition('');
     } else {
       setSelectedValue(value);
+      if (props.options[value] !== '其它') {
+        setCustomPosition('');
+      }
     }
   };
 
@@ -57,6 +71,29 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
         ...props.formValue,
         [dynamicKey]: date,
       });
+    } else if (props.showFormIndex === 5) {
+      const dynamicKey = FORM_KEY_MAP[props.showFormIndex];
+      if (selectedValue >= 0 && selectedValue < props.options.length) {
+        const selectedOption = props.options[selectedValue];
+        if (selectedOption === '其它') {
+          if (customPosition.trim()) {
+            props.setFormValue({
+              ...props.formValue,
+              [dynamicKey]: customPosition.trim(),
+            });
+          } else {
+            props.setFormValue({
+              ...props.formValue,
+              [dynamicKey]: '其它',
+            });
+          }
+        } else {
+          props.setFormValue({
+            ...props.formValue,
+            [dynamicKey]: selectedOption,
+          });
+        }
+      }
     } else if (selectedValue >= 0 && selectedValue < props.options.length) {
       const dynamicKey = FORM_KEY_MAP[props.showFormIndex];
       props.setFormValue({
@@ -65,6 +102,11 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
       });
     }
   };
+
+  const handleCustomInput = (e: any) => {
+    setCustomPosition(e.detail.value);
+  };
+
   switch (props.type) {
     case 'albumChoice':
       return (
@@ -110,17 +152,33 @@ const FormPicker: React.FC<any> = memo(function FormPicker({ ...props }) {
               </View>
             </View>
             {(props.options ?? []).map((item, index) => (
-              <View key={index} className="formWindow-item">
+              <View
+                key={index}
+                className="formWindow-item"
+                onClick={() => handleSelect(index)}
+              >
                 <View
                   className="formWindow-item-btn"
                   style={{
                     backgroundColor: selectedValue === index ? '#7D73F0' : '#FFFFFF',
                   }}
-                  onClick={() => handleSelect(index)}
                 ></View>
                 <View className="formWindow-item-text">{item}</View>
               </View>
             ))}
+            {props.showFormIndex === 5 &&
+              selectedValue >= 0 &&
+              props.options[selectedValue] === '其它' && (
+                <View className="formWindow-custom-input">
+                  <View className="formWindow-custom-input-label">请输入地点：</View>
+                  <Input
+                    className="formWindow-custom-input-field"
+                    placeholder="请输入自定义地点"
+                    value={customPosition}
+                    onInput={handleCustomInput}
+                  />
+                </View>
+              )}
           </View>
         </Drawer>
       );

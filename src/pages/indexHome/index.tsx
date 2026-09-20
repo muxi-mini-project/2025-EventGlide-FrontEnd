@@ -10,6 +10,7 @@ import { judgeDate } from '@/common/utils/DateList';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import IndexPageNull from '@/modules/EmptyComponent/components/indexpagenull';
 import { filterActivity, getActivityList, searchActivityList } from '@/common/api';
+import { activeSiteOption } from '@/common/const/Formconst';
 import ScrollTop from '@/modules/ScrollTop/components/ScrollTop';
 
 const Index = () => {
@@ -17,10 +18,9 @@ const Index = () => {
   const [showTypeDrawer, setShowTypeDrawer] = useState(false);
   const [showColorExplain, setShowColorExplain] = useState(false);
   const [activityType, setActivityType] = useState<string>('');
-  const { activeList, setActiveList, setSelectedItem, selectedInfo, isSelect, setSelectInfo } =
+  const { activeList, setActiveList, setSelectedItem, selectedInfo, setSelectInfo } =
     useActivityStore();
   const [approximateTime, setApproximateTime] = useState<string>('');
-  const [type, setType] = useState<string[]>([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [scrollRecord, setScrollRecord] = useState(false);
@@ -36,17 +36,45 @@ const Index = () => {
   const LIMIT = 10;
   const BUFFER = 300;
 
+  const hasActiveFilters = () => {
+    return (
+      selectedInfo.detailTime !== '' ||
+      selectedInfo.type.length > 0 ||
+      selectedInfo.holderType.length > 0 ||
+      selectedInfo.position.length > 0
+    );
+  };
+
   const loadActivities = async (pageNum = 1, refresh = false, searchKeyword = '') => {
     let res;
     const shouldSearch = searchKeyword !== '';
+    const hasOther = selectedInfo.position.includes('其它');
+    const fixedPositions = selectedInfo.position.filter((item) => item !== '其它');
+
     if (shouldSearch) {
-      // 搜索模式
       res = await searchActivityList({ name: searchKeyword, page: pageNum, limit: LIMIT });
-    } else if (isSelect) {
-      // 筛选模式
-      res = await filterActivity({ ...selectedInfo, page: pageNum, limit: LIMIT });
+    } else if (hasActiveFilters()) {
+      if (hasOther && fixedPositions.length > 0) {
+        const res1 = await filterActivity({ ...selectedInfo, position: fixedPositions, page: pageNum, limit: LIMIT });
+        const res2 = await filterActivity({ ...selectedInfo, position: [], page: 1, limit: 100 });
+        const otherItems = (res2.data?.details || []).filter(
+          (item) => !activeSiteOption.includes(item.position)
+        );
+        const allDetails = [...(res1.data?.details || []), ...otherItems];
+        const start = (pageNum - 1) * LIMIT;
+        const paginatedDetails = allDetails.slice(start, start + LIMIT);
+        res = { data: { details: paginatedDetails, total: allDetails.length } };
+      } else if (hasOther) {
+        res = await filterActivity({ ...selectedInfo, position: [], page: pageNum, limit: LIMIT });
+        if (res.data?.details) {
+          res.data.details = res.data.details.filter(
+            (item) => !activeSiteOption.includes(item.position)
+          );
+        }
+      } else {
+        res = await filterActivity({ ...selectedInfo, page: pageNum, limit: LIMIT });
+      }
     } else {
-      // 默认模式
       res = await getActivityList({ limit: LIMIT, page: pageNum });
     }
     console.log(res);
@@ -73,19 +101,35 @@ const Index = () => {
     console.log(selectedInfo);
     setHasMore(true);
     await loadActivities(1, true);
-    const now = new Date();
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} 00:00`;
-    setSelectInfo({
-      ...selectedInfo,
-      detailTime: today,
-    });
   });
 
   useEffect(() => {
     console.log(selectedInfo);
     const fetchFilteredActivities = async () => {
       try {
-        const res = await filterActivity(selectedInfo);
+        const hasOther = selectedInfo.position.includes('其它');
+        const fixedPositions = selectedInfo.position.filter((item) => item !== '其它');
+
+        let res;
+        if (hasOther && fixedPositions.length > 0) {
+          const res1 = await filterActivity({ ...selectedInfo, position: fixedPositions });
+          const res2 = await filterActivity({ ...selectedInfo, position: [] });
+          const otherItems = (res2.data?.details || []).filter(
+            (item) => !activeSiteOption.includes(item.position)
+          );
+          const merged = [...(res1.data?.details || []), ...otherItems];
+          res = { data: { details: merged, total: merged.length } };
+        } else if (hasOther) {
+          res = await filterActivity({ ...selectedInfo, position: [] });
+          if (res.data?.details) {
+            res.data.details = res.data.details.filter(
+              (item) => !activeSiteOption.includes(item.position)
+            );
+          }
+        } else {
+          res = await filterActivity(selectedInfo);
+        }
+
         console.log(res.data);
         if (res.data === null) {
           setActiveList([]);
@@ -101,7 +145,7 @@ const Index = () => {
     } else {
       fetchFilteredActivities();
     }
-  }, [type]);
+  }, [selectedInfo]);
 
   useEffect(() => {
     if (showPostWindow || showColorExplain) {
@@ -204,7 +248,6 @@ const Index = () => {
       <View className="sticky-header" onClick={() => setScrollTop(scrollPosition)}>
         <ActivityTabs
           setApproximateTime={setApproximateTime}
-          setType={setType}
           showTypeDrawer={showTypeDrawer}
           setChooseDrawerVisible={setShowTypeDrawer}
           chooseDrawerType={activityType}
@@ -256,7 +299,6 @@ const Index = () => {
         isVisiable={showTypeDrawer}
         setIsVisiable={setShowTypeDrawer}
         type={activityType}
-        setType={setType}
       ></ActivityTypeDrawer>
       <ColorExplain
         visible={showColorExplain}

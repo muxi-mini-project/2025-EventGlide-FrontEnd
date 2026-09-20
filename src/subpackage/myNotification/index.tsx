@@ -166,15 +166,14 @@ const Index = () => {
       const invitationsList = invitations.data?.Invitations || [];
       const likes = res.data?.Likes || [];
       const collects = res.data.Collects || [];
-      const mergedFavor = mergeSortedArrays(likes, collects);
-      const favorWithInvitations = mergeSortedArrays(mergedFavor, invitationsList);
+      const favorWithInvitations = [...likes, ...collects, ...invitationsList].sort((a, b) => parseDateSafely(b.PublishedAt) - parseDateSafely(a.PublishedAt));
       console.log('合并后的通知列表', favorWithInvitations);
       setFavor(favorWithInvitations);
-      readnotice(mergedFavor);
+      readnotice(favorWithInvitations);
 
       const comments = res.data?.Comments || [];
       const ats = res.data.Ats || [];
-      const mergedLetter = mergeSortedArrays(comments, ats);
+      const mergedLetter = [...comments, ...ats].sort((a, b) => parseDateSafely(b.PublishedAt) - parseDateSafely(a.PublishedAt));
       setLetter(mergedLetter);
       if (mergedLetter[0] && mergedLetter[0].status === '未读') {
         setNotice(true);

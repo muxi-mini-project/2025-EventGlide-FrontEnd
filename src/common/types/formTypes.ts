@@ -14,9 +14,11 @@ export interface FormItemType {
 export interface LabelForm {
   type: string;
   holderType: string;
+  organizerUnit: string;
   startTime: string;
   endTime: string;
   position: string;
+  address: string;
   ifRegister: string;
   activeForm?: string;
   registerMethod?: string;

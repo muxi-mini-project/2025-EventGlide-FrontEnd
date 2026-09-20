@@ -37,6 +37,12 @@ const Index = () => {
   const [page, setPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const LIMIT = 10;
+  const handleCancel = async () => {
+    setSearchValue('');
+    setCurrentSearchKeyword('');
+    setHasMore(true);
+    await loadPosts(1, true, '');
+  };
   const positions = useRef<
     {
       top: number;
@@ -72,6 +78,7 @@ const Index = () => {
     if (res.data.total !== undefined) {
       setTotalPosts(res.data.total);
     }
+    return list.length;
   };
 
   useDidShow(async () => {
@@ -112,11 +119,28 @@ const Index = () => {
         bottom: rect?.bottom ?? 0,
       }));
 
-      handleScroll({
-        detail: {
-          scrollTop: 0,
-        },
+      // 初始化可见列表，确保首次加载时显示图片
+      const viewportTop = 0;
+      const viewportBottom = windowHeight + BUFFER;
+      const initialVisible = new Set<number>();
+
+      positions.current.forEach((position, index) => {
+        const { top, bottom } = position;
+        const inView = bottom >= viewportTop && top <= viewportBottom;
+        if (inView) {
+          initialVisible.add(index);
+        }
       });
+
+      visibleSet.current = initialVisible;
+      setIsShowList(Array.from(initialVisible));
+
+      if (positions.current.length > 0) {
+        const lastBottom = positions.current[positions.current.length - 1].bottom;
+        if (lastBottom < windowHeight + BUFFER) {
+          loadMore();
+        }
+      }
     });
   };
 
@@ -235,6 +259,10 @@ const Index = () => {
       const feedRes = await get<GetNotificationCountResponse>('/feed/total');
       setMsgCount(feedRes.data.total);
       finishRefresh();
+
+      setTimeout(() => {
+        measurePostPositions();
+      }, 200);
     } catch (error) {
       finishRefresh();
       console.error('刷新过程发生错误:', error);
@@ -301,7 +329,10 @@ const Index = () => {
                 value={searchValue}
                 onInput={(e) => setSearchValue(e.detail.value)}
                 onConfirm={() => handleSearch()}
-              />
+              />{searchValue && (
+                <View className="cancel-btn" onClick={handleCancel}>取消</View>
+              )}
+
             </View>
             {/* <View className="search-btn" onClick={() => handleSearch()}>
               搜索

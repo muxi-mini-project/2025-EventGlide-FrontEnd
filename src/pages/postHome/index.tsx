@@ -51,6 +51,8 @@ const Index = () => {
   >([]);
   const scrollRaf = useRef(false);
   const hasLoadedPosts = useRef(false);
+  const pageRef = useRef(1);
+  const refreshingRef = useRef(false);
   const { doorStatus } = useDoorStore();
 
   const loadPosts = async (page = 1, refresh = false, searchKeyword = '') => {
@@ -71,10 +73,12 @@ const Index = () => {
       setPostList(list);
       setSelectPostList(list);
     } else {
-      setPostList([...PostList, ...list]);
-      setSelectPostList([...PostList, ...list]);
+      const latestPostList = usePostStore.getState().PostList;
+      setPostList([...latestPostList, ...list]);
+      setSelectPostList([...latestPostList, ...list]);
     }
     setPage(page);
+    pageRef.current = page;
     if (res.data.total !== undefined) {
       setTotalPosts(res.data.total);
     }
@@ -224,12 +228,14 @@ const Index = () => {
   const onRefresh = async () => {
     console.log('refresh');
     setRefreshing(true);
+    refreshingRef.current = true;
     const startTime = Date.now();
     const MIN_REFRESH_DURATION = 1500;
 
     const timeoutId = setTimeout(() => {
-      if (refreshing) {
+      if (refreshingRef.current) {
         setRefreshing(false);
+        refreshingRef.current = false;
         console.log('刷新失败');
       }
     }, 4000);
@@ -245,10 +251,12 @@ const Index = () => {
         setTimeout(() => {
           clearTimeoutSafely();
           setRefreshing(false);
+          refreshingRef.current = false;
         }, remaining);
       } else {
         clearTimeoutSafely();
         setRefreshing(false);
+        refreshingRef.current = false;
       }
     };
 
@@ -259,12 +267,9 @@ const Index = () => {
       const feedRes = await get<GetNotificationCountResponse>('/feed/total');
       setMsgCount(feedRes.data.total);
       finishRefresh();
-
-      setTimeout(() => {
-        measurePostPositions();
-      }, 200);
     } catch (error) {
       finishRefresh();
+      refreshingRef.current = false;
       console.error('刷新过程发生错误:', error);
       Taro.showToast({
         title: '刷新失败，请稍后重试',
@@ -278,10 +283,11 @@ const Index = () => {
     if (loading || !hasMore || refreshing) return;
     setLoading(true);
     try {
-      if (PostList.length >= totalPosts) {
+      const latestPostList = usePostStore.getState().PostList;
+      if (latestPostList.length >= totalPosts) {
         setHasMore(false);
       }
-      await loadPosts(page + 1, false, currentSearchKeyword);
+      await loadPosts(pageRef.current + 1, false, currentSearchKeyword);
     } catch (error) {
       console.error('加载更多失败:', error);
     } finally {

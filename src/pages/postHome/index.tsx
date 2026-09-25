@@ -37,6 +37,27 @@ const Index = () => {
   const [page, setPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const LIMIT = 10;
+
+  /**
+   * 原来读的是 windowHeight state，而它只在 Taro.useReady 里赋值：
+   * useDidShow 早于 onReady，加上 setTimeout(100) 里捕获的是旧 render 的闭包，
+   * 首次进入/重新进入时 measure 常常拿到 0，
+   * viewportBottom 就退化成只剩 BUFFER(300px)，
+   * 瀑布流两列里只有最上面那两张卡片被判为「可见」，其余永久骨架屏，
+   * 直到有滚动事件走 handleScroll 才重新算出来 —— 就是用户看到的现象。
+   */
+  const getViewportHeight = () => {
+    try {
+      const info = Taro.getWindowInfo ? Taro.getWindowInfo() : Taro.getSystemInfoSync();
+      if (info && info.windowHeight > 0) return info.windowHeight;
+    } catch (e) {
+      // 取不到就走兜底值
+    }
+    // 其次用 useReady 里存的高度，最后按小屏估一个，
+    // 宁可多加载几张也不要漏显示
+    return windowHeight > 0 ? windowHeight : 667;
+  };
+
   const handleCancel = async () => {
     setSearchValue('');
     setCurrentSearchKeyword('');
@@ -51,6 +72,8 @@ const Index = () => {
   >([]);
   const scrollRaf = useRef(false);
   const hasLoadedPosts = useRef(false);
+  const pageRef = useRef(1);
+  const refreshingRef = useRef(false);
   const { doorStatus } = useDoorStore();
 
   const loadPosts = async (page = 1, refresh = false, searchKeyword = '') => {
@@ -71,10 +94,12 @@ const Index = () => {
       setPostList(list);
       setSelectPostList(list);
     } else {
-      setPostList([...PostList, ...list]);
-      setSelectPostList([...PostList, ...list]);
+      const latestPostList = usePostStore.getState().PostList;
+      setPostList([...latestPostList, ...list]);
+      setSelectPostList([...latestPostList, ...list]);
     }
     setPage(page);
+    pageRef.current = page;
     if (res.data.total !== undefined) {
       setTotalPosts(res.data.total);
     }
@@ -121,8 +146,9 @@ const Index = () => {
 
       // 初始化可见列表，确保首次加载时显示图片
       const viewportTop = 0;
-      const viewportBottom = windowHeight + BUFFER;
-      const initialVisible = new Set<number>();
+      const viewportBottom = getViewportHeight() + BUFFER;
+      // 与上一次的结果取并集：测量只会「多显示」，不会把已经在显示的卡片重新藏回骨架屏
+      const initialVisible = new Set<number>(visibleSet.current);
 
       positions.current.forEach((position, index) => {
         const { top, bottom } = position;
@@ -132,12 +158,18 @@ const Index = () => {
         }
       });
 
+      // 首屏兜底：即使整体测量异常（节点还没渲染、灰度只渲染前 3 条等），
+      // 前几张卡片也一定显示图片，不会再出现「只有两张有图」
+      for (let i = 0; i < Math.min(6, positions.current.length); i++) {
+        initialVisible.add(i);
+      }
+
       visibleSet.current = initialVisible;
       setIsShowList(Array.from(initialVisible));
 
       if (positions.current.length > 0) {
         const lastBottom = positions.current[positions.current.length - 1].bottom;
-        if (lastBottom < windowHeight + BUFFER) {
+        if (lastBottom < viewportBottom) {
           loadMore();
         }
       }
@@ -146,16 +178,18 @@ const Index = () => {
 
   const handleScroll = (e: any) => {
     const scrollTop = e?.detail?.scrollTop || 0;
+    // 这里也改成实时取，不依赖可能为 0 的 windowHeight state
+    const viewportHeight = getViewportHeight();
 
     setShowScrollTop(scrollTop > 300);
 
-    const distanceToBottom = e.detail.scrollHeight - (scrollTop + windowHeight);
+    const distanceToBottom = e.detail.scrollHeight - (scrollTop + viewportHeight);
     if (distanceToBottom <= BUFFER) {
       loadMore();
     }
 
     const viewportTop = scrollTop - BUFFER;
-    const viewportBottom = scrollTop + windowHeight + BUFFER;
+    const viewportBottom = scrollTop + viewportHeight + BUFFER;
 
     const newVisible = new Set<number>();
 
@@ -224,12 +258,14 @@ const Index = () => {
   const onRefresh = async () => {
     console.log('refresh');
     setRefreshing(true);
+    refreshingRef.current = true;
     const startTime = Date.now();
     const MIN_REFRESH_DURATION = 1500;
 
     const timeoutId = setTimeout(() => {
-      if (refreshing) {
+      if (refreshingRef.current) {
         setRefreshing(false);
+        refreshingRef.current = false;
         console.log('刷新失败');
       }
     }, 4000);
@@ -245,10 +281,12 @@ const Index = () => {
         setTimeout(() => {
           clearTimeoutSafely();
           setRefreshing(false);
+          refreshingRef.current = false;
         }, remaining);
       } else {
         clearTimeoutSafely();
         setRefreshing(false);
+        refreshingRef.current = false;
       }
     };
 
@@ -259,12 +297,9 @@ const Index = () => {
       const feedRes = await get<GetNotificationCountResponse>('/feed/total');
       setMsgCount(feedRes.data.total);
       finishRefresh();
-
-      setTimeout(() => {
-        measurePostPositions();
-      }, 200);
     } catch (error) {
       finishRefresh();
+      refreshingRef.current = false;
       console.error('刷新过程发生错误:', error);
       Taro.showToast({
         title: '刷新失败，请稍后重试',
@@ -278,10 +313,11 @@ const Index = () => {
     if (loading || !hasMore || refreshing) return;
     setLoading(true);
     try {
-      if (PostList.length >= totalPosts) {
+      const latestPostList = usePostStore.getState().PostList;
+      if (latestPostList.length >= totalPosts) {
         setHasMore(false);
       }
-      await loadPosts(page + 1, false, currentSearchKeyword);
+      await loadPosts(pageRef.current + 1, false, currentSearchKeyword);
     } catch (error) {
       console.error('加载更多失败:', error);
     } finally {

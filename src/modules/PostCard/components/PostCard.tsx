@@ -117,9 +117,15 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
             <Image
               className="img"
               mode="widthFix"
-              lazyLoad={true}
-              src={localImageUrl || item.showImg[0]}
+              /*
+               * 是否加载已经由父级 postHome 通过 isShowImg 控制，
+               * 而微信自己的 lazy-load 只在滚动事件里判断可见性，
+               * 重新进入小程序时首屏不会补发滚动事件，
+               * 图片就一直不加载（表现和骨架屏一样），拖一下屏幕才出来。
+               */
+              src={localImageUrl || item.showImg?.[0]}
               onLoad={() => setIsLoading(false)}
+              onError={() => setIsLoading(false)}
             ></Image>
             {isLoading && <View className="image-loader"></View>}
           </View>

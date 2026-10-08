@@ -12,6 +12,7 @@ import IndexPageNull from '@/modules/EmptyComponent/components/indexpagenull';
 import { filterActivity, getActivityList, searchActivityList } from '@/common/api';
 import { activeSiteOption } from '@/common/const/Formconst';
 import ScrollTop from '@/modules/ScrollTop/components/ScrollTop';
+import useDoorStore from '@/store/DoorStote';
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
@@ -33,6 +34,7 @@ const Index = () => {
   const [totalPosts, setTotalPosts] = useState(0);
   const LIMIT = 10;
   const BUFFER = 300;
+  const { doorStatus } = useDoorStore();
 
   const hasActiveFilters = () => {
     return (
@@ -285,7 +287,13 @@ const Index = () => {
                 <ActivityCard
                   key={index}
                   activeItem={activeItem}
-                  setShowPostWindow={setShowPostWindow}
+                  setShowPostWindow={
+                    doorStatus === 'pass'
+                      ? setShowPostWindow
+                      : () => {
+                          console.log(`doorstatus: ${doorStatus}`);
+                        }
+                  }
                 />
               </View>
             ))

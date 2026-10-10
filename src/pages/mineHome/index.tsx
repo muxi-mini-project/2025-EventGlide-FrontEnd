@@ -96,6 +96,13 @@ const Index = () => {
     } catch (err) {
       console.log(err);
     }
+    // 每次回到「我的」页面都按当前 tab 重拉列表，
+    // 保证删帖/别处操作后列表立即同步（首帧已由 useEffect[activeIndex, activePage] 拉过，这里是回来时的增量刷新）
+    if (activePage === 'post') {
+      loadPosts(1, true);
+    } else {
+      loadActivities(1, true);
+    }
   });
 
   const loadPosts = async (pageNum = 1, refresh = false) => {

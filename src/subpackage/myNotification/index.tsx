@@ -16,6 +16,8 @@ import { getActivityById } from '@/common/api/Activity';
 import handleInteraction from '@/common/utils/Interaction';
 import ConfirmModal from '@/modules/ConfirmModal';
 import Message from '@/common/components/Message';
+// 帖子被删除后的中性占位图，使用项目已有 info 图标
+import defaultPostPlaceholder from '@/common/svg/Post/info.svg';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
   const { setSelectedItem, setSelectComment } = useActivityStore();
@@ -30,6 +32,8 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
 
   const handleClick = async (props: LetterType) => {
     console.log(props);
+    // 目标帖子已被删除，禁止跳转
+    if (props.targetDeleted) return;
     if (props.status === 'pending') {
       handleItemClick(props);
     } else {
@@ -121,11 +125,11 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
         </View>
         <Image
           mode="aspectFill"
-          src={props.FirstPic || props.Userinfo.Avatar}
+          src={props.targetDeleted ? defaultPostPlaceholder : (props.FirstPic || props.Userinfo.Avatar)}
           className="letter-list-item-decPic"
           onClick={(event) => {
             event.stopPropagation();
-            handleClick(props);
+            if (!props.targetDeleted) handleClick(props);
           }}
         ></Image>
       </View>

@@ -34,6 +34,23 @@
       color: #3d3d3d;
     }
   }
+  &-edit {
+    position: absolute;
+    right: 30rpx;
+    bottom: 20rpx;
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 102;
+    &-text {
+      font-size: 44rpx;
+      color: #5e5064;
+      line-height: 1;
+      letter-spacing: -4rpx;
+    }
+  }
   &-title {
     position: absolute;
     width: 100%;

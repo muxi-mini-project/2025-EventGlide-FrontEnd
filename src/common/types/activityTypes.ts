@@ -59,6 +59,7 @@ export interface LetterType {
   RootType?: string;
   RootID?: string;
   Subject: string;
+  targetDeleted?: boolean;
   Userinfo: {
     Avatar: string;
     StudentID: string;

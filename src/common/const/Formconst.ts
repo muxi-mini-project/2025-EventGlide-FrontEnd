@@ -134,5 +134,5 @@ export {
   activeSiteOption,
   activeColor,
   holdertype,
-  formList
+  formList,
 };

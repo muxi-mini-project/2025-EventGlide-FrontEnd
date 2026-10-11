@@ -8,7 +8,7 @@ import ImagePicker from '@/modules/ImagePicker';
 import searchpic from '@/common/svg/Postlist/搜索.svg';
 import Info from '@/common/svg/Post/info.svg';
 import usePostStore from '@/store/PostStore';
-import { get, post } from '@/common/api/request';
+import { get } from '@/common/api/request';
 import useActivityStore from '@/store/ActivityStore';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import { getPostList, searchPostList } from '@/common/api';
@@ -80,14 +80,14 @@ const Index = () => {
     const shouldSearch = searchKeyword !== '';
     const res = shouldSearch
       ? await searchPostList({
-        page: page,
-        limit: LIMIT,
-        name: searchKeyword,
-      })
+          page: page,
+          limit: LIMIT,
+          name: searchKeyword,
+        })
       : await getPostList({
-        page: page,
-        limit: LIMIT,
-      });
+          page: page,
+          limit: LIMIT,
+        });
     console.log(res);
     const list = res.data.details || [];
     if (refresh) {
@@ -365,10 +365,12 @@ const Index = () => {
                 value={searchValue}
                 onInput={(e) => setSearchValue(e.detail.value)}
                 onConfirm={() => handleSearch()}
-              />{searchValue && (
-                <View className="cancel-btn" onClick={handleCancel}>取消</View>
+              />
+              {searchValue && (
+                <View className="cancel-btn" onClick={handleCancel}>
+                  取消
+                </View>
               )}
-
             </View>
             {/* <View className="search-btn" onClick={() => handleSearch()}>
               搜索
@@ -402,18 +404,18 @@ const Index = () => {
             {visiblePostList === null
               ? null
               : visiblePostList.map((item, index) => (
-                <View
-                  key={index}
-                  id={`post-item-${index}`}
-                  onClick={() => {
-                    setSelectPostList(PostList);
-                    setPostIndex(item.id);
-                    setBackPage('postHome');
-                  }}
-                >
-                  <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
-                </View>
-              ))}
+                  <View
+                    key={index}
+                    id={`post-item-${index}`}
+                    onClick={() => {
+                      setSelectPostList(PostList);
+                      setPostIndex(item.id);
+                      setBackPage('postHome');
+                    }}
+                  >
+                    <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
+                  </View>
+                ))}
           </GridView>
         </ScrollView>
       </View>

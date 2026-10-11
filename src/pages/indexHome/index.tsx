@@ -12,14 +12,14 @@ import IndexPageNull from '@/modules/EmptyComponent/components/indexpagenull';
 import { filterActivity, getActivityList, searchActivityList } from '@/common/api';
 import { activeSiteOption } from '@/common/const/Formconst';
 import ScrollTop from '@/modules/ScrollTop/components/ScrollTop';
+import useDoorStore from '@/store/DoorStote';
 
 const Index = () => {
   const [showPostWindow, setShowPostWindow] = useState(false);
   const [showTypeDrawer, setShowTypeDrawer] = useState(false);
   const [showColorExplain, setShowColorExplain] = useState(false);
   const [activityType, setActivityType] = useState<string>('');
-  const { activeList, setActiveList, setSelectedItem, selectedInfo, setSelectInfo } =
-    useActivityStore();
+  const { activeList, setActiveList, setSelectedItem, selectedInfo } = useActivityStore();
   const [approximateTime, setApproximateTime] = useState<string>('');
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -28,13 +28,13 @@ const Index = () => {
   const [firstLoad, setFirstLoad] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [currentSearchKeyword, setCurrentSearchKeyword] = useState<string>('');
-  const [isSearchMode, setIsSearchMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(0);
   const LIMIT = 10;
   const BUFFER = 300;
+  const { doorStatus } = useDoorStore();
 
   const hasActiveFilters = () => {
     return (
@@ -55,7 +55,12 @@ const Index = () => {
       res = await searchActivityList({ name: searchKeyword, page: pageNum, limit: LIMIT });
     } else if (hasActiveFilters()) {
       if (hasOther && fixedPositions.length > 0) {
-        const res1 = await filterActivity({ ...selectedInfo, position: fixedPositions, page: pageNum, limit: LIMIT });
+        const res1 = await filterActivity({
+          ...selectedInfo,
+          position: fixedPositions,
+          page: pageNum,
+          limit: LIMIT,
+        });
         const res2 = await filterActivity({ ...selectedInfo, position: [], page: 1, limit: 100 });
         const otherItems = (res2.data?.details || []).filter(
           (item) => !activeSiteOption.includes(item.position)
@@ -92,7 +97,6 @@ const Index = () => {
 
   const handleSearch = async (keyword: string) => {
     setCurrentSearchKeyword(keyword);
-    setIsSearchMode(keyword !== '');
     setHasMore(true);
     await loadActivities(1, true, keyword);
   };
@@ -283,7 +287,13 @@ const Index = () => {
                 <ActivityCard
                   key={index}
                   activeItem={activeItem}
-                  setShowPostWindow={setShowPostWindow}
+                  setShowPostWindow={
+                    doorStatus === 'pass'
+                      ? setShowPostWindow
+                      : () => {
+                          console.log(`doorstatus: ${doorStatus}`);
+                        }
+                  }
                 />
               </View>
             ))

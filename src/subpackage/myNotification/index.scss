@@ -13,7 +13,8 @@
     display: flex;
     border-bottom: 2rpx solid #f1eefc;
     &-item {
-      width: 50%;
+      flex: 1;
+      position: relative;
       align-items: center;
       line-height: 110rpx;
       text-align: center;
@@ -76,6 +77,8 @@
     width: 55rpx;
     height: 4rpx;
     background-color: #7d73f0;
-    left: 163rpx;
+    // 三栏均分布局下下划线居中（原来 left:163rpx 是按两栏 375rpx 宽写死的）
+    left: 50%;
+    margin-left: -27.5rpx;
   }
 }

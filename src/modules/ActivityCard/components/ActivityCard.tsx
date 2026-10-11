@@ -7,12 +7,22 @@ import { ActivityDetailInfo } from '@/common/types';
 import { activeColor, holdertype } from '@/common/const/Formconst';
 import TimeTranslation from '@/common/utils/TimeTranslation';
 
+// 未发布状态的标签，「我的-活动」列表用（通过 showCheckingStatus 打开）
+const CHECKING_LABEL: Record<string, [string, string]> = {
+  pending_signers: ['待签署', '#BBBCBE'],
+  pending_auditor: ['审核中', '#BBBCBE'],
+  checking: ['审核中', '#BBBCBE'],
+  reject: ['未通过', '#F66565'],
+};
+
 const ActivityCard: React.FC<{
   activeItem: ActivityDetailInfo;
   setShowPostWindow: (show: boolean) => void;
   isbottomline?: boolean;
-}> = memo(({ activeItem, setShowPostWindow, isbottomline = true }) => {
+  showCheckingStatus?: boolean;
+}> = memo(({ activeItem, setShowPostWindow, isbottomline = true, showCheckingStatus = false }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const statusLabel = activeItem.isChecking ? CHECKING_LABEL[activeItem.isChecking] : undefined;
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -22,7 +32,7 @@ const ActivityCard: React.FC<{
       <View className="active-image">
         <Image
           className={`active-image-img ${imageLoaded ? 'loaded' : ''}`}
-          src={activeItem.showImg[0]}
+          src={activeItem.showImg?.[0]}
           onLoad={handleImageLoad}
           mode="aspectFill"
         ></Image>
@@ -33,8 +43,8 @@ const ActivityCard: React.FC<{
         <View className="active-date">
           <Image className="active-icon" mode="widthFix" src={date}></Image>
           <View className="active-date-text">
-            {TimeTranslation(activeItem.detailTime.startTime)} -{' '}
-            {TimeTranslation(activeItem.detailTime.endTime)}
+            {TimeTranslation(activeItem.detailTime?.startTime)} -{' '}
+            {TimeTranslation(activeItem.detailTime?.endTime)}
           </View>
         </View>
         <View className="active-pos">
@@ -43,6 +53,14 @@ const ActivityCard: React.FC<{
         </View>
       </View>
       <View className="active-footer">
+        {showCheckingStatus && statusLabel && (
+          <View
+            className="active-footer-checking"
+            style={`background-color: ${statusLabel[1]}`}
+          >
+            {statusLabel[0]}
+          </View>
+        )}
         <View className="active-footer-holder">
           {holdertype.get(activeItem.holderType) || activeItem.holderType}
         </View>

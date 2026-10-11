@@ -18,6 +18,7 @@ import { getCommentsBySubject, createComment, replyComment } from '@/common/api/
 import useActivityStore from '@/store/ActivityStore';
 import { CreatorType } from '@/common/types';
 import handleInteraction from '@/common/utils/Interaction';
+import Message from '@/common/components/Message';
 import ReplyInput from '@/modules/ReplyInput';
 import CommentList from '@/modules/Comment';
 import CommentActionSheet from '@/modules/CommentActionSheet';
@@ -67,6 +68,19 @@ const Index = () => {
   const params = { studentId, subject: 'activity', targetId: selectedItem.id };
   const reply_params = { parentId: replyId, subject: 'comment' };
   const comment_params = { parentId: selectedItem.id, subject: 'activity' };
+
+  // 签署人表决：仅活动处于签署人征集阶段（pending_signers）时展示按钮。
+  // 非签署人会收到 10403、活动已结束签署收到 34001，由 request.ts 统一弹后端提示。
+  const handleSign = async (type: 'approve' | 'reject') => {
+    try {
+      await handleInteraction(type, { subject: 'activity', targetId: selectedItem.id });
+      Message.success({ content: type === 'approve' ? '已批准' : '已拒绝', duration: 1500 });
+      // 返回消息页后 useDidShow 会重拉 /feed/auditor，已表决的邀请自动从列表消失
+      setTimeout(() => Taro.navigateBack(), 800);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handlepic = (pictures) => {
     let windowRatio = Number((windowHeight / windowWidth).toFixed(2));
@@ -335,6 +349,24 @@ const Index = () => {
             />
           </View>
         </ScrollView>
+
+        {/* 签署人表决栏：仅待签署状态显示 */}
+        {selectedItem.isChecking === 'pending_signers' && (
+          <View className="actComment-signbar">
+            <View
+              className="actComment-signbar-btn actComment-signbar-reject"
+              onClick={() => handleSign('reject')}
+            >
+              拒绝
+            </View>
+            <View
+              className="actComment-signbar-btn actComment-signbar-approve"
+              onClick={() => handleSign('approve')}
+            >
+              批准
+            </View>
+          </View>
+        )}
 
         {/* 底部操作栏 */}
         <View className="actComment-footer">

@@ -62,7 +62,6 @@ const Index = () => {
 
   // 活动相关状态
   const [activityPage, setActivityPage] = useState(1);
-  const [totalActivities, setTotalActivities] = useState(0);
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityHasMore, setActivityHasMore] = useState(true);
   const [mineActivityList, setMineActivityList] = useState<ActivityDetailInfo[]>([]);
@@ -214,24 +213,40 @@ const Index = () => {
     try {
       const res = await getMyActivityList(activeIndex, LIMIT, pageNum);
       console.log(`activity ${activeIndex}:`, res.data);
-      if (res.data.details === null) {
+      const rawList: ActivityDetailInfo[] = res.data?.details || [];
+      // 排查用：确认 /act/own 返回里 isChecking 的真实取值（状态标签靠它渲染）
+      console.log(
+        '[活动列表] isChecking 取值:',
+        rawList.map((item) => item.isChecking)
+      );
+      if (rawList.length === 0) {
         if (refresh) {
           setMineActivityList([]);
         }
-        return;
+        return 0;
       }
-      const newActivityList: ActivityDetailInfo[] = res.data.details.map(
-        (item: unknown) => item as ActivityDetailInfo
-      );
+      // /act/own 返回本人全部状态（含审核中 / 被拒），
+      // 「我的-活动」只展示已发布的，未发布的统一去 review 页看。
+      // 这里用「排除已知未发布状态」而不是「只留 pass」：
+      // 万一后端没返回 isChecking 字段，前者会退回成旧行为（都显示），后者会把列表整个清空。
+      const UNPUBLISHED_STATUS = ['pending_signers', 'pending_auditor', 'checking', 'reject'];
+      const newActivityList =
+        activeIndex === 'release'
+          ? rawList.filter(
+              (item) => !item.isChecking || !UNPUBLISHED_STATUS.includes(item.isChecking)
+            )
+          : rawList;
       if (refresh) {
         setMineActivityList(newActivityList);
       } else {
         setMineActivityList([...mineActivityList, ...newActivityList]);
       }
       setActivityPage(pageNum);
-      setTotalActivities(res.data.total || 0);
+      // 返回未过滤的原始条数，用来判断还有没有下一页（过滤后的条数不可靠）
+      return rawList.length;
     } catch (err) {
       console.log(err);
+      return 0;
     }
   };
 
@@ -240,8 +255,10 @@ const Index = () => {
     if (activityLoading || !activityHasMore) return;
     setActivityLoading(true);
     try {
-      await loadActivities(activityPage + 1, false);
-      if (mineActivityList.length >= totalActivities) {
+      const rawCount = await loadActivities(activityPage + 1, false);
+      // 按原始条数判断到底，不能用过滤后的 length 跟 total 比，
+      // 否则只要存在未发布的活动就永远满足不了条件，会一直重复请求
+      if (rawCount < LIMIT) {
         setActivityHasMore(false);
       }
     } catch (error) {
@@ -307,12 +324,12 @@ const Index = () => {
             >
               活动
             </View>
-            {/* <View
+            <View
               className="mine-order-title-choice-check"
               onClick={() => navigateTo({ url: '/subpackage/review/index' })}
             >
               审核
-            </View> */}
+            </View>
             <Image
               onClick={() => navigateTo({ url: '/subpackage/mySearch/index' })}
               className="mine-order-title-choice-img"
@@ -384,6 +401,7 @@ const Index = () => {
                 onLoadMore={loadMoreActivities}
                 hasMore={activityHasMore}
                 loading={activityLoading}
+                showCheckingStatus={true}
               />
             )}
           </View>

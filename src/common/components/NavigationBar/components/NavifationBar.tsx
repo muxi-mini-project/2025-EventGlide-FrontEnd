@@ -6,7 +6,11 @@ import avatar from '@/common/assets/Postlist/波奇.jpg';
 import Naviarrow from '@/common/svg/arrowhead/Naviarrow.svg';
 import { UserInfo } from '@/common/types';
 
-const NavigationBar: React.FC<{ url: string; userInfo: UserInfo }> = memo(({ userInfo }) => {
+const NavigationBar: React.FC<{
+  url: string;
+  userInfo: UserInfo;
+  onEdit?: () => void;
+}> = memo(({ userInfo, onEdit }) => {
   return (
     <View className="navigationBar">
       <View className="navigationBar-back" onClick={() => Taro.navigateBack()}>
@@ -20,6 +24,11 @@ const NavigationBar: React.FC<{ url: string; userInfo: UserInfo }> = memo(({ use
         ></Image>
         <View className="navigationBar-user-name">{userInfo.username}</View>
       </View>
+      {onEdit && (
+        <View className="navigationBar-edit" onClick={onEdit}>
+          <View className="navigationBar-edit-text">···</View>
+        </View>
+      )}
     </View>
   );
 });

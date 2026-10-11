@@ -61,3 +61,8 @@ export const loadPostDraft = () => {
 export const savePostDraft = (draftData: CreatePostRequest) => {
   return apiClient.post<CreatePostRequest>('/post/draft', draftData);
 };
+
+// 删除帖子（targetId 必须用字符串，避免雪花 id 精度丢失）
+export const deletePost = (targetId: string) => {
+  return apiClient.post<{ code: number }>('/post/delete', { targetId });
+};

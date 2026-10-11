@@ -10,6 +10,11 @@ import collectActive from '@/common/svg/post/starAct.svg';
 import favorActive from '@/common/svg/post/heartAct.svg';
 import comment from '@/common/svg/post/comment.svg';
 import icon from '@/common/svg/post/inputIcon.svg';
+import deleteIcon from '@/common/svg/edit/删除.svg';
+import permissionIcon from '@/common/svg/edit/权限设置.svg';
+// 可见性图标留给帖子页展示「可见对象」时用
+// import publicIcon from '@/common/svg/edit/公开可见图标.svg';
+// import privateIcon from '@/common/svg/edit/仅自己可见.svg';
 import { CreatorType } from '@/common/types';
 import useUserStore from '@/store/userStore';
 import usePostStore from '@/store/PostStore';
@@ -20,6 +25,9 @@ import ReplyInput from '@/modules/ReplyInput';
 import CommentActionSheet from '@/modules/CommentActionSheet';
 import CommentList from '@/modules/Comment';
 import formatTime from '@/common/utils/FormatTime';
+import ConfirmModal from '@/modules/ConfirmModal';
+import { deletePost } from '@/common/api/PostRequest';
+import Message from '@/common/components/Message';
 
 export const SetBlogReponseContext = createContext<(params: any) => void>(() => {});
 export const SetBlogComment = createContext<(params: any) => void>(() => {});
@@ -59,7 +67,18 @@ const Index = () => {
   const windowWidth = Taro.getWindowInfo().windowWidth;
   const windowHeight = Taro.getWindowInfo().windowHeight;
   const Item = selectPostList[PostIndex];
-  console.log('postDetail', selectPostList, PostIndex, Item);
+  // 编辑操作面板状态
+  const [showEditSheet, setShowEditSheet] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showPermissionSheet, setShowPermissionSheet] = useState(false);
+  // 是否是自己的帖子（从 mineHome 进入 + 作者匹配，两边转字符串避免类型不一致）
+  const isOwnPost = backPage === 'mineHome' && String(Item?.userInfo?.studentId) === String(studentId);
+  console.log('[postDetail debug]', {
+    backPage,
+    itemStudentId: Item?.userInfo?.studentId,
+    storageStudentId: studentId,
+    isOwnPost,
+  });
   const params = {
     subject: 'post',
     studentId: studentId,
@@ -313,10 +332,26 @@ const Index = () => {
     setReplytype('reply');
   };
 
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(Item.id);
+      Message.success({ content: '删除成功', duration: 2000 });
+      setShowDeleteConfirm(false);
+      setShowEditSheet(false);
+      Taro.navigateBack();
+    } catch (err) {
+      console.log(err);
+      Message.error({ content: '删除失败', duration: 2000 });
+    }
+  };
+
   return (
     <>
       <View className="postDetail">
-        <NavigationBar url={`/pages/${backPage}/index`} userInfo={Item.userInfo} />
+        <NavigationBar
+          url={`/pages/${backPage}/index`}
+          userInfo={Item.userInfo}
+        />
         <ScrollView
           className="postDetail-comment-list"
           scrollY
@@ -351,6 +386,12 @@ const Index = () => {
               <View className="postDetail-content-title">{Item.title}</View>
               <View className="postDetail-content-desc">{Item.introduce || ''}</View>
               <View className="postDetail-content-timesite">{formatTime(Item.publishTime)}</View>
+              {isOwnPost && (
+                <View className="postDetail-content-edit-row" onClick={() => setShowEditSheet(true)}>
+                  <View className="postDetail-content-edit-row-text">编辑和权限设置</View>
+                  <View className="postDetail-content-edit-row-arrow">›</View>
+                </View>
+              )}
             </View>
           </View>
           <View className="postDetail-comment">
@@ -466,6 +507,49 @@ const Index = () => {
           />
         )}
       </View>
+
+      {/* 帖子操作面板（删除 + 权限设置），仅自己的帖子从 mineHome 进入时显示 */}
+      {showEditSheet && (
+        <View className="postEdit-mask" onClick={() => setShowEditSheet(false)}>
+          <View className="postEdit-box" onClick={(e) => e.stopPropagation()}>
+            <View className="postEdit-sheet">
+              <View className="postEdit-sheet-item" onClick={() => { setShowEditSheet(false); setShowDeleteConfirm(true); }}>
+                <Image className="postEdit-sheet-item-img" src={deleteIcon} mode="widthFix" />
+                <View className="postEdit-sheet-item-text">删除</View>
+              </View>
+              <View className="postEdit-sheet-item" onClick={() => { setShowEditSheet(false); setShowPermissionSheet(true); }}>
+                <Image className="postEdit-sheet-item-img" src={permissionIcon} mode="widthFix" />
+                <View className="postEdit-sheet-item-text">权限设置</View>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* 权限设置面板 */}
+      {showPermissionSheet && (
+        <View className="postEdit-mask" onClick={() => setShowPermissionSheet(false)}>
+          <View className="postEdit-box" onClick={(e) => e.stopPropagation()}>
+            <View className="postPermission-list">
+              <View className="postPermission-list-item" onClick={() => setShowPermissionSheet(false)}>
+                公开可见
+              </View>
+              <View className="postPermission-list-item" onClick={() => setShowPermissionSheet(false)}>
+                仅自己可见
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* 删除二次确认弹窗 */}
+      <ConfirmModal
+        title="确认删除这篇帖子吗？"
+        visible={showDeleteConfirm}
+        onConfirm={handleDeletePost}
+        onClose={() => setShowDeleteConfirm(false)}
+        headerClassName="textmid"
+      />
     </>
   );
 };

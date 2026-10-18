@@ -12,14 +12,15 @@ import { get } from '@/common/api/request';
 import useActivityStore from '@/store/ActivityStore';
 import { NavigationBarTabBar } from '@/common/components/NavigationBar';
 import { getPostList, searchPostList } from '@/common/api';
-import { GetNotificationCountResponse } from '@/common/types';
+import { GetNotificationCountResponse, PostDetailInfo } from '@/common/types';
 import ScrollTop from '@/modules/ScrollTop';
 import useDoorStore from '@/store/DoorStote';
 
 const Index = () => {
   const [isAlbumVisiable, setIsAlbumVisiable] = useState(false);
   const [windowHeight, setWindowHeight] = useState(0);
-  const [isShowList, setIsShowList] = useState<number[]>([]);
+  // Set 语义：卡片可见性查询 O(1)，且只在集合真正变化时才 setState，避免每帧全量 re-render
+  const [isShowList, setIsShowList] = useState<Set<number>>(() => new Set());
   const [searchValue, setSearchValue] = useState<string>('');
   const [currentSearchKeyword, setCurrentSearchKeyword] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
@@ -70,6 +71,8 @@ const Index = () => {
       bottom: number;
     }[]
   >([]);
+  /** 已测量过位置的卡片数量：高度预分配后旧卡片位置稳定，追加数据时只增量测量新增部分 */
+  const measuredCount = useRef(0);
   const scrollRaf = useRef(false);
   const hasLoadedPosts = useRef(false);
   const pageRef = useRef(1);
@@ -93,6 +96,14 @@ const Index = () => {
     if (refresh) {
       setPostList(list);
       setSelectPostList(list);
+      // 列表整体替换：位置与可见集合全部作废，等新列表渲染后重新测量；
+      // 顺带清掉未触发的卸载定时器，避免旧索引误删新列表的可见项
+      positions.current = [];
+      measuredCount.current = 0;
+      visibleSet.current = new Set();
+      Object.values(unloadTimers.current).forEach(clearTimeout);
+      unloadTimers.current = {};
+      setIsShowList(new Set());
     } else {
       const latestPostList = usePostStore.getState().PostList;
       setPostList([...latestPostList, ...list]);
@@ -119,30 +130,47 @@ const Index = () => {
   useEffect(() => {
     if (PostList === null) return;
 
-    if (PostList.length > 0) {
+    if (PostList.length > measuredCount.current) {
       setTimeout(() => {
-        measurePostPositions();
+        measurePostPositions(measuredCount.current);
       }, 100);
     }
-  }, [PostList]);
+    // doorStatus 放行时列表由 3 条变全量，也要补测剩余卡片
+  }, [PostList, doorStatus]);
 
   Taro.useReady(() => {
     const newwindowHeight = Taro.getWindowInfo().windowHeight;
     setWindowHeight(newwindowHeight);
   });
 
-  const measurePostPositions = () => {
-    const query = Taro.createSelectorQuery();
+  /**
+   * 只测量 [fromIndex, renderedCount) 的卡片位置。
+   * 高度已按宽高比预分配，追加数据时旧卡片位置不会变化，
+   * 所以 loadMore 后只需增量测量新增卡片，不再全量重测。
+   * 门禁灰度只渲染前 3 条时也按实际渲染数量测量，避免对不存在的节点发查询。
+   */
+  const measurePostPositions = (fromIndex: number) => {
+    const renderedCount =
+      doorStatus !== 'pass' ? Math.min(PostList?.length ?? 0, 3) : PostList?.length ?? 0;
+    if (fromIndex >= renderedCount) return;
 
-    PostList.forEach((_, index) => {
-      query.select(`#post-item-${index}`).boundingClientRect();
-    });
+    const query = Taro.createSelectorQuery();
+    for (let i = fromIndex; i < renderedCount; i++) {
+      query.select(`#post-item-${i}`).boundingClientRect();
+    }
 
     query.exec((res) => {
-      positions.current = res.map((rect: any) => ({
+      const measured = res.map((rect: any) => ({
         top: rect?.top ?? 0,
         bottom: rect?.bottom ?? 0,
       }));
+
+      if (fromIndex === 0) {
+        positions.current = measured;
+      } else {
+        positions.current.push(...measured);
+      }
+      measuredCount.current = renderedCount;
 
       // 初始化可见列表，确保首次加载时显示图片
       const viewportTop = 0;
@@ -158,14 +186,13 @@ const Index = () => {
         }
       });
 
-      // 首屏兜底：即使整体测量异常（节点还没渲染、灰度只渲染前 3 条等），
-      // 前几张卡片也一定显示图片，不会再出现「只有两张有图」
+      // 首屏兜底：即使整体测量异常，前几张卡片也一定显示图片，不会再出现「只有两张有图」
       for (let i = 0; i < Math.min(6, positions.current.length); i++) {
         initialVisible.add(i);
       }
 
       visibleSet.current = initialVisible;
-      setIsShowList(Array.from(initialVisible));
+      setIsShowList(new Set(initialVisible));
 
       if (positions.current.length > 0) {
         const lastBottom = positions.current[positions.current.length - 1].bottom;
@@ -190,54 +217,73 @@ const Index = () => {
 
     const viewportTop = scrollTop - BUFFER;
     const viewportBottom = scrollTop + viewportHeight + BUFFER;
+    const pos = positions.current;
+    const n = pos.length;
+    if (n === 0) return;
 
-    const newVisible = new Set<number>();
-
-    positions.current.forEach((position, index) => {
-      const { top, bottom } = position;
-
-      const inView = bottom >= viewportTop && top <= viewportBottom;
-
-      const aboveView = bottom < viewportTop;
-      const belowView = top > viewportBottom;
-
-      // 当前区域
-      if (inView) {
-        newVisible.add(index);
-
-        if (unloadTimers.current[index]) {
-          clearTimeout(unloadTimers.current[index]);
-          delete unloadTimers.current[index];
-        }
+    // positions 按渲染顺序存储，masonry 布局下 top 单调不减（每张卡片都放到较矮的一列），
+    // 二分出第一个 top >= viewportTop 的索引，它之前的都在视口上方，永久保留
+    let lo = 0;
+    let hi = n - 1;
+    let start = n;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (pos[mid].top >= viewportTop) {
+        start = mid;
+        hi = mid - 1;
+      } else {
+        lo = mid + 1;
       }
+    }
 
-      // 上方区域永久保留
-      else if (aboveView) {
-        newVisible.add(index);
+    const next = new Set<number>();
 
-        if (unloadTimers.current[index]) {
-          clearTimeout(unloadTimers.current[index]);
-          delete unloadTimers.current[index];
-        }
+    // 上方区域：永久可见（含 top 在视口上方、底边还没滚出去的图片）
+    for (let i = 0; i < start; i++) {
+      next.add(i);
+      if (unloadTimers.current[i]) {
+        clearTimeout(unloadTimers.current[i]);
+        delete unloadTimers.current[i];
       }
+    }
 
-      // 下方区域延迟卸载
-      else if (belowView) {
-        if (!unloadTimers.current[index]) {
-          unloadTimers.current[index] = setTimeout(() => {
-            visibleSet.current.delete(index);
+    // 窗口区域：只走到第一个 top 超出视口底部的卡片，下方区域无需遍历
+    for (let i = start; i < n && pos[i].top <= viewportBottom; i++) {
+      next.add(i);
+      if (unloadTimers.current[i]) {
+        clearTimeout(unloadTimers.current[i]);
+        delete unloadTimers.current[i];
+      }
+    }
 
-            setIsShowList(Array.from(visibleSet.current));
-
-            delete unloadTimers.current[index];
-          }, 3000);
-        }
+    // 只检查此前可见集合里滑到窗口下方的项，安排延迟卸载（滚动上移时它们不在 next 里）
+    const prev = visibleSet.current;
+    prev.forEach((i) => {
+      if (next.has(i)) return;
+      if (!unloadTimers.current[i]) {
+        unloadTimers.current[i] = setTimeout(() => {
+          visibleSet.current.delete(i);
+          setIsShowList(new Set(visibleSet.current));
+          delete unloadTimers.current[i];
+        }, 3000);
       }
     });
 
-    visibleSet.current = newVisible;
+    // 集合没变化就不 setState，避免每个滚动帧都触发整列表 re-render
+    let changed = prev.size !== next.size;
+    if (!changed) {
+      for (const i of next) {
+        if (!prev.has(i)) {
+          changed = true;
+          break;
+        }
+      }
+    }
 
-    setIsShowList(Array.from(newVisible));
+    visibleSet.current = next;
+    if (changed) {
+      setIsShowList(new Set(next));
+    }
   };
 
   const handleSearch = async () => {
@@ -328,6 +374,23 @@ const Index = () => {
   // 限制展示的帖子数量
   const visiblePostList = doorStatus !== 'pass' ? PostList?.slice(0, 3) : PostList;
 
+  /**
+   * 图片宽高已由后端落库，无需等图片加载就能按宽高比算出最终展示高度，
+   * 骨架屏与图片占同一高度，避免「先定高、加载后展开」的跳动。
+   * 布局口径与 GridView 保持一致：两列、crossAxisGap 5px、容器宽 90%。
+   */
+  const GRID_GAP = 5;
+  const windowWidthPx = Taro.getWindowInfo().windowWidth;
+  const columnWidthPx = (windowWidthPx * 0.9 - GRID_GAP) / 2;
+  const MAX_IMG_HEIGHT_PX = (500 / 750) * windowWidthPx; // 与 PostCard 的 maxHeight 500rpx 一致
+  const DEFAULT_IMG_HEIGHT_PX = (360 / 750) * windowWidthPx; // 与骨架屏 360rpx 一致
+
+  const calcCardImageHeight = (item: PostDetailInfo) => {
+    const img = item.showImg?.[0];
+    if (!img || !img.width || !img.height) return DEFAULT_IMG_HEIGHT_PX;
+    return Math.round(Math.min((img.height / img.width) * columnWidthPx, MAX_IMG_HEIGHT_PX));
+  };
+
   return (
     <>
       <NavigationBarTabBar backgroundColor="#FFFFFF" title="发现" />
@@ -414,7 +477,12 @@ const Index = () => {
                       setBackPage('postHome');
                     }}
                   >
-                    <PostCard item={item} index={index} isShowImg={isShowList.includes(index)} />
+                    <PostCard
+                      item={item}
+                      index={index}
+                      isShowImg={isShowList.has(index)}
+                      imageHeight={calcCardImageHeight(item)}
+                    />
                   </View>
                 ))}
           </GridView>

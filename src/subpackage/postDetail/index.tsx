@@ -100,20 +100,13 @@ const Index = () => {
     setLoadSelectComment(true);
   };
 
-  const loadImageRatios = async () => {
+  const loadImageRatios = () => {
     if (Item && Item.showImg) {
-      const ratios: number[] = [];
-
-      for (const imgUrl of Item.showImg) {
-        try {
-          const imgInfo = await Taro.getImageInfo({ src: imgUrl });
-          const ratio = Number((imgInfo.height / imgInfo.width).toFixed(2));
-          ratios.push(ratio);
-        } catch (error) {
-          console.error(`获取图片 ${imgUrl} 比例失败:`, error);
-          ratios.push(1);
-        }
-      }
+      // 宽高由后端落库，直接使用，无需再请求图片信息
+      const ratios = Item.showImg.map((img) => {
+        if (!img.width || !img.height) return 1;
+        return Number((img.height / img.width).toFixed(2));
+      });
       handlepic(ratios);
     }
   };
@@ -338,7 +331,7 @@ const Index = () => {
                   {Item.showImg.map((item, index) => (
                     <SwiperItem key={index} className="postDetail-content-avatar-swiper-item">
                       <Image
-                        src={item}
+                        src={item.url}
                         className={`postDetail-content-avatar-swiper-item-${imageRatios[index]}`}
                         mode={imageRatios[index] === 'widthimg' ? 'widthFix' : 'heightFix'}
                       />
@@ -448,7 +441,7 @@ const Index = () => {
             >
               {Item.showImg.map((item, index) => (
                 <SwiperItem key={index} className={`showpicture-swiper-${ratios[index]}`}>
-                  <Image src={item} className="showpicture-swiper-item-img" mode="widthFix" />
+                  <Image src={item.url} className="showpicture-swiper-item-img" mode="widthFix" />
                 </SwiperItem>
               ))}
             </Swiper>

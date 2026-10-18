@@ -1,20 +1,20 @@
 import { create } from 'zustand';
-import { LabelForm } from '@/common/types';
+import { LabelForm, Image } from '@/common/types';
 
 interface DraftData {
   title: string;
   introduce: string;
-  showImg: string[];
+  showImg: Image[];
   labelform: LabelForm;
 }
 
 interface activeInfoState {
   title: string;
   introduce: string;
-  showImg: string[];
+  showImg: Image[];
   labelform: LabelForm;
   draftData: DraftData;
-  setBasicInfo: (title: string, description: string, imgUrl: string[]) => void;
+  setBasicInfo: (title: string, description: string, imgUrl: Image[]) => void;
   setLabelForm: (labelform: LabelForm) => void;
   setDraftData: (draftData: DraftData) => void;
 }
@@ -44,7 +44,7 @@ const useActiveInfoStore = create<activeInfoState>((set) => ({
     showImg: [],
     labelform: { ...emptyLabelForm },
   },
-  setBasicInfo: (title: string, description: string, imgUrl?: string[]) => {
+  setBasicInfo: (title: string, description: string, imgUrl?: Image[]) => {
     set({ title, introduce: description, showImg: imgUrl });
   },
   setLabelForm: (labelform: LabelForm) => {

@@ -12,6 +12,7 @@ import useActiveInfoStore from '@/store/activeInfoStore';
 import { useDidShow } from '@tarojs/taro';
 import { getActivityDraft } from '@/common/api';
 import { LabelForm } from '@/common/types';
+import type { Image as ImageInfo } from '@/common/types';
 import { useSaveDraft } from '@/common/hooks/useSaveDraft';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
 const emptyLabelForm: LabelForm = {
@@ -29,7 +30,7 @@ const emptyLabelForm: LabelForm = {
 const Index = () => {
   const [isShowDraft, setIsShowDraft] = useState(false);
   const [isShowAlbum, setIsShowAlbum] = useState(false);
-  const [imgUrl, setImgUrl] = useState<string[]>([]);
+  const [imgUrl, setImgUrl] = useState<ImageInfo[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const { setBasicInfo, setLabelForm, labelform, draftData, setDraftData } = useActiveInfoStore();
@@ -59,11 +60,9 @@ const Index = () => {
         console.log(res.data);
         const draftTitle = res.data.title || '';
         const draftIntroduce = res.data.introduce || '';
-        let draftShowImg: string[] = [];
+        let draftShowImg: ImageInfo[] = [];
         if (Array.isArray(res.data.showImg)) {
-          draftShowImg = res.data.showImg.filter((item: string) => item !== '');
-        } else if (typeof res.data.showImg === 'string' && res.data.showImg !== '') {
-          draftShowImg = [res.data.showImg];
+          draftShowImg = res.data.showImg.filter((item: ImageInfo) => item.url !== '');
         }
         setTitle(draftTitle);
         setDescription(draftIntroduce);
@@ -136,13 +135,9 @@ const Index = () => {
   const hasContentChanged = () => {
     if (title !== draftData.title) return true;
     if (description !== draftData.introduce) return true;
-    if (imgUrl.length !== draftData.showImg.length) return true;
-
-    for (let i = 0; i < imgUrl.length; i++) {
-      if (imgUrl[i] !== draftData.showImg[i]) return true;
-    }
 
     // 使用排序后的 stringify 比较，忽略属性顺序
+    if (stringifySorted(imgUrl) !== stringifySorted(draftData.showImg)) return true;
     if (stringifySorted(labelform) !== stringifySorted(draftData.labelform)) return true;
 
     return false;
@@ -196,7 +191,7 @@ const Index = () => {
                   imgUrl.map((item, index) => (
                     <Picture
                       key={index}
-                      src={item}
+                      src={item.url}
                       isShowDelete={true}
                       imgUrl={imgUrl}
                       setImgUrl={setImgUrl}
@@ -260,6 +255,7 @@ const Index = () => {
           imgUrl={imgUrl}
           setImgUrl={setImgUrl}
           type={'event'}
+          withSize
         />
     </View>
   );

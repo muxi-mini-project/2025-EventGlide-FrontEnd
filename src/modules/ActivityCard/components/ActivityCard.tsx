@@ -22,7 +22,7 @@ const ActivityCard: React.FC<{
       <View className="active-image">
         <Image
           className={`active-image-img ${imageLoaded ? 'loaded' : ''}`}
-          src={activeItem.showImg[0]}
+          src={activeItem.showImg[0]?.url}
           onLoad={handleImageLoad}
           mode="aspectFill"
         ></Image>

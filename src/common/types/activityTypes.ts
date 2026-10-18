@@ -1,5 +1,6 @@
 // 活动相关类型
 import { UserInfo } from './UserTypes';
+import { Image } from './imageTypes';
 
 export type ActiveList = {
   date: string;
@@ -14,7 +15,7 @@ export interface MyActivityList {
   collectNum: number;
   comment: number;
   introduce: string;
-  showImg: string[];
+  showImg: Image[];
   isLike: string;
   isCollect: string;
 }
@@ -41,7 +42,7 @@ export interface ActivityDetailInfo {
   organizerUnit: string;
   type: string;
   ifRegister: boolean | string;
-  showImg: string[];
+  showImg: Image[];
   collectNum: number;
   likeNum: number;
   commentNum: number;

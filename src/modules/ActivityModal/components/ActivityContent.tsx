@@ -8,11 +8,12 @@ import pos from '@/common/svg/activity/pos.svg';
 import date from '@/common/svg/activity/date.svg';
 import holder from '@/common/svg/activity/holder.svg';
 import TimeTranslation from '@/common/utils/TimeTranslation';
+import type { Image as ImageInfo } from '@/common/types';
 
 interface ActivityData {
   title?: string;
   introduce?: string;
-  showImg?: string[] | null;
+  showImg?: ImageInfo[] | null;
   type?: string;
   holderType?: string;
   organizerUnit?: string;
@@ -129,7 +130,7 @@ const ActivityContent: React.FC<ActivityContentProps> = memo(
             {imgList.map((item, index) => (
               <Picture
                 key={index}
-                src={item}
+                src={item.url}
                 isShowDelete={canDeleteImages}
                 imgUrl={[]}
                 setImgUrl={([]) => { }}

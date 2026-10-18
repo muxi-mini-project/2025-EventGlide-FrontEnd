@@ -24,7 +24,7 @@ const MyActivityCard: React.FC<MyActivityList> = memo(({ ...props }) => {
                 <Image
                   className="mine-activity-content-picture-img"
                   mode="aspectFill"
-                  src={item}
+                  src={item.url}
                   key={index}
                 ></Image>
               );

@@ -340,6 +340,7 @@ const Index = () => {
           imgUrl={imgUrl}
           setImgUrl={setImgUrl}
           type={'blog'}
+          withSize
         />
         <View className="search-container">
           <View className="info-icon-container">

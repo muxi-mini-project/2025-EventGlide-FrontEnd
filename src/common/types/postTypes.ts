@@ -1,4 +1,5 @@
 import { UserInfo } from './UserTypes';
+import { Image } from './imageTypes';
 // 帖子相关类型
 export type PostList = {
   imgUrl: string;
@@ -14,7 +15,7 @@ export interface PostDetailInfo {
   likeNum: number;
   isLike: string;
   isCollect: string;
-  showImg: string[];
+  showImg: Image[];
   title: string;
   publishTime: string;
   userInfo: UserInfo;

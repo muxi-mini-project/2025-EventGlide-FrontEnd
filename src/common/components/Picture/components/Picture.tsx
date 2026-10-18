@@ -2,14 +2,15 @@ import { Image, View } from '@tarojs/components';
 import { memo } from 'react';
 import classnames from 'classnames';
 import './style.scss';
+import { Image as ImageInfo } from '@/common/types';
 
-const Picture: React.FC<{
+const PictureInner = <T extends string | ImageInfo>(props: {
   src?: string;
   isShowDelete: boolean;
   size?: number;
-  imgUrl: string[];
-  setImgUrl: (url: string[]) => void;
-}> = memo((props) => {
+  imgUrl: T[];
+  setImgUrl: (url: T[]) => void;
+}) => {
   if (!Array.isArray(props.imgUrl)) {
     console.error('imgUrl is not an array:', props.imgUrl);
     return null;
@@ -34,7 +35,9 @@ const Picture: React.FC<{
             none: !props.isShowDelete,
           })}
           onClick={() => {
-            const newImgUrl = props.imgUrl.filter((url) => url !== props.src);
+            const newImgUrl = props.imgUrl.filter(
+              (img) => (typeof img === 'string' ? img : img.url) !== props.src
+            );
             props.setImgUrl(newImgUrl);
           }}
         >
@@ -45,6 +48,8 @@ const Picture: React.FC<{
   } else {
     return null;
   }
-});
+};
+
+const Picture = memo(PictureInner) as unknown as typeof PictureInner;
 
 export default Picture;

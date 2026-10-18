@@ -123,7 +123,7 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
                * 重新进入小程序时首屏不会补发滚动事件，
                * 图片就一直不加载（表现和骨架屏一样），拖一下屏幕才出来。
                */
-              src={localImageUrl || item.showImg?.[0]}
+              src={localImageUrl || item.showImg?.[0]?.url}
               onLoad={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
             ></Image>

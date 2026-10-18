@@ -1,17 +1,20 @@
 import Taro, { navigateTo } from '@tarojs/taro';
 import { fetchToQiniu } from '../api/qiniu';
+import { Image } from '../types';
 
-type AlbumFunctionProps = {
+type AlbumFunctionProps<T extends string | Image> = {
   setIsVisiable: (isVisiable: boolean) => void;
-  setImgUrl: (imgUrl: string[]) => void;
-  imgUrl: string[];
+  setImgUrl: (imgUrl: T[]) => void;
+  imgUrl: T[];
   count: number;
   url: string;
   isAlbum: boolean;
   isRequest?: boolean;
+  /** 上传后是否携带图片宽高（showImg 需要），默认 false */
+  withSize?: boolean;
 };
 
-const handleChooseImage = ({
+const handleChooseImage = <T extends string | Image>({
   setIsVisiable,
   setImgUrl,
   imgUrl,
@@ -19,18 +22,25 @@ const handleChooseImage = ({
   url,
   isAlbum,
   isRequest = false,
-}: AlbumFunctionProps) => {
+  withSize = false,
+}: AlbumFunctionProps<T>) => {
   Taro.chooseImage({
     count: count,
     sizeType: ['original', 'compressed'],
     sourceType: isAlbum ? ['album'] : ['camera'],
     success: async (res) => {
-      let newImgUrl: string[] = [...imgUrl];
+      let newImgUrl: T[] = [...imgUrl];
 
       for (const filePath of res.tempFilePaths) {
         try {
           const qiniuUrl = await fetchToQiniu(filePath);
-          if (qiniuUrl) newImgUrl.push(qiniuUrl as string);
+          if (!qiniuUrl) continue;
+          if (withSize) {
+            const imgInfo = await Taro.getImageInfo({ src: filePath });
+            newImgUrl.push({ url: qiniuUrl, width: imgInfo.width, height: imgInfo.height } as T);
+          } else {
+            newImgUrl.push(qiniuUrl as T);
+          }
         } catch (error) {
           console.error('上传到七牛云失败:', error);
           Taro.showToast({

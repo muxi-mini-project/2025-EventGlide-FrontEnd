@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { PostDetailInfo } from '@/common/types';
+import { PostDetailInfo, Image } from '@/common/types';
 
 interface PostStoreType {
-  showImg: string[];
+  showImg: Image[];
   title: string;
   introduce: string;
   studentId: string;
@@ -12,6 +12,9 @@ interface PostStoreType {
   postUpdates: Record<string, Partial<PostDetailInfo>>;
   backPage: string;
   selectCommentPost: string;
+  /** 发布新帖后置位，postHome 的 useDidShow 据此重新拉取第一页 */
+  postRefreshFlag: boolean;
+  setPostRefreshFlag: (flag: boolean) => void;
   setSelectCommentPost: (bid: string) => void;
   setBackPage: (page: string) => void;
   setPostList: (PostList: PostDetailInfo[]) => void;
@@ -19,10 +22,10 @@ interface PostStoreType {
   setPostIndex: (bid: string) => void;
   setLikeNumChange: (blog: PostDetailInfo, type: number) => void;
   setCollectNumChange: (blog: PostDetailInfo, type: number) => void;
-  setImgUrl: (url: string[]) => void;
+  setImgUrl: (url: Image[]) => void;
   setPoststudentId: (id: string) => void;
   setCommentNumChange: (blog: PostDetailInfo) => void;
-  setContent: (title: string, description: string, imgUrl: string[]) => void;
+  setContent: (title: string, description: string, imgUrl: Image[]) => void;
 }
 
 const usePostStore = create<PostStoreType>((set, get) => ({
@@ -36,6 +39,8 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   PostIndex: -1,
   backPage: '',
   selectCommentPost: '',
+  postRefreshFlag: false,
+  setPostRefreshFlag: (flag) => set(() => ({ postRefreshFlag: flag })),
   setSelectCommentPost: (bid) => set(() => ({ selectCommentPost: bid })),
   setBackPage: (page) => set(() => ({ backPage: page })),
   setPostList: (PostList) => set(() => ({ PostList })),

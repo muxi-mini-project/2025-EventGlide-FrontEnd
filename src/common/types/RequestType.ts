@@ -2,6 +2,7 @@ import { ActivityDetailInfo, SelectedInfo } from './ActivityTypes';
 import { PostDetailInfo } from './PostTypes';
 import { LabelForm } from './FormTypes';
 import { ResponseType } from './CommentTypes';
+import { Image } from './imageTypes';
 
 /** 登录相关请求/响应接口类型 */
 export interface LoginRequest {
@@ -41,7 +42,7 @@ export interface FilteAcitivityRequest extends SelectedInfo {}
 export interface CreateActivityRequest {
   title: string;
   introduce: string;
-  showImg: string[];
+  showImg: Image[];
   labelform: LabelForm;
 }
 
@@ -55,7 +56,7 @@ export interface GetActivityDrafytResponse {
   introduce?: string;
   position?: string;
   registerMethod?: string;
-  showImg?: string;
+  showImg?: Image[];
   signer?: string;
   startTime?: string;
   studentId?: string;
@@ -67,7 +68,7 @@ export interface GetActivityDrafytResponse {
 export interface CreatePostRequest {
   title: string;
   introduce: string;
-  showImg: string[];
+  showImg: Image[];
   studentId?: string;
 }
 
@@ -82,7 +83,7 @@ export interface GetPostReponsePage {
 export interface GetPostDraftResonse {
   bid: string;
   title: string;
-  showImg: string[];
+  showImg: Image[];
   introduce: string;
   createAt: string;
   studentId: string;
@@ -92,7 +93,7 @@ export interface GetPostDraftResonse {
 export interface SaveDraftRequest {
   title: string;
   introduce: string;
-  showImg: string[];
+  showImg: Image[];
   labelform?: LabelForm;
   studentId?: string;
   [key: string]: any;

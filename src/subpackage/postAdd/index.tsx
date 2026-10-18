@@ -13,13 +13,14 @@ import { createPost, loadPostDraft } from '@/common/api/PostRequest';
 import Taro from '@tarojs/taro';
 import { useSaveDraft } from '@/common/hooks/useSaveDraft';
 import { LabelForm } from '@/common/types';
+import type { Image as ImageInfo } from '@/common/types';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
 
 const Index = () => {
   const { showImg: imgUrl } = usePostStore();
   const [isShowDraft, setIsShowDraft] = useState(false);
   const [isShowAlbum, setIsShowAlbum] = useState(false);
-  const [pageImgUrl, setPageImgUrl] = useState<string[]>(imgUrl);
+  const [pageImgUrl, setPageImgUrl] = useState<ImageInfo[]>(imgUrl);
   const [title, setTitle] = useState('');
   const [introduce, setIntroduce] = useState('');
   const studentId = Taro.getStorageSync('sid');
@@ -29,7 +30,7 @@ const Index = () => {
   const [draftData, setDraftData] = useState({
     title: '',
     introduce: '',
-    showImg: [] as string[],
+    showImg: [] as ImageInfo[],
   });
   const [writing, setWriting] = useState(false);
 
@@ -56,12 +57,10 @@ const Index = () => {
       if (res.msg === 'success') {
         const draftTitle = res.data.title || '';
         const draftIntroduce = res.data.introduce || '';
-        let draftShowImg: string[] = [];
+        let draftShowImg: ImageInfo[] = [];
 
         if (Array.isArray(res.data.showImg)) {
-          draftShowImg = res.data.showImg.filter((item) => item !== '');
-        } else if (res.data.showImg !== '' && res.data.showImg !== null) {
-          draftShowImg = [res.data.showImg];
+          draftShowImg = res.data.showImg.filter((item: ImageInfo) => item.url !== '');
         }
 
         setTitle(draftTitle);
@@ -112,6 +111,8 @@ const Index = () => {
           studentId: postInfo.studentId,
         });
         console.log(res);
+        // 通知瀑布流页：返回时重新拉取第一页，让新帖立刻出现在列表头部
+        usePostStore.getState().setPostRefreshFlag(true);
         Taro.navigateBack();
       } catch (err) {
         console.log(err);
@@ -139,7 +140,7 @@ const Index = () => {
     if (pageImgUrl.length !== draftData.showImg.length) return true;
 
     for (let i = 0; i < pageImgUrl.length; i++) {
-      if (pageImgUrl[i] !== draftData.showImg[i]) return true;
+      if (JSON.stringify(pageImgUrl[i]) !== JSON.stringify(draftData.showImg[i])) return true;
     }
 
     return false;
@@ -194,7 +195,7 @@ const Index = () => {
                     pageImgUrl.map((item, index) => (
                       <Picture
                         key={index}
-                        src={item}
+                        src={item.url}
                         isShowDelete={true}
                         imgUrl={pageImgUrl}
                         setImgUrl={setPageImgUrl}
@@ -262,6 +263,7 @@ const Index = () => {
           imgUrl={pageImgUrl}
           setImgUrl={setPageImgUrl}
           type={'event'}
+          withSize
         />
       </View>
     </>

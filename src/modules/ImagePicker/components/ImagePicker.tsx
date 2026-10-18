@@ -1,11 +1,11 @@
 import { View } from '@tarojs/components';
 import { memo } from 'react';
 import './style.scss';
-import { ImagePickerProps } from '@/common/types';
+import { ImagePickerProps, Image } from '@/common/types';
 import { handleChooseImage } from '@/common/utils/AlbumFunction';
 import Drawer from '@/common/components/Drawer';
 
-const ImagePicker: React.FC<ImagePickerProps> = memo(function ({
+const ImagePickerInner = <T extends string | Image>({
   isVisiable,
   setIsVisiable,
   imgUrl,
@@ -13,19 +13,21 @@ const ImagePicker: React.FC<ImagePickerProps> = memo(function ({
   type,
   count = 9,
   isRequest = false,
-}) {
+  withSize = false,
+}: ImagePickerProps<T>) => {
   const handleChooseImageClick = () => {
     if (type === 'blog') {
-      handleChooseImage({
+      handleChooseImage<T>({
         setIsVisiable,
         setImgUrl,
         imgUrl,
         count: count,
         url: '/subpackage/postAdd/index',
         isAlbum: true,
+        withSize,
       });
     } else if (type === 'event') {
-      handleChooseImage({
+      handleChooseImage<T>({
         setIsVisiable,
         setImgUrl,
         imgUrl,
@@ -33,21 +35,23 @@ const ImagePicker: React.FC<ImagePickerProps> = memo(function ({
         url: '',
         isAlbum: true,
         isRequest: isRequest,
+        withSize,
       });
     }
   };
   const handleTakePhotoClick = () => {
     if (type === 'blog') {
-      handleChooseImage({
+      handleChooseImage<T>({
         setIsVisiable,
         setImgUrl,
         imgUrl,
         count: 1,
         url: '/subpackage/postAdd/index',
         isAlbum: false,
+        withSize,
       });
     } else if (type === 'event') {
-      handleChooseImage({
+      handleChooseImage<T>({
         setIsVisiable,
         setImgUrl,
         imgUrl,
@@ -55,6 +59,7 @@ const ImagePicker: React.FC<ImagePickerProps> = memo(function ({
         url: '',
         isAlbum: false,
         isRequest: isRequest,
+        withSize,
       });
     }
   };
@@ -78,6 +83,8 @@ const ImagePicker: React.FC<ImagePickerProps> = memo(function ({
       </View>
     </Drawer>
   );
-});
+};
+
+const ImagePicker = memo(ImagePickerInner) as unknown as typeof ImagePickerInner;
 
 export default ImagePicker;

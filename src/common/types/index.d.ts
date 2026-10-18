@@ -1,5 +1,10 @@
 // 统一类型导出文件
 export type {
+  // 图片相关类型
+  Image,
+} from './imageTypes';
+
+export type {
   // 用户相关类型
   UserInfo,
 } from './UserTypes';

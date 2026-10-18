@@ -7,7 +7,7 @@ import { memo, useState, useEffect } from 'react';
 import handleInteraction from '@/common/utils/Interaction';
 import usePostStore from '@/store/PostStore';
 
-const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
+const PostCard: React.FC<any> = memo(function ({ item, isShowImg, imageHeight }) {
   // const [islike, setIsLike] = useState(item.isLike === 'true');
   // const [likeNum, setLikeNum] = useState(item.likeNum);
   const [localImageUrl, setLocalImageUrl] = useState<string>('');
@@ -107,7 +107,13 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
         style={{ height: '10rpx', backgroundColor: isShowImg ? 'green' : 'red', width: '100%' }}
       ></View> */}
       <View
-        style={{ maxHeight: '500rpx', overflow: 'hidden' }}
+        style={{
+          maxHeight: '500rpx',
+          overflow: 'hidden',
+          // 图片宽高已由后端落库，父级按宽高比算好最终展示高度，
+          // 骨架屏和图片都占同一高度，加载前后卡片不再跳动
+          ...(imageHeight ? { height: `${imageHeight}px` } : {}),
+        }}
         onClick={() => {
           navigateTo({ url: '/subpackage/postDetail/index' });
         }}
@@ -123,14 +129,22 @@ const PostCard: React.FC<any> = memo(function ({ item, isShowImg }) {
                * 重新进入小程序时首屏不会补发滚动事件，
                * 图片就一直不加载（表现和骨架屏一样），拖一下屏幕才出来。
                */
-              src={localImageUrl || item.showImg?.[0]}
+              src={localImageUrl || item.showImg?.[0]?.url}
               onLoad={() => setIsLoading(false)}
               onError={() => setIsLoading(false)}
             ></Image>
-            {isLoading && <View className="image-loader"></View>}
+            {isLoading && (
+              <View
+                className="image-loader"
+                style={imageHeight ? { height: `${imageHeight}px` } : undefined}
+              ></View>
+            )}
           </View>
         ) : (
-          <View className="image-loader"></View>
+          <View
+            className="image-loader"
+            style={imageHeight ? { height: `${imageHeight}px` } : undefined}
+          ></View>
         )}
       </View>
       <View className="content">

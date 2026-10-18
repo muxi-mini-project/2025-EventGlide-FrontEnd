@@ -8,6 +8,7 @@ import { get } from '@/common/api/request';
 import NoticePageNull from '@/modules/EmptyComponent/components/noticepagenull';
 import { activeColor, holdertype } from '@/common/const/Formconst';
 import { NavigationBarBack } from '@/common/components/NavigationBar';
+import type { Image } from '@/common/types';
 
 export interface ActiveItem {
   id: string;
@@ -17,7 +18,7 @@ export interface ActiveItem {
   isChecking: string;
   holderType: string;
   ifRegister: string;
-  showImg: string[];
+  showImg: Image[];
   detailTime: {
     startTime: string;
     endTime: string;
@@ -29,7 +30,7 @@ interface PostItem {
   title: string;
   introduce: string;
   isChecking: string;
-  showImg: string[];
+  showImg: Image[];
   publishTime: string;
 }
 
@@ -127,7 +128,7 @@ const Index = () => {
                     {(item.showImg || []).map((item, index) => (
                       <Picture
                         key={index}
-                        src={item}
+                        src={item.url}
                         isShowDelete={false}
                         imgUrl={[]}
                         setImgUrl={([]) => {}}

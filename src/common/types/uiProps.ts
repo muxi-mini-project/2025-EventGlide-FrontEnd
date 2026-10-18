@@ -1,4 +1,5 @@
 // UI组件属性相关类型
+import { Image } from './imageTypes';
 
 /** ----核心组件Props---- */
 export interface ModalProps {
@@ -138,15 +139,17 @@ export interface CustomInputProps {
 
 /** --- 二次封装组件props --- */
 
-export interface ImagePickerProps {
+export interface ImagePickerProps<T extends string | Image = string | Image> {
   /** 是否弹出 */
   isVisiable: boolean;
   setIsVisiable: (value: boolean) => void;
-  setImgUrl: (value: string[]) => void;
-  imgUrl: string[];
+  setImgUrl: (value: T[]) => void;
+  imgUrl: T[];
   type: string;
   count?: number;
   isRequest?: boolean;
+  /** 上传后是否携带图片宽高（showImg 用 Image 对象；头像、申报表等仍用 url 字符串） */
+  withSize?: boolean;
 }
 
 export interface ConfirmModalProps

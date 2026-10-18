@@ -12,6 +12,9 @@ interface PostStoreType {
   postUpdates: Record<string, Partial<PostDetailInfo>>;
   backPage: string;
   selectCommentPost: string;
+  /** 发布新帖后置位，postHome 的 useDidShow 据此重新拉取第一页 */
+  postRefreshFlag: boolean;
+  setPostRefreshFlag: (flag: boolean) => void;
   setSelectCommentPost: (bid: string) => void;
   setBackPage: (page: string) => void;
   setPostList: (PostList: PostDetailInfo[]) => void;
@@ -36,6 +39,8 @@ const usePostStore = create<PostStoreType>((set, get) => ({
   PostIndex: -1,
   backPage: '',
   selectCommentPost: '',
+  postRefreshFlag: false,
+  setPostRefreshFlag: (flag) => set(() => ({ postRefreshFlag: flag })),
   setSelectCommentPost: (bid) => set(() => ({ selectCommentPost: bid })),
   setBackPage: (page) => set(() => ({ backPage: page })),
   setPostList: (PostList) => set(() => ({ PostList })),

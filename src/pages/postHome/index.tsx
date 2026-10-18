@@ -124,6 +124,18 @@ const Index = () => {
       setHasMore(true);
       await loadPosts(1, true, '');
       setImgUrl([]);
+      return;
+    }
+    // 发布新帖后返回：重新拉取第一页并滚回顶部，让新帖子立刻出现在列表头部
+    if (usePostStore.getState().postRefreshFlag) {
+      usePostStore.getState().setPostRefreshFlag(false);
+      setHasMore(true);
+      // 与 ScrollTop 组件相同的「先置 1 再回 0」技巧：
+      // scrollTop state 可能本来就是 0，直接 set 0 不会触发滚动回顶
+      setScrollTop(1);
+      setTimeout(() => setScrollTop(0), 0);
+      await loadPosts(1, true, currentSearchKeyword);
+      setImgUrl([]);
     }
   });
 

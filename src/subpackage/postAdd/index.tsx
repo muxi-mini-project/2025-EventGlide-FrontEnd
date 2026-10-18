@@ -111,6 +111,8 @@ const Index = () => {
           studentId: postInfo.studentId,
         });
         console.log(res);
+        // 通知瀑布流页：返回时重新拉取第一页，让新帖立刻出现在列表头部
+        usePostStore.getState().setPostRefreshFlag(true);
         Taro.navigateBack();
       } catch (err) {
         console.log(err);

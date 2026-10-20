@@ -251,6 +251,40 @@
   }
 }
 
+// 签署人表决栏（仅活动 pending_signers 时显示），固定在底部操作栏上方
+.actComment-signbar {
+  position: fixed;
+  bottom: 160rpx;
+  left: 0;
+  width: 100%;
+  display: flex;
+  gap: 30rpx;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  border-top: 2rpx solid #f1eefc;
+  z-index: 30;
+  box-sizing: border-box;
+
+  &-btn {
+    flex: 1;
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: center;
+    border-radius: 40rpx;
+    font-size: 30rpx;
+    font-family: SimHei;
+    color: #fff;
+  }
+
+  &-reject {
+    background-color: #f66565;
+  }
+
+  &-approve {
+    background-color: #9ddb85;
+  }
+}
+
 // 全屏图片查看器
 .showpicture {
   position: fixed;

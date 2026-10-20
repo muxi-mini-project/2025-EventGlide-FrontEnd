@@ -13,27 +13,19 @@ import useActivityStore from '@/store/ActivityStore';
 import usePostStore from '@/store/PostStore';
 import { getPostById } from '@/common/api/PostRequest';
 import { getActivityById } from '@/common/api/Activity';
-import handleInteraction from '@/common/utils/Interaction';
-import ConfirmModal from '@/modules/ConfirmModal';
-import Message from '@/common/components/Message';
+// 帖子被删除后的中性占位图，使用项目已有 info 图标
+import defaultPostPlaceholder from '@/common/svg/Post/info.svg';
 
 const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
   const { setSelectedItem, setSelectComment } = useActivityStore();
   const { setSelectPostList, setPostIndex, setSelectCommentPost } = usePostStore();
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const handleItemClick = (item: LetterType) => {
-    if (item.status === 'pending') {
-      setShowConfirmModal(true);
-    }
-  };
-
+  // 统一走详情跳转：待签署的邀请也直接进活动详情页，批准/拒绝按钮在详情页里
   const handleClick = async (props: LetterType) => {
     console.log(props);
-    if (props.status === 'pending') {
-      handleItemClick(props);
-    } else {
-      try {
+    // 目标帖子已被删除，禁止跳转
+    if (props.targetDeleted) return;
+    try {
         if (props.Subject === 'activity') {
           const res = await getActivityById(props.TargetId);
           console.log(res);
@@ -68,41 +60,10 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
       } catch (error) {
         console.log(error);
       }
-    }
-  };
-  const approveInvitation = async (props: LetterType) => {
-    console.log(props);
-    try {
-      const res = await handleInteraction('approve', {
-        subject: props.Subject,
-        targetId: props.TargetId,
-      });
-      console.log(res);
-      if (res.code === 200) {
-        Message.success('同意成功');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const rejectInvitation = async (props: LetterType) => {
-    console.log(props);
-    try {
-      const res = await handleInteraction('reject', {
-        subject: props.Subject,
-        targetId: props.TargetId,
-      });
-      console.log(res);
-      if (res.code === 200) {
-        Message.success('拒绝成功');
-      }
-    } catch (error) {
-      console.log(error);
-    }
   };
   return (
     <>
-      <View className="letter-list-item" onClick={() => handleItemClick(props)}>
+      <View className="letter-list-item" onClick={() => handleClick(props)}>
         <Image
           src={props.Userinfo.Avatar}
           mode="aspectFill"
@@ -121,30 +82,22 @@ const LetterListItem: React.FC<LetterType> = memo(({ ...props }) => {
         </View>
         <Image
           mode="aspectFill"
-          src={props.FirstPic || props.Userinfo.Avatar}
+          src={props.targetDeleted ? defaultPostPlaceholder : (props.FirstPic || props.Userinfo.Avatar)}
           className="letter-list-item-decPic"
           onClick={(event) => {
             event.stopPropagation();
-            handleClick(props);
+            if (!props.targetDeleted) handleClick(props);
           }}
         ></Image>
       </View>
-      <ConfirmModal
-        title="是否同意该邀请？"
-        visible={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={() => approveInvitation(props)}
-        onReject={() => rejectInvitation(props)}
-        headerClassName="textmid"
-      />
     </>
   );
 });
 
 const Index = () => {
   // const [isActive, setIsActive] = useState(true);
-  const [activeItem, setActiveItem] = useState('favor');
-  const handleClick = (type: 'favor' | 'letter') => {
+  const [activeItem, setActiveItem] = useState<'invite' | 'favor' | 'letter'>('favor');
+  const handleClick = (type: 'invite' | 'favor' | 'letter') => {
     if (activeItem === type) {
       return;
     }
@@ -152,7 +105,8 @@ const Index = () => {
     // setIsActive(!isActive);
     setShowPage(type);
   };
-  const [showPage, setShowPage] = useState<'favor' | 'letter'>('favor');
+  const [showPage, setShowPage] = useState<'invite' | 'favor' | 'letter'>('favor');
+  const [invite, setInvite] = useState<LetterType[]>([]);
   const [favor, setFavor] = useState<LetterType[]>([]);
   const [letter, setLetter] = useState<LetterType[]>([]);
   const [notice, setNotice] = useState(false);
@@ -166,10 +120,16 @@ const Index = () => {
       const invitationsList = invitations.data?.Invitations || [];
       const likes = res.data?.Likes || [];
       const collects = res.data.Collects || [];
-      const favorWithInvitations = [...likes, ...collects, ...invitationsList].sort((a, b) => parseDateSafely(b.PublishedAt) - parseDateSafely(a.PublishedAt));
-      console.log('合并后的通知列表', favorWithInvitations);
-      setFavor(favorWithInvitations);
-      readnotice(favorWithInvitations);
+      // 邀请来自 /feed/auditor（按未表决实时查出来的），不是消息表数据，read 接口清不掉；
+      // 且它的 status 是 'pending'，会让 readnotice 的循环提前 break，
+      // 挡住排在它后面真正未读的赞/收藏。所以已读只对 feed 数据处理。
+      const feedFavor = [...likes, ...collects].sort((a, b) => parseDateSafely(b.PublishedAt) - parseDateSafely(a.PublishedAt));
+      readnotice(feedFavor);
+      setFavor(feedFavor);
+      // 邀请单独成栏，不再并入「赞和收藏」
+      setInvite(
+        [...invitationsList].sort((a, b) => parseDateSafely(b.PublishedAt) - parseDateSafely(a.PublishedAt))
+      );
 
       const comments = res.data?.Comments || [];
       const ats = res.data.Ats || [];
@@ -237,6 +197,14 @@ const Index = () => {
       <View className="myNotification-page">
         <View className="myNotification-page-header">
           <View
+            onClick={() => handleClick('invite')}
+            className={classnames('myNotification-page-header-item', {
+              activeItem: activeItem === 'invite',
+            })}
+          >
+            邀请
+          </View>
+          <View
             onClick={() => handleClick('favor')}
             className={classnames('myNotification-page-header-item', {
               activeItem: activeItem === 'favor',
@@ -263,19 +231,21 @@ const Index = () => {
                 height: '10rpx',
                 borderRadius: '5rpx',
                 backgroundColor: '#FF4D4F',
-                right: 0,
-                top: 0,
-                marginRight: '90rpx',
-                marginTop: '40rpx',
+                right: '40rpx',
+                top: '40rpx',
               }}
             />
           </View>
         </View>
         <View className="myNotification-page-content">
-          {(showPage === 'favor' && favor.length === 0) ||
+          {(showPage === 'invite' && invite.length === 0) ||
+            (showPage === 'favor' && favor.length === 0) ||
             (showPage === 'letter' && letter.length === 0) ? (
             <NoticePageNull key="notice-null" />
           ) : null}
+          {showPage === 'invite' &&
+            invite.length > 0 &&
+            invite.map((item, index) => <LetterListItem key={index} {...item} />)}
           {showPage === 'favor' &&
             favor.length > 0 &&
             favor.map((item, index) => <LetterListItem key={index} {...item} />)}

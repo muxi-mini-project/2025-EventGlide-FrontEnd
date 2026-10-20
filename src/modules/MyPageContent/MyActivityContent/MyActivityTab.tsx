@@ -14,6 +14,8 @@ const MyActivityTab: React.FC<{
   onLoadMore?: () => void;
   hasMore?: boolean;
   loading?: boolean;
+  // 是否显示审核状态标签：只有「我的-活动」需要（他人主页/搜索不显示）
+  showCheckingStatus?: boolean;
 }> = memo(function ({
   activeIndex,
   setIsShowActivityWindow,
@@ -22,6 +24,7 @@ const MyActivityTab: React.FC<{
   onLoadMore,
   hasMore,
   loading,
+  showCheckingStatus = false,
 }) {
   const { setSelectedItem } = useActivityStore();
 
@@ -58,6 +61,7 @@ const MyActivityTab: React.FC<{
                   activeItem={item}
                   setShowPostWindow={setIsShowActivityWindow}
                   isbottomline={false}
+                  showCheckingStatus={showCheckingStatus}
                 />
                 <View className="mine-activity-page-bottomline"></View>
               </View>
